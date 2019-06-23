@@ -1,0 +1,15 @@
+// -----------------------------------------------------------------------------
+//   Ambient.Impact - UX - Drupal administrative toolbar component
+// -----------------------------------------------------------------------------
+
+@import '../../../ambientimpact_core/stylesheets/_common.scss';
+
+.toolbar {
+  // Hide when in immerse mode.
+  @include hide-on-immerse;
+
+  // Transition properties for going in and out of immerse mode.
+  transition-property:        opacity;
+  transition-duration:        200ms;
+  transition-timing-function: linear;
+}
