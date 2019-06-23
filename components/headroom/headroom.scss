@@ -1,0 +1,20 @@
+// -----------------------------------------------------------------------------
+//	Ambient.Impact - UX - Headroom.js component
+// -----------------------------------------------------------------------------
+
+// See http://wicky.nillia.ms/headroom.js/
+
+@import '../../../ambientimpact_core/stylesheets/_common.scss';
+
+.headroom {
+	@include headroom-base;
+	@include headroom-pinned;
+
+	&--unpinned {
+		@include headroom-unpinned;
+	}
+
+	&--not-top {
+		@include headroom-immerse;
+	}
+}
