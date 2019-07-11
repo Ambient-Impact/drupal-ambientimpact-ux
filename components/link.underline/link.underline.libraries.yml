@@ -1,0 +1,9 @@
+component.link.underline:
+  js:
+    link.underline.js: {}
+    link.underline.image.js: {}
+    link.underline.transition.js: {}
+  dependencies:
+    - ambientimpact_core/ally.js
+    - ambientimpact_ux/gsap.tweenmax
+    - ambientimpact_core/component.link.image
