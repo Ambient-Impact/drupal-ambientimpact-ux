@@ -3,8 +3,8 @@
 namespace Drupal\ambientimpact_ux\EventSubscriber\Theme;
 
 use Drupal\ambientimpact_core\ComponentPluginManagerInterface;
-use Drupal\hook_event_dispatcher\HookEventDispatcherInterface;
 use Drupal\core_event_dispatcher\Event\Theme\PageTopEvent;
+use Drupal\core_event_dispatcher\PageHookEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -35,7 +35,7 @@ class PageTopEventSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      HookEventDispatcherInterface::PAGE_TOP => 'pageTop',
+      PageHookEvents::PAGE_TOP => 'pageTop',
     ];
   }
 

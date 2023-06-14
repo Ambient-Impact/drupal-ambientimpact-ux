@@ -2,8 +2,8 @@
 
 namespace Drupal\ambientimpact_ux\EventSubscriber\Form;
 
-use Drupal\hook_event_dispatcher\HookEventDispatcherInterface;
 use Drupal\core_event_dispatcher\Event\Form\FormAlterEvent;
+use Drupal\core_event_dispatcher\FormHookEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -15,7 +15,7 @@ class FormAlterEventSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      HookEventDispatcherInterface::FORM_ALTER => 'formAlter',
+      FormHookEvents::FORM_ALTER => 'formAlter',
     ];
   }
 

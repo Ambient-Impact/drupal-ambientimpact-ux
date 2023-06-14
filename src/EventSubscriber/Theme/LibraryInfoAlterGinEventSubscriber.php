@@ -2,8 +2,8 @@
 
 namespace Drupal\ambientimpact_ux\EventSubscriber\Theme;
 
-use Drupal\hook_event_dispatcher\HookEventDispatcherInterface;
 use Drupal\core_event_dispatcher\Event\Theme\LibraryInfoAlterEvent;
+use Drupal\core_event_dispatcher\ThemeHookEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -19,7 +19,7 @@ class LibraryInfoAlterGinEventSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      HookEventDispatcherInterface::LIBRARY_INFO_ALTER => 'onLibraryInfoAlter',
+      ThemeHookEvents::LIBRARY_INFO_ALTER => 'onLibraryInfoAlter',
     ];
   }
 

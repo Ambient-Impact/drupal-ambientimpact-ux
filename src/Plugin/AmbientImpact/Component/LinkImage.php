@@ -4,7 +4,7 @@ namespace Drupal\ambientimpact_ux\Plugin\AmbientImpact\Component;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
 use Drupal\Component\Serialization\SerializationInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -29,7 +29,7 @@ class LinkImage extends ComponentBase {
   /**
    * The Drupal MIME type guesser service.
    *
-   * @var \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface
+   * @var \Symfony\Component\Mime\MimeTypeGuesserInterface
    */
   protected $MIMEGuesser;
 
@@ -63,7 +63,7 @@ class LinkImage extends ComponentBase {
    * @param \Drupal\Core\Cache\CacheBackendInterface $htmlCacheService
    *   The Component HTML cache service.
    *
-   * @param \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface $MIMEGuesser
+   * @param \Symfony\Component\Mime\MimeTypeGuesserInterface $MIMEGuesser
    *   The Drupal MIME type guesser service.
    */
   public function __construct(
@@ -190,7 +190,7 @@ class LinkImage extends ComponentBase {
    *   True if $uri looks like an image file, false otherwise.
    */
   public function isURIDestinationImage(string $uri): bool {
-    $guessedMIMEType = $this->MIMEGuesser->guess($uri);
+    $guessedMIMEType = $this->MIMEGuesser->guessMimeType($uri);
 
     // If the MIME type can't be guessed by the MIME type guesser, it'll return
     // null, which is still a valid value to search an array for, but of course
