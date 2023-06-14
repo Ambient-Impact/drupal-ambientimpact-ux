@@ -5,3 +5,4 @@ component.material.input:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.jquery
     - ambientimpact_ux/component.textarea
+    - core/once

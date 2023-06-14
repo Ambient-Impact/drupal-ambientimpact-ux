@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------------- */
 
 AmbientImpact.on('jquery', function(aijQuery) {
-AmbientImpact.onGlobals(['ally.get.activeElement'], function() {
+AmbientImpact.onGlobals(['ally.get.activeElement', 'once'], function() {
 AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
   'use strict';
 
@@ -122,7 +122,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
     },
     // Attach to specified input selectors, within context.
     attach = function(selector, context) {
-      $(selector, context).once(containerClass).each(function() {
+      $(once(containerClass, $(selector, context))).each(function() {
         var inputID, tempInputID, messagesID;
 
         // Get the input ID - required for generating the ID on the
@@ -281,7 +281,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
     },
     // Detach from specified input selectors, within context.
     detach = function(selector, context) {
-      $(selector, context).removeOnce(containerClass).each(function() {
+      $(once.remove(containerClass, $(selector, context))).each(function() {
         var $linkField, $linkFieldLabel, $linkURLLabel,
           $linkURLLabelText, $viewsExposedWidget;
 
@@ -396,7 +396,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
           // Run attach().
           attach(textareaSelector, context);
 
-          $(textareaSelector, context).once(containerTextareaClass).each(function() {
+          $(once(containerTextareaClass, $(textareaSelector, context))).each(function() {
             // Set the initial rows to 1 and update Autosize. This
             // is to match the Material Design style.
             if (window.autosize) {
@@ -424,7 +424,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
           // Run detach().
           detach(textareaSelector, context);
 
-          $(textareaSelector, context).removeOnce(containerTextareaClass).each(function() {
+          $(once.remove(containerTextareaClass, $(textareaSelector, context))).each(function() {
             // Restore the previous rows attribute, if any.
             if ($(this).data('material-input-old-rows')) {
               $(this)
