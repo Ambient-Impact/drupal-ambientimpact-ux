@@ -3,6 +3,10 @@
   "description": "Ambient.Impact - UX",
   "type": "drupal-custom-module",
   "license": "GPL-2.0-or-later",
+  "support": {
+    "docs": "https://github.com/Ambient-Impact/drupal-ambientimpact-ux",
+    "source": "https://github.com/Ambient-Impact/drupal-ambientimpact-ux"
+  },
   "authors": [
     {
       "name": "Ambient.Impact",
