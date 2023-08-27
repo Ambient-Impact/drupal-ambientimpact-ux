@@ -255,7 +255,39 @@ AmbientImpact.addComponent('scrollbarGutter', function(aiScrollbarGutter, $) {
        */
       let behaviourTarget = this;
 
+      let scrolling = false;
+
+      let scrollHandler = function(event) {
+        scrolling = true;
+        console.log('Scrolling!');
+      };
+
+      document.addEventListener('scroll', scrollHandler, {passive: true});
+
+      // document.addEventListener('scrollend', function(event) {
+      //   document.removeEventListener('scroll', scrollHandler, {passive: true});
+      // });
+
       getScrollbarThickness().then(function(measured) {
+
+        // if (scrolling === true) {
+
+          return new Promise(function(resolve) {
+            document.addEventListener('scrollend', function(event) {
+              document.removeEventListener('scroll', scrollHandler, {passive: true});
+              resolve(measured);
+            });
+          });
+
+        // }
+
+        // return measured;
+
+        // return new Promise(function(resolve) { return setTimeout(function() {
+        //   resolve(measured);
+        // }, 1); });
+
+      }).then(function(measured) {
 
         return setProperty(behaviourTarget, measured);
 
