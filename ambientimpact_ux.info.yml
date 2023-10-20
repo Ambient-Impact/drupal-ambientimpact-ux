@@ -3,9 +3,11 @@ type: module
 description: Various UX (user experience) improvements and components.
 package: Ambient.Impact
 core_version_requirement: ^9.5 || ^10.0
+php: 8.1
 
 dependencies:
   - ambientimpact_core:ambientimpact_core
   - ambientimpact_icon:ambientimpact_icon
   - hook_event_dispatcher:core_event_dispatcher
   - hook_event_dispatcher:preprocess_event_dispatcher
+  - hux:hux
