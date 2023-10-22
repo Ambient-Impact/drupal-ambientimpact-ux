@@ -17,6 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContextualLinks implements ContainerInjectionInterface {
 
+  use StringTranslationTrait;
+
   /**
    * Hook constructor; saves dependencies.
    *
