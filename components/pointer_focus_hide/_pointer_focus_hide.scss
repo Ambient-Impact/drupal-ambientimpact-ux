@@ -10,10 +10,13 @@
 /// @content
 ///
 @mixin on {
-  @include selector.root-conditions('[data-focus-source=pointer]', 'html') {
-    &.pointer-focus-hide:focus {
-      @content;
-    }
+  // @include selector.root-conditions('[data-focus-source=pointer]', 'html') {
+  //   &.pointer-focus-hide:focus {
+  //     @content;
+  //   }
+  // }
+  &:not(:focus-visible):focus {
+    @content;
   }
 }
 
@@ -23,11 +26,14 @@
 /// @content
 ///
 @mixin not {
-  @include selector.root-conditions(
-    ':not([data-focus-source=pointer])', 'html'
-  ) {
-    &:not(:hover):focus {
-      @content;
-    }
+  // @include selector.root-conditions(
+  //   ':not([data-focus-source=pointer])', 'html'
+  // ) {
+  //   &:not(:hover):focus {
+  //     @content;
+  //   }
+  // }
+  &:focus-visible {
+    @content;
   }
 }
