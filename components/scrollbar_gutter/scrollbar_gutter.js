@@ -140,7 +140,13 @@ AmbientImpact.addComponent('scrollbarGutter', function(aiScrollbarGutter, $) {
   function destroyMeasure() {
 
     return fastdom.mutate(function() {
+
       $scrollbarMeasureContainer.remove();
+
+      $scrollbarMeasureContainer = $();
+
+      $scrollbarMeasureChild = $();
+
     });
 
   };
