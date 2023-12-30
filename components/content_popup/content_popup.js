@@ -96,6 +96,11 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
    *   A zero-based index or -1 if not found.
    */
   function getItemIndex(trigger) {
+
+    if (!('aiContentPopUp' in trigger)) {
+      return -1;
+    }
+
     for (var i = items.length - 1; i >= 0; i--) {
       if (items[i].uid === trigger.aiContentPopUp.uid) {
         return i;
