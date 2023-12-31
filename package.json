@@ -47,7 +47,6 @@
     "jquery-hoverintent": "^1.10.0",
     "jquery.onfontresize": "github:Ambient-Impact/jquery.onfontresize",
     "popper.js": "^1.15.0",
-    "smoothscroll-polyfill": "^0.4.4",
     "tippy.js": "^2.6.0"
   },
   "vendorize": [
@@ -59,7 +58,6 @@
     "jquery-hoverintent",
     "jquery.onfontresize",
     "popper.js",
-    "smoothscroll-polyfill",
     "tippy.js"
   ]
 }
