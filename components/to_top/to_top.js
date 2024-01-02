@@ -602,6 +602,9 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @return {Object}
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/scroll
+     *
+     * @todo Should we wrap the media query check in a FastDom measure
+     *   callback?
      */
     #getScrollObject() {
 
