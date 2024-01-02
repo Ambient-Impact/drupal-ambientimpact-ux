@@ -398,18 +398,21 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
         // Remove the hidden attribute.
         that.#$element.removeAttr('hidden');
 
-        // We need to delay the removal of the class until the next paint, so
-        // that the browser has a chance to paint the container as unhidden,
-        // otherwise transitions won't run.
-
-        // At this point we haven't painted a new frame yet.
-        window.requestAnimationFrame(function(timestamp) {
-          // Now we have, so we remove on the next frame.
-          window.requestAnimationFrame(function(timestamp) {
-            that.#$element.removeClass(hiddenClass);
-          });
-        });
-
+      // We need to delay the removal of the class until at least one frame has
+      // been painted, so that the browser has a chance to paint the container
+      // as unhidden, otherwise transitions won't run.
+      //
+      // @see https://stackoverflow.com/questions/61017477/requestanimationframe-inside-a-promise#61020604
+      //   Describes how to Promise-ify requestAnimationFrame.
+      }).then(function() {
+        return new Promise(requestAnimationFrame);
+      // At this point we haven't painted a new frame yet but the browser is
+      // indicating one is ready to paint.
+      }).then(function() {
+        return new Promise(requestAnimationFrame);
+      // Now we have painted a frame, so we remove the class on the next frame.
+      }).then(function() {
+        that.#$element.removeClass(hiddenClass);
       });
 
     }
