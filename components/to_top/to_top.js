@@ -27,14 +27,14 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
    *
    * @type {String}
    */
-  const hiddenClass = baseClass + '--hidden';
+  const hiddenClass = `${baseClass}--hidden`;
 
   /**
    * The BEM descendent class for the link.
    *
    * @type {String}
    */
-  const linkClass = baseClass + '__link';
+  const linkClass = `${baseClass}__link`;
 
   /**
    * Our event namespace.
@@ -286,12 +286,12 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
         // styles.
         classes: {
           initial:    baseClass,
-          pinned:     baseClass + '--pinned',
-          unpinned:   baseClass + '--unpinned',
-          top:        baseClass + '--top',
-          notTop:     baseClass + '--not-top',
-          bottom:     baseClass + '--bottom',
-          notBottom:  baseClass + '--not-bottom'
+          pinned:     `${baseClass}--pinned`,
+          unpinned:   `${baseClass}--unpinned`,
+          top:        `${baseClass}--top`,
+          notTop:     `${baseClass}--not-top`,
+          bottom:     `${baseClass}--bottom`,
+          notBottom:  `${baseClass}--not-bottom`,
         },
 
         // When Headroom says we're pinned and thus going up, record the
