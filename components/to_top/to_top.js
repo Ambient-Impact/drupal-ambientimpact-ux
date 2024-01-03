@@ -183,13 +183,19 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
       });
 
       // Handle visibility on text input focus/blur.
+      //
+      // @todo Remove the timeout and switch to focusin and focusout events
+      //   using FocusEvent.relatedTarget to check if focus has moved to another
+      //   text field.
+      //
+      // @see https://developer.mozilla.org/en-US/docs/Web/API/FocusEvent/relatedTarget
       $('body').on([
         `focus.${eventNamespace}`,
         `blur.${eventNamespace}`,
       ].join(' '), 'input:textall, textarea', function(event) {
 
         // Use a timeout to delay checking the active element. This ensures we
-        // don't incorrectly show the widget when the user blurs on text field
+        // don't incorrectly show the widget when the user blurs one text field
         // by focusing another one.
         setTimeout(function() {
           that.updateVisibility();
