@@ -251,7 +251,7 @@ AmbientImpact.addComponent('scrollbarGutter', function(aiScrollbarGutter, $) {
   this.addBehaviour(
     'AmbientImpactScrollbarGutter',
     'ambientimpact-scrollbar-gutter',
-    propertyTargetSelector,
+    'body',
     function(context, settings) {
 
       /**
@@ -259,9 +259,18 @@ AmbientImpact.addComponent('scrollbarGutter', function(aiScrollbarGutter, $) {
        *
        * @type {HTMLElement}
        */
-      let behaviourTarget = this;
+      const behaviourTarget = document.documentElement;
 
-      getScrollbarThickness().then(function(measured) {
+      // Destroy any existing measure if one exists, and resetting the element
+      // jQuery collections to empty. This is necessary if attaching after a
+      // detach because the delay in resolving Promises often causes
+      // buildMeasure() to return and not do anything since it (correctly) still
+      // sees an existing measure element in the jQuery collection.
+      destroyMeasure().then(function() {
+
+        return getScrollbarThickness();
+
+      }).then(function(measured) {
 
         return setProperty(behaviourTarget, measured);
 
@@ -279,12 +288,12 @@ AmbientImpact.addComponent('scrollbarGutter', function(aiScrollbarGutter, $) {
        *
        * @type {HTMLElement}
        */
-      let behaviourTarget = this;
+      const behaviourTarget = document.documentElement;
 
       $(window).off('lazyResize.aiScrollbarGutter', resizeHandler);
 
       destroyMeasure().then(function() {
-        fastdom.mutate(function() {
+        return fastdom.mutate(function() {
 
           $(behaviourTarget)
           .removeAttr(attributeName)
