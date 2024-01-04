@@ -35,6 +35,13 @@ AmbientImpact.addComponent('pointerFocusHide', function(
   'use strict';
 
   /**
+   * Our event namespace.
+   *
+   * @type {String}
+   */
+  const eventNamespace = 'aiPointerFocusHide';
+
+  /**
    * An array of element selectors to watch.
    *
    * @type {Array}
@@ -166,24 +173,60 @@ AmbientImpact.addComponent('pointerFocusHide', function(
     $(element).data(dataName, false);
   };
 
-  // We bind globally instead of using a behaviour since there isn't really any
-  // significant benefit to binding to specific containers and doing so would
-  // add more complexity.
-  $('body').on('focus.aiPointerFocusHide', elements.join(), function(event) {
-    var $this = $(this);
+  /**
+   * Focus event handler.
+   *
+   * @param {jQuery.Event} event
+   *   The event object.
+   */
+  function focusHandler(event) {
+
+    const $this = $(this);
 
     if (
       // If the data attribute/jQuery data has been set to true, always apply
       // the class.
-      $this.data(dataName) === true  ||
+      $this.data(dataName) === true ||
       // If the data attribute/jQuery data is not defined, apply the class.
       typeof $this.data(dataName) === 'undefined'
     ) {
       $this.addClass(pointerFocusClass);
     }
-  })
-  .on('blur.aiPointerFocusHide', elements.join(), function(event) {
-    $(this).removeClass(pointerFocusClass)
-  });
+
+  };
+
+  /**
+   * Blur event handler.
+   *
+   * @param {jQuery.Event} event
+   *   The event object.
+   */
+  function blurHandler(event) {
+    $(this).removeClass(pointerFocusClass);
+  };
+
+  this.addBehaviour(
+    'AmbientImpactPointerFocusHide',
+    'ambientimpact-pointer-focus-hide',
+    'body',
+    function(context, settings) {
+
+      $(this).on({
+        // @see https://stackoverflow.com/questions/33194138/template-string-as-object-property-name#70080319
+        [`focus.${eventNamespace}`]:  focusHandler,
+        [`blur.${eventNamespace}`]:   blurHandler,
+      }, elements.join());
+
+    },
+    function(context, settings, trigger) {
+
+      $(this).off({
+        [`focus.${eventNamespace}`]:  focusHandler,
+        [`blur.${eventNamespace}`]:   blurHandler,
+      }, elements.join());
+
+    }
+  );
+
 });
 });
