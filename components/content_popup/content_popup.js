@@ -458,6 +458,17 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
   }
 
   /**
+   * Destroy the currently active instance.
+   */
+  function destroy() {
+
+    aiOffcanvas.destroy($panel);
+
+    panelInstance = undefined;
+
+  };
+
+  /**
    * Set the panel title and content to that of the provided item.
    *
    * @param {object} itemObject
@@ -520,14 +531,33 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
     }
   }
 
-  // Initialize the panel on load if the media query allows it.
-  initPanel();
+  this.addBehaviour(
+    'AmbientImpactContentPopup',
+    'ambientimpact-content-popup',
+    'body',
+    function(context, settings) {
 
-  // Initialize the panel, tooltips, and disable tooltips when the media query
-  // matches or no longer matches. These all have checks for the current media
-  // query state, so they can be bound like this without any checks here.
-  aiMediaQuery.onMedia(panelMediaQuery, initPanel);
-  aiMediaQuery.onMedia(panelMediaQuery, initTooltips);
-  aiMediaQuery.onMedia(panelMediaQuery, disableTooltips);
+      initPanel();
+
+      // Initialize the panel, tooltips, and disable tooltips when the media
+      // query matches or no longer matches. These all have checks for the
+      // current media query state, so they can be bound like this without any
+      // checks here.
+      aiMediaQuery.onMedia(panelMediaQuery, initPanel);
+      aiMediaQuery.onMedia(panelMediaQuery, initTooltips);
+      aiMediaQuery.onMedia(panelMediaQuery, disableTooltips);
+
+    },
+    function(context, settings, trigger) {
+
+      aiMediaQuery.offMedia(panelMediaQuery, initPanel);
+      aiMediaQuery.offMedia(panelMediaQuery, initTooltips);
+      aiMediaQuery.offMedia(panelMediaQuery, disableTooltips);
+
+      destroy();
+
+    }
+  );
+
 });
 });
