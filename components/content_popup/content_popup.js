@@ -462,7 +462,13 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
    */
   function destroy() {
 
-    aiOffcanvas.destroy($panel);
+    // Only attempt to destroy if a panel has been created, as on larger screens
+    // it likely will not have been.
+    if ($panel.length > 0) {
+
+      aiOffcanvas.destroy($panel);
+
+    }
 
     panelInstance = undefined;
 
