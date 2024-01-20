@@ -12,7 +12,7 @@ AmbientImpact.addComponent('abbr', function(aiAbbr, $) {
   this.addBehaviour(
     'AmbientImpactAbbr',
     'ambientimpact-abbr',
-    '.layout-container, .offcanvas-panel',
+    'body',
     function(context, settings) {
       aiTooltip.create(this, {
         tippy: {
