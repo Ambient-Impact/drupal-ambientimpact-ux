@@ -216,6 +216,12 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
 
       $(window).on([
         `lazyResize.${eventNamespace}`,
+        // @todo This event is deprecated; add support for the 'change' event
+        //   of the Screen Orientation API.
+        //
+        // @see https://developer.mozilla.org/en-US/docs/Web/API/Window/orientationchange_event
+        //
+        // @see https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation/change_event
         `orientationchange.${eventNamespace}`,
       ].join(' '), function(event) {
         that.#initHeadroom();
