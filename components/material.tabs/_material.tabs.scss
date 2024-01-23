@@ -6,6 +6,7 @@
 @use 'material.common/material.colour' as material-colour;
 @use 'material.common/material.general' as material-general;
 @use 'sass/helpers/colour';
+@use 'sass:list';
 
 ///
 /// Material tabs container underline colour on light backgrounds.
@@ -36,6 +37,11 @@ $indicator-thickness: 2px !default;
 /// Material tabs padding.
 ///
 $padding: material-general.$item-padding-text-align !default;
+
+///
+/// Stacking order. Later in the list means a higher z-index.
+///
+$stacking-order: container-decoration, item;
 
 ///
 /// Style and layout for a Material tabs container.
@@ -72,6 +78,8 @@ $padding: material-general.$item-padding-text-align !default;
     right:  0;
     bottom: 0;
 
+    z-index: list.index($stacking-order, container-decoration);
+
     // Use border rather a background colour with height as the latter has
     // issues with sub-pixel rounding issues and can be rendered thicker than
     // intended.
@@ -97,6 +105,8 @@ $padding: material-general.$item-padding-text-align !default;
 @mixin item {
 
   position: relative;
+
+  z-index: list.index($stacking-order, item);
 
   padding:  $padding;
 
