@@ -5,6 +5,7 @@ component.content_popup:
   js:
     content_popup.js: {}
   dependencies:
+    - ambientimpact_core/component.fastdom
     - ambientimpact_core/component.media_query
     - ambientimpact_ux/component.offcanvas
     - ambientimpact_ux/component.tooltip

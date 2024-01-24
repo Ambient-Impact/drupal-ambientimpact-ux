@@ -9,8 +9,8 @@
 // widgets on two separate sites, this component combines both and switches
 // between them dynamically depending on the screen size.
 
-AmbientImpact.on(['tooltip', 'offcanvas', 'mediaQuery'], function(
-  aiTooltip, aiOffcanvas, aiMediaQuery
+AmbientImpact.on(['fastdom', 'tooltip', 'offcanvas', 'mediaQuery'], function(
+  aiFastDom, aiTooltip, aiOffcanvas, aiMediaQuery
 ) {
 AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
   'use strict';
@@ -87,6 +87,27 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
   };
 
   /**
+   * FastDom instance.
+   *
+   * @type {FastDom}
+   */
+  const fastdom = aiFastDom.getInstance();
+
+  /**
+   * Whether the panel is used after an attach.
+   *
+   * This is intended to prevent the panel being visible in the DOM if it's
+   * erroneously inserted but the CSS is no longer present on the page.
+   *
+   * @type {Boolean}
+   *
+   * @see initPanel()
+   *   Documents the reason for this. Will be removed when this component is
+   *   refactored.
+   */
+  let panelUsed = false;
+
+  /**
    * Get the index of the given trigger in the items array.
    *
    * @param {HTMLElement} trigger
@@ -147,7 +168,35 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
         $trigger.focus();
       });
 
-      $panelOpenButton.trigger('click');
+      fastdom.mutate(function() {
+
+        if (panelUsed === true) {
+          return;
+        }
+
+        // Remove the hidden attributes if the panel is needed.
+        $panel.removeAttr('hidden');
+
+        panelUsed = true;
+
+      // We need to delay triggering the panel open until at least one frame has
+      // been painted, so that the browser has a chance to paint the panel as
+      // unhidden, otherwise transitions won't run.
+      //
+      // @see https://stackoverflow.com/questions/61017477/requestanimationframe-inside-a-promise#61020604
+      //   Describes how to Promise-ify requestAnimationFrame.
+      }).then(function() {
+        return new Promise(requestAnimationFrame);
+      // At this point we haven't painted a new frame yet but the browser is
+      // indicating one is ready to paint.
+      }).then(function() {
+        return new Promise(requestAnimationFrame);
+      // Now we have painted a frame, so we can trigger the panel open on the
+      // next frame.
+      }).then(function() {
+        $panelOpenButton.trigger('click')
+      });
+
     }
 
     // Prevent the trigger's default action if tooltips or the panel are
@@ -438,6 +487,10 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     $panelOpenButton
       .text('Content pop-up open button')
+      // Set the hidden attribute in case stylesheets fail to load.
+      //
+      // See also the notes for the $panel hidden attribute below.
+      .attr('hidden', true)
       .appendTo('body');
 
     $panelTitle
@@ -450,6 +503,22 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
       .attr('id', panelID)
       .addClass([baseClass, panelBaseClass].join(' '))
       .prepend($panelTitle, $panelContent)
+      // Set the hidden attribute to ensure this remains hidden even if
+      // stylesheets fail to load or are removed, e.g. after a Turbo visit to a
+      // page that no longer has the off-canvas or content pop-up CSS.
+      //
+      // @see addItem()
+      //   Removes this when is added if the panelUsed variable is false.
+      //
+      // @see destroy()
+      //   Sets panelUsed back to false.
+      //
+      // @see https://www.drupal.org/project/refreshless/issues/3416734
+      //   Open issue to remove behaviours to fix this kind of problem.
+      //
+      // @todo Revisit this when refactoring this component as OOP and better
+      //   behaviours.
+      .attr('hidden', true)
       .appendTo('body');
 
     panelInstance = aiOffcanvas.init($panel, $.extend(
@@ -471,6 +540,8 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
     }
 
     panelInstance = undefined;
+
+    panelUsed = false;
 
   };
 
