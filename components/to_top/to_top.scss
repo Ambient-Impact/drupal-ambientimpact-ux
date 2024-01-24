@@ -39,6 +39,15 @@
     }
   }
 
+  // This class is used during construct to evaluate visibility without a brief
+  // flash of the link before it's hidden.
+  &--invisible {
+
+    opacity: 0;
+    pointer-events: none;
+
+  }
+
   &__link {
     display: block;
 

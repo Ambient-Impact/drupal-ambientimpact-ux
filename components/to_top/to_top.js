@@ -30,6 +30,13 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
   const hiddenClass = `${baseClass}--hidden`;
 
   /**
+   * The BEM modifier class for the container when it's hidden.
+   *
+   * @type {String}
+   */
+  const invisibleClass = `${baseClass}--invisible`;
+
+  /**
    * The BEM descendent class for the link.
    *
    * @type {String}
@@ -113,7 +120,7 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
        */
       const that = this;
 
-      this.#$element = $('<div></div>').addClass(baseClass);
+      this.#$element = $('<div></div>').addClass([baseClass, invisibleClass]);
 
       // Evaluate visibility immediately on construct.
       this.updateVisibility()
@@ -128,6 +135,7 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
       // complete.
       }).then(function() {
         that.#bindEventHandlers();
+        that.#$element.removeClass(invisibleClass);
       });
 
     }
