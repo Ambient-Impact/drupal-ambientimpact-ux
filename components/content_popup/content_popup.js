@@ -537,6 +537,10 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
       aiOffcanvas.destroy($panel);
 
+      $panel.detach();
+
+      $panelOpenButton.detach();
+
     }
 
     panelInstance = undefined;
