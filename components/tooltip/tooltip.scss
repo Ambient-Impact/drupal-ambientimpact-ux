@@ -13,6 +13,15 @@
   );
 }
 
+.tippy-popper {
+  // This fixes some extreme blurry edges occurring in recent Firefox versions
+  // as of end of 2023/start of 2024; it likely isn't needed any more and was
+  // probably used to prompt browsers to use GPU acceleration for the tooltips
+  // at the time but this should no longer be needed as browsers will do so
+  // regardless by default now.
+  perspective: none;
+}
+
 .tippy-tooltip {
   // Set a max-width for the tooltips so they don't get uncomfortably wide.
   // Note that applying this to .tippy-popper will not work, as it gets
