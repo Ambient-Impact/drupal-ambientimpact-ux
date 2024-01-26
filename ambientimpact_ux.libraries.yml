@@ -80,29 +80,29 @@ jquery.onfontresize:
 
 popper.js:
   remote: https://popper.js.org/
-  version: 1.15.0
+  version: 2.11.8
   license:
     name: MIT
-    url: https://github.com/FezVrasta/popper.js/blob/master/LICENSE.md
+    url: https://github.com/FezVrasta/popper.js/blob/master/LICENSE
     gpl-compatible: true
   js:
-    vendor/popper.js/dist/umd/popper.min.js: {
+    vendor/@popperjs/core/dist/umd/popper.min.js: {
       attributes: { defer: true },
       minified:   true
     }
 
 tippy.js:
   remote: https://atomiks.github.io/tippyjs/
-  version: 2.6.0
+  version: 6.3.7
   license:
     name: MIT
-    url: https://github.com/atomiks/tippyjs/blob/v2.6.0/LICENSE
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
     gpl-compatible: true
   css:
     component:
       vendor/tippy.js/dist/tippy.css: {}
   js:
-    vendor/tippy.js/dist/tippy.standalone.js: {
+    vendor/tippy.js/dist/tippy.umd.min.js: {
       attributes: { defer: true },
       minified:   true
     }

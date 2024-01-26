@@ -38,6 +38,7 @@
     "webpack-remove-empty-scripts": "^1.0.1"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "autosize": "^4.0.2",
     "chillout": "^3.1.7",
     "drupal-ambientimpact-core": "workspace:^1 || ^2",
@@ -46,10 +47,10 @@
     "headroom.js": "^0.10.4",
     "jquery-hoverintent": "^1.10.0",
     "jquery.onfontresize": "github:Ambient-Impact/jquery.onfontresize",
-    "popper.js": "^1.15.0",
-    "tippy.js": "^2.6.0"
+    "tippy.js": "^6.3.7"
   },
   "vendorize": [
+    "@popperjs/core",
     "autosize",
     "chillout",
     "fontfaceobserver",
@@ -57,7 +58,6 @@
     "headroom.js",
     "jquery-hoverintent",
     "jquery.onfontresize",
-    "popper.js",
     "tippy.js"
   ]
 }
