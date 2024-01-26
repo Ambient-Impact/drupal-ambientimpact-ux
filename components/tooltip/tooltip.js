@@ -270,6 +270,15 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
 		 * @see https://atomiks.github.io/tippyjs/#all-options
 		 */
 		tippy: {
+
+      // Tippy.js has a default of [0, 20], the first value being the show
+      // delay. Adding a slight delay helps to prevent the tooltips opening
+      // when moving the pointer quickly over elements that are tooltip
+      // triggers unless the pointer lingers/stops there. It's not a perfect
+      // solution as it doesn't take pointer momentum into account like jQuery
+      // hoverIntent does, but it's better than nothing.
+      delay: [50, 20],
+
 			// This sets the font-size to inherit the document size. This works
 			// because Tippy.js will output whatever is provided to the
 			// data-size attribute, so we use this in the CSS to apply
