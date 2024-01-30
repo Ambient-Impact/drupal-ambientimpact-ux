@@ -14,12 +14,29 @@
 }
 
 .tippy-popper {
+
   // This fixes some extreme blurry edges occurring in recent Firefox versions
   // as of end of 2023/start of 2024; it likely isn't needed any more and was
   // probably used to prompt browsers to use GPU acceleration for the tooltips
   // at the time but this should no longer be needed as browsers will do so
   // regardless by default now.
   perspective: none;
+
+  // These attempt to fix 1px rounding error gaps between the panel and its
+  // arrow when using the SVG-based round arrow.
+  &[x-placement^='top'] .tippy-roundarrow {
+    transform: translateY(-1px);
+  }
+  &[x-placement^='bottom'] .tippy-roundarrow {
+    transform: translateY(1px);
+  }
+  &[x-placement^='left'] .tippy-roundarrow {
+    transform: translateX(-1px);
+  }
+  &[x-placement^='right'] .tippy-roundarrow {
+    transform: translateX(1px);
+  }
+
 }
 
 .tippy-tooltip {

@@ -3,6 +3,7 @@
 // -----------------------------------------------------------------------------
 
 @use 'material.common/material.panel' as material-panel;
+@use 'material.common/material.shadow' as material-shadow;
 
 ///
 /// The padding of tooltips.
@@ -64,12 +65,24 @@ $tooltip-themes: (
       $shadow-depth:      $tooltip-shadow-depth
     );
 
+    // Remove the box-shadow added by the panel mixin so that we can use the CSS
+    // filter-based drop-shadow() which allows us to apply the shadow to the
+    // arrow as well without having to mess with trying to clip it to prevent
+    // the arrow shadow overlapping the panel.
+    box-shadow: none;
+
+    filter:
+      drop-shadow(material-shadow.filter-downward($tooltip-shadow-depth))
+      drop-shadow(material-shadow.filter-ambient($tooltip-shadow-depth));
+
     .tippy-backdrop {
       background-color:   $background-colour;
     }
 
     .tippy-roundarrow {
-      fill:               $background-colour;
+      svg {
+        fill: $background-colour;
+      }
     }
 
     &[data-animatefill] {
