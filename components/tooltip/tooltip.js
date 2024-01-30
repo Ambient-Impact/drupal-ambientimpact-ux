@@ -278,6 +278,12 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       // Use the SVG-based round arrow.
       arrowType: 'round',
 
+      // Uncomment these to debug tooltips without them disappearing on losing
+      // focus.
+      //
+      // hideOnClick: 'persistent',
+      // trigger: 'click',
+
       // Tippy.js has a default of [0, 20], the first value being the show
       // delay. Adding a slight delay helps to prevent the tooltips opening
       // when moving the pointer quickly over elements that are tooltip
