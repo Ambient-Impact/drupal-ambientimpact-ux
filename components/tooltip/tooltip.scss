@@ -16,10 +16,14 @@
 .tippy-popper {
 
   // This fixes some extreme blurry edges occurring in recent Firefox versions
-  // as of end of 2023/start of 2024; it likely isn't needed any more and was
-  // probably used to prompt browsers to use GPU acceleration for the tooltips
-  // at the time but this should no longer be needed as browsers will do so
-  // regardless by default now.
+  // as of end of 2023/start of 2024; we don't currently use Tippy animations
+  // that rely on this and it likely exists in the Tippy/Popper CSS to prompt
+  // browsers to use GPU rendering, but this is likely not needed any more.
+  //
+  // @todo Disable this only when not using perspective animations?
+  //
+  // @todo Remove this when upgrading to latest Tippy and Popper if they no
+  //   longer exhibit the blur bug.
   perspective: none;
 
   // These attempt to fix 1px rounding error gaps between the panel and its
