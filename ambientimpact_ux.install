@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Rebuild library definitions to pick up the Motion One library.
+ */
+function ambientimpact_ux_update_10101(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+}

@@ -3,17 +3,17 @@
 // -----------------------------------------------------------------------------
 
 @use 'sass/helpers/selector';
-@use 'sass/variables/motion';
 
 [data-scroll-proxy-item] {
-
-  --scroll-proxy-transition-duration:         400ms;
-  --scroll-proxy-transition-timing-function:  #{motion.$easing-decelerate};
 
   // If the user indicates reduced motion, this removes the sliding motion and
   // makes the item update instantly to the new location.
   @media (prefers-reduced-motion: reduce) {
-    --scroll-proxy-transition-timing-function: steps(1);
+
+    transition-duration:        200ms;
+    transition-property:        transform;
+    transition-timing-function: steps(1);
+
   }
 
   --scroll-proxy-visible-area: calc(100vw - var(--scroll-proxy-gutter, 0));
@@ -44,10 +44,6 @@
   ));
 
   transform: var(--scroll-proxy-transform);
-
-  transition-duration:        var(--scroll-proxy-transition-duration);
-  transition-property:        transform;
-  transition-timing-function: var(--scroll-proxy-transition-timing-function);
 
   will-change: transform;
 

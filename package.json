@@ -46,6 +46,7 @@
     "headroom.js": "^0.10.4",
     "jquery-hoverintent": "^1.10.0",
     "jquery.onfontresize": "github:Ambient-Impact/jquery.onfontresize",
+    "motion": "^10.17.0",
     "popper.js": "^1.15.0",
     "tippy.js": "^2.6.0"
   },
@@ -57,6 +58,7 @@
     "headroom.js",
     "jquery-hoverintent",
     "jquery.onfontresize",
+    "motion",
     "popper.js",
     "tippy.js"
   ]
