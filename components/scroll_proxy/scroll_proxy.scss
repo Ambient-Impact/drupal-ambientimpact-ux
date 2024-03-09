@@ -28,8 +28,7 @@
   }
 
   // This is the core of the scroll proxy translate logic. It scales the
-  // custom property value generated via the scroll proxy Intersection
-  // Observer between:
+  // custom property value generated via the scroll proxy JavaScript between:
   //
   // 1. The start position (zero (0), where the left edge of the item is at the
   //    left of the container in LTR; vice versa in RTL).
