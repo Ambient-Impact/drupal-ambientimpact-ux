@@ -1,0 +1,6 @@
+component.details:
+  js:
+    details.js: {}
+  dependencies:
+    - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/motion_one

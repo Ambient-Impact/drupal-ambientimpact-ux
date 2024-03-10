@@ -10,3 +10,16 @@ function ambientimpact_ux_update_10101(): void {
   \Drupal::service('library.discovery')->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild library definitions and plug-ins for new Details component.
+ */
+function ambientimpact_ux_update_10102(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+  \Drupal::service(
+    'plugin.manager.ambientimpact_component',
+  )->clearCachedDefinitions();
+
+}
