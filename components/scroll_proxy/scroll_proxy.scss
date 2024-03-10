@@ -35,9 +35,13 @@
   //
   // 2. The end position (one (1), i.e. 100%, where the right edge of the item
   //    is at the right edge of the container in LTR; vice versa in RTL).
+  //
+  // Also note the default values for some of these custom properties so that
+  // this calc() results in a valid value even when the JavaScript has not yet
+  // set a value on the element.
   --scroll-proxy-transform: translateX(calc(
-    (var(--scroll-proxy-item-width) - var(--scroll-proxy-visible-area)) *
-    (var(--scroll-proxy-sentinel-intersect-amount) *
+    (var(--scroll-proxy-item-width, 0) - var(--scroll-proxy-visible-area)) *
+    (var(--scroll-proxy-sentinel-intersect-amount, 0) *
       var(--scroll-proxy-directional-factor)
     )
   ));
