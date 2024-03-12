@@ -1,0 +1,27 @@
+// -----------------------------------------------------------------------------
+//   Ambient.Impact - UX - Details component
+// -----------------------------------------------------------------------------
+
+.details-animated {
+
+  // Required so content is clipped when animating opening or closing.
+  overflow: hidden;
+
+  // Matches user agent stylesheets.
+  > summary:first-of-type {
+    list-style-type: disclosure-closed;
+  }
+
+  &[open] > summary:first-of-type {
+    list-style-type: disclosure-open;
+  }
+
+  // This forces the list marker to display as closed when closing but still
+  // technically open via the open attribute. This feels more intuitive in
+  // response to a user action rather than waiting until the open attribute is
+  // removed.
+  &--closing[open] > summary:first-of-type {
+    list-style-type: disclosure-closed;
+  }
+
+}

@@ -1,4 +1,7 @@
 component.details:
+  css:
+    component:
+      details.css: {}
   js:
     details.js: {}
   dependencies:
