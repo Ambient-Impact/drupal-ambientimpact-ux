@@ -341,8 +341,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         return that.#animation.finished.then(function(animations) {
 
-          console.debug('Open:', animations);
-
           // If the Promise was resolved with an array of Animation instances,
           // the animation finished successfully.
           if (typeof animations !== 'undefined') {
@@ -549,7 +547,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
       // Return an already resolved Promise and do nothing if the element is
       // already in the process of opening or open.
       if (this.#canOpen() === false) {
-        // console.debug('Cannot open');
         return Promise.resolve();
       }
 
@@ -568,7 +565,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
       // Return an already resolved Promise and do nothing if the element is
       // already in the process of closing or closed.
       if (this.#canClose() === false) {
-        // console.debug('Cannot close');
         return Promise.resolve();
       }
 
