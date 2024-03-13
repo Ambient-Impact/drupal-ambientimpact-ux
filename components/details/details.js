@@ -30,28 +30,92 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
    */
   const fastdom = aiFastDom.getInstance();
 
+  /**
+   * The base BEM class for the details element and all child/state classes.
+   *
+   * @type {String}
+   */
   const baseClass = 'details-animated';
 
+  /**
+   * The BEM modifier class for when the details is in the process of opening.
+   *
+   * @type {String}
+   */
   const openingClass = `${baseClass}--opening`;
 
+  /**
+   * The BEM modifier class for when the details is in the process of closing.
+   *
+   * @type {String}
+   */
   const closingClass = `${baseClass}--closing`;
 
+  /**
+   * Represents a <details> element.
+   */
   this.Details = class {
 
+    /**
+     * The details element wrapped in a jQuery collection.
+     *
+     * @type {jQuery}
+     */
     #$details;
 
+    /**
+     * The summary element wrapped in a jQuery collection.
+     *
+     * @type {jQuery}
+     */
     #$summary;
 
+    /**
+     * The content wrapper element wrapped in a jQuery collection.
+     *
+     * @type {jQuery}
+     */
     #$content;
 
+    /**
+     * Currently running animation controls or null if none is running.
+     *
+     * @type {AnimationControls|null}
+     *
+     * @see https://motion.dev/dom/controls
+     */
     #animation = null;
 
+    /**
+     * Whether the details is currently in the process of closing.
+     *
+     * @type {Boolean}
+     */
     #isClosing = false;
 
+    /**
+     * Whether the details is currently in the process of opening.
+     *
+     * @type {Boolean}
+     */
     #isOpening = false;
 
+    /**
+     * Open and close animation duration in seconds.
+     *
+     * @type {Number}
+     *
+     * @see https://motion.dev/guides/waapi-improvements#durations-as-seconds
+     */
     #animationDuration = 0.2;
 
+    /**
+     * Open and close animation easing.
+     *
+     * @type {String}
+     *
+     * @see https://motion.dev/dom/animate#easing
+     */
     #animationEasing = 'ease-out';
 
     /**
@@ -65,10 +129,10 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       this.#$details = $($details).first();
 
-      this.#$summary = this.#$details.find('> summary');
+      this.#$summary = this.#$details.find('> summary').first();
 
       // Drupal adds a wrapper around the content for us. Thanks Drupal!
-      this.#$content = this.#$details.find('> .details-wrapper');
+      this.#$content = this.#$details.find('> .details-wrapper').first();
 
       /**
        * Reference to the current instance.
@@ -140,6 +204,14 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Summary click event handler.
+     *
+     * @param {jQuery.Event} event
+     *   The event object.
+     *
+     * @throws If there was an error in the toggle() method.
+     */
     #clickHandler(event) {
 
       try {
@@ -156,23 +228,16 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
-    // #animationStartTasks() {
-
-    //   /**
-    //    * Reference to the current instance.
-    //    *
-    //    * @type {this}
-    //    */
-    //   const that = this;
-
-    //   return fastdom.mutate(function() {
-
-    //     that.#$details.css('overflow', 'hidden');
-
-    //   });
-
-    // }
-
+    /**
+     * Perform tasks when an open or close animation has finished successfully.
+     *
+     * @param {Boolean} open
+     *   Value to set the 'open' property (not attribute) on the details element
+     *   to.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     #animationEndTasks(open) {
 
       /**
@@ -200,17 +265,20 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         that.#isClosing = false;
 
-        that.#$details.css({
-          height:   '',
-          // overflow: '',
-        }).removeClass([openingClass, closingClass]);
-
-        // console.debug('#animationEndTasks()');
+        that.#$details.css('height', '').removeClass([
+          openingClass, closingClass,
+        ]);
 
       });
 
     }
 
+    /**
+     * Perform tasks to start opening the details element.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     #openTasks() {
 
       /**
@@ -220,8 +288,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      // this.#isOpening = true;
-
       return this.#setOpening().then(function() {
 
         return fastdom.measure(function() {
@@ -230,18 +296,9 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         });
 
-      })/*;
+      }).then(function(detailsHeight) { return fastdom.mutate(function() {
 
-      return fastdom.measure(function() {
-
-        return that.#$details.outerHeight();
-
-      })*/.then(function(detailsHeight) { return fastdom.mutate(function() {
-
-        that.#$details.css({
-          height:   `${detailsHeight}px`,
-          // overflow: 'hidden',
-        });
+        that.#$details.css('height', `${detailsHeight}px`);
 
         that.#$details.prop('open', true);
 
@@ -262,8 +319,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         };
 
       }) }).then(function(heights) { return fastdom.mutate(function() {
-
-        // console.debug(heights);
 
         const keyframes = [
           // Start height.
@@ -286,14 +341,16 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         return that.#animation.finished.then(function(animations) {
 
-          // console.debug('Open:', animations);
+          console.debug('Open:', animations);
 
+          // If the Promise was resolved with an array of Animation instances,
+          // the animation finished successfully.
           if (typeof animations !== 'undefined') {
             return that.#animationEndTasks(true);
           }
 
-          // console.debug('Open cancelled');
-
+          // Otherwise, if the parameter is undefined, the animation was
+          // cancelled so clean up state.
           return fastdom.mutate(function() {
 
             that.#isOpening = false;
@@ -308,6 +365,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Perform tasks to start closing the details element.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     #closeTasks() {
 
       /**
@@ -316,8 +379,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        * @type {this}
        */
       const that = this;
-
-      // this.#isClosing = true;
 
       return this.#setClosing().then(function() {
 
@@ -330,25 +391,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         });
 
-      })/*;
-
-      return fastdom.measure(function() {
-
-        return {
-          'details': that.#$details.outerHeight(),
-          'summary': that.#$summary.outerHeight(),
-        };
-
-      })*/.then(function(heights) { return fastdom.mutate(function() {
+      }).then(function(heights) { return fastdom.mutate(function() {
 
         // Stop any existing animation.
         if (that.#animation !== null) {
           that.#animation.stop();
         }
-
-        // that.#$details.css({
-        //   overflow: 'hidden',
-        // });
 
         const keyframes = [
           // Start height.
@@ -366,16 +414,14 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         return that.#animation.finished.then(function(animations) {
 
-          // console.debug('Close:', animations);
-
+          // If the Promise was resolved with an array of Animation instances,
+          // the animation finished successfully.
           if (typeof animations !== 'undefined') {
             return that.#animationEndTasks(false);
           }
 
-          // console.debug('Close cancelled');
-
-          // that.#isClosing = false;
-
+          // Otherwise, if the parameter is undefined, the animation was
+          // cancelled so clean up state.
           return fastdom.mutate(function() {
 
             that.#isClosing = false;
@@ -390,6 +436,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Set the current state to opening.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     #setOpening() {
 
       /**
@@ -411,6 +463,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Set the current state to closing.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     #setClosing() {
 
       /**
@@ -432,6 +490,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Determine if we can open.
+     *
+     * @return {Boolean}
+     *   True if currently closing or closed and false otherwise.
+     */
     #canOpen() {
 
       return (
@@ -440,12 +504,24 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Determine if we can close.
+     *
+     * @return {Boolean}
+     *   True if currently opening or opened and false otherwise.
+     */
     #canClose() {
 
       return (this.#isOpening === true || this.#$details.prop('open') === true);
 
     }
 
+    /**
+     * Toggle the current state from closed to open or vice versa.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     toggle() {
 
       if (this.#canOpen() === true) {
@@ -462,6 +538,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Open if not already opening or open.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     open() {
 
       // Return an already resolved Promise and do nothing if the element is
@@ -475,6 +557,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
     }
 
+    /**
+     * Close if not already closing or closed.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
     close() {
 
       // Return an already resolved Promise and do nothing if the element is
