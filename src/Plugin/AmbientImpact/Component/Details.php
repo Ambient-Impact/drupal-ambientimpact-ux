@@ -14,7 +14,7 @@ use Drupal\Core\Url;
  * @Component(
  *   id           = "details",
  *   title        = @Translation("Details"),
- *   description  = @Translation("Provides enhancements for <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details'>&lt;details&gt; elements</a>.")
+ *   description  = @Translation("Provides animations for <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details'>&lt;details&gt; elements</a> loosely based on <a href='https://css-tricks.com/how-to-animate-the-details-element/'>How to Animate the Details Element on CSS-Tricks</a>.")
  * )
  */
 class Details extends ComponentBase {
@@ -28,19 +28,26 @@ class Details extends ComponentBase {
 
     $details = [
       '#type'         => 'details',
-      '#title'        => $this->t('More info'),
+      '#title'        => $this->t('Toggle me'),
       '#description'  => $lorem,
-      '#attached'     => ['library' => ['ambientimpact_ux/component.details']],
+      '#attached'     => ['library' => [
+        'ambientimpact_ux/component.details.demo',
+      ]],
     ];
-
-    /** @var \Drupal\Core\Url */
-    $mdnUrl = Url::fromUri(
-      'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details',
-    );
 
     /** @var \Drupal\Core\Link */
     $mdnLink = new Link(
-      $this->t('&lt;details&gt; elements'), $mdnUrl,
+      $this->t('&lt;details&gt; elements'), Url::fromUri(
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details',
+      ),
+    );
+
+    /** @var \Drupal\Core\Link */
+    $sourceLink = new Link(
+      $this->t('How to Animate the Details Element on CSS-Tricks'),
+      Url::fromUri(
+        'https://css-tricks.com/how-to-animate-the-details-element/',
+      ),
     );
 
     return [
@@ -48,10 +55,13 @@ class Details extends ComponentBase {
         '#type'       => 'html_tag',
         '#tag'        => 'p',
         '#value'      => $this->t(
-          'This provides enhancements for @detailsElementLink.',
-          // Unfortunately, this needs to be rendered here or it'll cause a
-          // fatal error when Drupal tries to pass it to \htmlspecialchars().
-          ['@detailsElementLink' => $mdnLink->toString()],
+          'This provides animations for @detailsElementLink loosely based on @sourceLink. Toggle the following elements to see this in action:',
+          // Unfortunately, these need to be rendered here or they'll cause a
+          // fatal error when Drupal tries to pass them to \htmlspecialchars().
+          [
+            '@detailsElementLink' => $mdnLink->toString(),
+            '@sourceLink'         => $sourceLink->toString(),
+          ],
         ),
       ],
       '#demo' => [$details, $details, $details],

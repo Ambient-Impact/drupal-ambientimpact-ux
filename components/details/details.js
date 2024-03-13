@@ -574,33 +574,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
   };
 
-  this.addBehaviour(
-    'AmbientImpactDetails',
-    'ambientimpact-details',
-    'details',
-    function(context, settings) {
-
-      $(this).prop('AmbientImpactDetails', new aiDetails.Details(this));
-
-    },
-    function(context, settings, trigger) {
-
-      /**
-       * Reference to the HTML element being detached from.
-       *
-       * @type {HTMLElement}
-       */
-      const that = this;
-
-      $(this).prop('AmbientImpactDetails').destroy().then(function() {
-
-        $(that).removeProp('AmbientImpactDetails');
-
-      });
-
-    }
-  );
-
 });
 });
 });

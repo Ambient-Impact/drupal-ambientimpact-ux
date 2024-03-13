@@ -7,3 +7,9 @@ component.details:
   dependencies:
     - ambientimpact_core/component.fastdom
     - ambientimpact_ux/motion_one
+
+component.details.demo:
+  js:
+    details.demo.js: {}
+  dependencies:
+    - ambientimpact_ux/component.details
