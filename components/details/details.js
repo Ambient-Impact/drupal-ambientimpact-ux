@@ -497,7 +497,10 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     #canOpen() {
 
       return (
-        this.#isClosing === true || this.#$details.prop('open') === false
+        // If already in the process of opening, we can't double open, can we?
+        this.#isOpening === false && (
+          this.#isClosing === true || this.#$details.prop('open') === false
+        )
       );
 
     }
@@ -510,7 +513,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      */
     #canClose() {
 
-      return (this.#isOpening === true || this.#$details.prop('open') === true);
+      return (
+        // If already closing, we can't close harder, no matter how hard we try.
+        this.#isClosing === false && (
+          this.#isOpening === true || this.#$details.prop('open') === true
+        )
+      );
 
     }
 
