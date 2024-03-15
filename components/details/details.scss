@@ -4,8 +4,7 @@
 
 .details-animated {
 
-  // Required so content is clipped when animating opening or closing.
-  overflow: hidden;
+  position: relative;
 
   // Matches user agent stylesheets.
   > summary:first-of-type {
@@ -22,6 +21,31 @@
   // removed.
   &--closing[open] > summary:first-of-type {
     list-style-type: disclosure-closed;
+  }
+
+  &:not(&--closing) > .details-wrapper {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  &--open[open] > .details-wrapper {
+    position: revert;
+    visibility: visible;
+  }
+
+  &__content-clone {
+
+    position: absolute;
+
+    left:   0;
+    right:  0;
+    bottom: 0;
+
+    // Needs to be set even if inert so it doesn't block clicks.
+    pointer-events: none;
+
+    visibility: hidden;
+
   }
 
 }

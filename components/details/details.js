@@ -8,6 +8,7 @@
 //   Adapted from this.
 
 AmbientImpact.onGlobals([
+  'ally.maintain.disabled',
   'document.documentElement.animate',
   'Motion.animate',
 ], function() {
@@ -38,6 +39,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
   const baseClass = 'details-animated';
 
   /**
+   * The BEM modifier class for when the details is open and not animating.
+   *
+   * @type {String}
+   */
+  const openClass = `${baseClass}--open`;
+
+  /**
    * The BEM modifier class for when the details is in the process of opening.
    *
    * @type {String}
@@ -50,6 +58,27 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
    * @type {String}
    */
   const closingClass = `${baseClass}--closing`;
+
+  /**
+   * BEM element class for the cloned content.
+   *
+   * @type {String}
+   */
+  const contentCloneClass = `${baseClass}__content-clone`;
+
+  /**
+   * Content element height CSS custom property name.
+   *
+   * @type {String}
+   */
+  const contentHeightProperty = '--details-content-height';
+
+  /**
+   * Summary element height CSS custom property name.
+   *
+   * @type {String}
+   */
+  const summaryHeightProperty = '--details-summary-height';
 
   /**
    * Represents a <details> element.
@@ -78,6 +107,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     #$content;
 
     /**
+     * The cloned content element wrapped in a jQuery collection.
+     *
+     * @type {jQuery}
+     */
+    #$contentClone;
+
+    /**
      * Currently running animation controls or null if none is running.
      *
      * @type {AnimationControls|null}
@@ -101,6 +137,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     #isOpening = false;
 
     /**
+     * Whether the details is currently fully open and not opening or closing.
+     *
+     * @type {Boolean}
+     */
+    #isOpen;
+
+    /**
      * Open and close animation duration in seconds.
      *
      * @type {Number}
@@ -117,6 +160,16 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      * @see https://motion.dev/dom/animate#easing
      */
     #animationEasing = 'ease-out';
+
+    /**
+     * ally.maintain.disabled() handle.
+     *
+     * @type {Object|undefined}
+     *
+     * @see https://allyjs.io/api/maintain/disabled.html
+     *   ally.maintain.disabled() documentation.
+     */
+    #allyMaintainDisabled;
 
     /**
      * Constructor.
@@ -141,9 +194,42 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
+      this.#isOpen = this.#$details.prop('open');
+
       fastdom.mutate(function() {
 
         that.#$details.addClass(baseClass);
+
+        if (that.#isOpen === true) {
+          that.#$details.addClass(openClass);
+        }
+
+        that.#$contentClone = that.#$content.clone();
+
+        that.#$contentClone.removeClass('details-wrapper').addClass(
+          contentCloneClass,
+        ).attr({
+          'hidden':       true,
+          'aria-hidden':  true,
+        }).appendTo(that.#$summary);
+
+        // If the browser supports the 'inert' attribute, use that rather than
+        // ally.js to disable all interaction with the cloned content.
+        if (typeof that.#$contentClone.prop('inert') !== 'undefined') {
+
+          that.#$contentClone.prop('inert', true);
+
+        } else {
+
+          that.#allyMaintainDisabled = ally.maintain.disabled({
+            context: that.#$contentClone,
+          });
+
+        }
+
+      }).then(function() {
+
+        return that.#setHeightProperties();
 
       }).then(function() {
 
@@ -172,7 +258,17 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       return fastdom.mutate(function() {
 
+        if (typeof that.#allyMaintainDisabled !== 'undefined') {
+          that.#allyMaintainDisabled.disengage();
+        }
+
+        that.#$contentClone.remove();
+
         that.#$details.removeClass([baseClass, openingClass, closingClass]);
+
+      }).then(function() {
+
+        return that.#unsetHeightProperties();
 
       });
 
@@ -185,11 +281,11 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      */
     #bindEventHandlers() {
 
-      this.#$summary.on(`click.${eventNamespace}`, {
+      this.#$details.on(`toggle.${eventNamespace}`, {
         // Pass the current instance to the event handler because 'this' will be
         // the clicked element in that context.
         that: this,
-      }, this.#clickHandler);
+      }, this.#toggleHandler);
 
     }
 
@@ -200,31 +296,85 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      */
     #unbindEventHandlers() {
 
-      this.#$summary.off(`click.${eventNamespace}`, this.#clickHandler);
+      this.#$details.off(`toggle.${eventNamespace}`, this.#toggleHandler);
 
     }
 
     /**
-     * Summary click event handler.
+     * Summary toggle event handler.
      *
      * @param {jQuery.Event} event
      *   The event object.
-     *
-     * @throws If there was an error in the toggle() method.
      */
-    #clickHandler(event) {
+    #toggleHandler(event) {
 
-      try {
+      event.data.that.toggle();
 
-        event.data.that.toggle();
+    }
 
-      // If there was an error, re-throw it here to halt execution so we don't
-      // prevent the default browser behaviour.
-      } catch (error) {
-        throw error;
-      }
+    /**
+     * Set or update the height custom properties.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     *
+     * @todo Can we potentially optimize this to allow passing already
+     *   read heights if they're available so we don't have to do it twice? Is
+     *   that over/prematurely optimizing?
+     */
+    #setHeightProperties() {
 
-      event.preventDefault();
+      /**
+       * Reference to the current instance.
+       *
+       * @type {this}
+       */
+      const that = this;
+
+      return fastdom.measure(function() {
+
+        return {
+          'summary': that.#$summary.outerHeight(),
+          'content': that.#$contentClone.outerHeight(),
+        };
+
+      }).then(function(heights) { return fastdom.mutate(function() {
+
+        /**
+         * Style declaration for the details element.
+         *
+         * @type {CSSStyleDeclaration}
+         */
+        const style = that.#$details.prop('style');
+
+        style.setProperty(summaryHeightProperty, `${heights.summary}px`);
+        style.setProperty(contentHeightProperty, `${heights.content}px`);
+
+      }) });
+
+    }
+
+    /**
+     * Unset the height custom properties.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
+    #unsetHeightProperties() {
+
+      return fastdom.mutate(function() {
+
+        /**
+         * Style declaration for the details element.
+         *
+         * @type {CSSStyleDeclaration}
+         */
+        const style = that.#$details.prop('style');
+
+        style.removeProperty(summaryHeightProperty);
+        style.removeProperty(contentHeightProperty);
+
+      });
 
     }
 
@@ -249,25 +399,24 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       return fastdom.mutate(function() {
 
-        if (that.#isOpening === true) {
-
-          that.#$details.prop('open', true);
-
-        } else if (that.#isClosing === true) {
-
-          that.#$details.prop('open', false);
-
-        }
-
         that.#animation = null;
 
         that.#isOpening = false;
 
         that.#isClosing = false;
 
-        that.#$details.css('height', '').removeClass([
+        that.#isOpen = that.#$details.prop('open');
+
+        that.#$details.removeClass([
           openingClass, closingClass,
         ]);
+
+        if (open === true) {
+          that.#$details.addClass(openClass);
+        } else {
+          // Only remove the inline height when having closed.
+          that.#$details.removeClass(openClass).css('height', '');
+        }
 
       });
 
@@ -288,19 +437,21 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      return this.#setOpening().then(function() {
+      return fastdom.measure(function() {
 
-        return fastdom.measure(function() {
+        return that.#$details.outerHeight();
 
-          return that.#$details.outerHeight();
+      }).then(function(detailsHeight) {
 
+        return that.#setOpening().then(function() {
+          return detailsHeight;
         });
 
       }).then(function(detailsHeight) { return fastdom.mutate(function() {
 
-        that.#$details.css('height', `${detailsHeight}px`);
+        // console.debug(detailsHeight);
 
-        that.#$details.prop('open', true);
+        that.#$details.css('height', `${detailsHeight}px`);
 
         // We need to delay reading the heights until the browser has had a
         // chance to start rendering the content element, because at this point
@@ -315,7 +466,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         return {
           'details': that.#$details.outerHeight(),
           'summary': that.#$summary.outerHeight(),
-          'content': that.#$content.outerHeight(),
+          'content': that.#$contentClone.outerHeight(),
         };
 
       }) }).then(function(heights) { return fastdom.mutate(function() {
@@ -378,15 +529,19 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      return this.#setClosing().then(function() {
+      return fastdom.measure(function() {
 
-        return fastdom.measure(function() {
+        return {
+          'details': that.#$details.outerHeight(),
+          'summary': that.#$summary.outerHeight(),
+          'content': that.#$contentClone.outerHeight(),
+        };
 
-          return {
-            'details': that.#$details.outerHeight(),
-            'summary': that.#$summary.outerHeight(),
-          };
+      }).then(function(heights) {
 
+        return that.#setClosing().then(function() {
+
+          return heights;
         });
 
       }).then(function(heights) { return fastdom.mutate(function() {
@@ -396,11 +551,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
           that.#animation.stop();
         }
 
+        that.#setHeightProperties();
+
         const keyframes = [
           // Start height.
           `${heights.details}px`,
           // End height.
-          `${heights.summary}px`,
+          `${heights.details - heights.content}px`,
         ];
 
         that.#animation = Motion.animate(that.#$details[0], {
@@ -478,7 +635,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       return fastdom.mutate(function() {
 
-        that.#$details.addClass(closingClass).removeClass(openingClass);
+        that.#$details.addClass(closingClass).removeClass([openingClass, openClass]);
 
         that.#isClosing = true;
 
@@ -499,7 +656,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
       return (
         // If already in the process of opening, we can't double open, can we?
         this.#isOpening === false && (
-          this.#isClosing === true || this.#$details.prop('open') === false
+          this.#isClosing === true || this.#isOpen === false
         )
       );
 
@@ -516,7 +673,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
       return (
         // If already closing, we can't close harder, no matter how hard we try.
         this.#isClosing === false && (
-          this.#isOpening === true || this.#$details.prop('open') === true
+          this.#isOpening === true || this.#isOpen === true
         )
       );
 
