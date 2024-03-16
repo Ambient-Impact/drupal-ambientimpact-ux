@@ -233,6 +233,10 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       }).then(function() {
 
+        return that.#setInlineHeight();
+
+      }).then(function() {
+
         that.#bindEventHandlers();
 
       });
@@ -379,6 +383,33 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     }
 
     /**
+     * Set the current height of the details as inline style.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
+    #setInlineHeight() {
+
+      /**
+       * Reference to the current instance.
+       *
+       * @type {this}
+       */
+      const that = this;
+
+      return fastdom.measure(function() {
+
+        return that.#$details.outerHeight();
+
+      }).then(function(detailsHeight) { return fastdom.mutate(function() {
+
+        that.#$details.css('height', `${detailsHeight}px`);
+
+      }) });
+
+    }
+
+    /**
      * Perform tasks when an open or close animation has finished successfully.
      *
      * @param {Boolean} open
@@ -437,31 +468,11 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      return fastdom.measure(function() {
+      return this.#setInlineHeight().then(function() {
 
-        return that.#$details.outerHeight();
+        return that.#setOpening();
 
-      }).then(function(detailsHeight) {
-
-        return that.#setOpening().then(function() {
-          return detailsHeight;
-        });
-
-      }).then(function(detailsHeight) { return fastdom.mutate(function() {
-
-        // console.debug(detailsHeight);
-
-        that.#$details.css('height', `${detailsHeight}px`);
-
-        // We need to delay reading the heights until the browser has had a
-        // chance to start rendering the content element, because at this point
-        // it doesn't yet have any height so will return zero.
-        //
-        // @see https://stackoverflow.com/questions/61017477/requestanimationframe-inside-a-promise#61020604
-        //   Describes how to Promise-ify requestAnimationFrame.
-        return new Promise(requestAnimationFrame);
-
-      }) }).then(function() { return fastdom.measure(function() {
+      }).then(function() { return fastdom.measure(function() {
 
         return {
           'details': that.#$details.outerHeight(),
@@ -529,19 +540,24 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      return fastdom.measure(function() {
+      return this.#setHeightProperties().then(function() {
 
-        return {
-          'details': that.#$details.outerHeight(),
-          'summary': that.#$summary.outerHeight(),
-          'content': that.#$contentClone.outerHeight(),
-        };
+        return fastdom.measure(function() {
+
+          return {
+            'details': that.#$details.outerHeight(),
+            'summary': that.#$summary.outerHeight(),
+            'content': that.#$contentClone.outerHeight(),
+          };
+
+        });
 
       }).then(function(heights) {
 
         return that.#setClosing().then(function() {
 
           return heights;
+
         });
 
       }).then(function(heights) { return fastdom.mutate(function() {
@@ -550,8 +566,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         if (that.#animation !== null) {
           that.#animation.stop();
         }
-
-        that.#setHeightProperties();
 
         const keyframes = [
           // Start height.
