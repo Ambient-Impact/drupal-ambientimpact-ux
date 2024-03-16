@@ -28,7 +28,6 @@ class Details extends ComponentBase {
 
     $details = [
       '#type'         => 'details',
-      '#title'        => $this->t('Toggle me'),
       '#description'  => $lorem,
       '#attached'     => ['library' => [
         'ambientimpact_ux/component.details.demo',
@@ -64,7 +63,11 @@ class Details extends ComponentBase {
           ],
         ),
       ],
-      '#demo' => [$details, $details, $details],
+      '#demo' => [
+        $details + ['#title' => $this->t('Toggle me')],
+        $details + ['#title' => $this->t('Toggle me too')],
+        $details + ['#title' => $this->t('This one starts open'), '#open' => true],
+      ],
     ];
 
   }
