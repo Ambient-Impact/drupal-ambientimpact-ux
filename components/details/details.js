@@ -399,7 +399,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       return fastdom.measure(function() {
 
-        return that.#$details.outerHeight();
+        return that.#$details.innerHeight();
 
       }).then(function(detailsHeight) { return fastdom.mutate(function() {
 
@@ -545,7 +545,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         return fastdom.measure(function() {
 
           return {
-            'details': that.#$details.outerHeight(),
+            'details': that.#$details.innerHeight(),
             'summary': that.#$summary.outerHeight(),
             'content': that.#$contentClone.outerHeight(),
           };
