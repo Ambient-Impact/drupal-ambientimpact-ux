@@ -16,6 +16,8 @@ use Drupal\Core\Url;
  *   title        = @Translation("Details"),
  *   description  = @Translation("Provides animations for <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details'>&lt;details&gt; elements</a> loosely based on <a href='https://css-tricks.com/how-to-animate-the-details-element/'>How to Animate the Details Element on CSS-Tricks</a> but with significant code quality and accessibility improvements.")
  * )
+ *
+ * @see \Drupal\Core\Render\Element\Details
  */
 class Details extends ComponentBase {
 
