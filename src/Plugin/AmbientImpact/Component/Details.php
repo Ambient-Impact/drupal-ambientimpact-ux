@@ -55,7 +55,7 @@ class Details extends ComponentBase {
         '#type'       => 'html_tag',
         '#tag'        => 'p',
         '#value'      => $this->t(
-          'This provides animations for @detailsElementLink loosely based on @sourceLink. Toggle the following elements to see this in action:',
+          'This provides animations for @detailsElementLink loosely based on @sourceLink but with significant code quality and accessibility improvements. Toggle the following elements to see this in action:',
           // Unfortunately, these need to be rendered here or they'll cause a
           // fatal error when Drupal tries to pass them to \htmlspecialchars().
           [
