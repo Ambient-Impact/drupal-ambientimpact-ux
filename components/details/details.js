@@ -8,7 +8,7 @@ AmbientImpact.onGlobals([
   'Motion.animate',
   'ResizeObserver',
 ], function() {
-AmbientImpact.on(['fastdom'], function(aiFastDom) {
+AmbientImpact.on(['fastdom', 'mediaQuery'], function(aiFastDom, aiMediaQuery) {
 AmbientImpact.addComponent('details', function(aiDetails, $) {
 
   'use strict';
@@ -569,10 +569,22 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
           that.#animation.stop();
         }
 
+        /**
+         * Animation duration in seconds.
+         *
+         * This uses a value of zero if the '(prefers-reduced-motion)' media
+         * feature matches and the value of that.#animationDuration otherwise.
+         *
+         * @type {Number}
+         */
+        const duration = aiMediaQuery.matches(
+          '(prefers-reduced-motion)',
+        ) ? 0 : that.#animationDuration;
+
         that.#animation = Motion.animate(that.#$details[0], {
           height: keyframes,
         }, {
-          duration: that.#animationDuration,
+          duration: duration,
           easing:   that.#animationEasing,
         });
 
@@ -649,10 +661,22 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
           `${heights.details - heights.content}px`,
         ];
 
+        /**
+         * Animation duration in seconds.
+         *
+         * This uses a value of zero if the '(prefers-reduced-motion)' media
+         * feature matches and the value of that.#animationDuration otherwise.
+         *
+         * @type {Number}
+         */
+        const duration = aiMediaQuery.matches(
+          '(prefers-reduced-motion)',
+        ) ? 0 : that.#animationDuration;
+
         that.#animation = Motion.animate(that.#$details[0], {
           height: keyframes,
         }, {
-          duration: that.#animationDuration,
+          duration: duration,
           easing:   that.#animationEasing,
         });
 

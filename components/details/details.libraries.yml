@@ -7,6 +7,7 @@ component.details:
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.fastdom
+    - ambientimpact_core/component.media_query
     - ambientimpact_ux/motion_one
 
 component.details.demo:
