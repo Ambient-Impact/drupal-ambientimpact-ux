@@ -2,11 +2,6 @@
 //   Ambient.Impact - UX - Details component
 // -----------------------------------------------------------------------------
 
-// @see https://css-tricks.com/how-to-animate-the-details-element/
-//
-// @see https://codepen.io/chriscoyier/pen/XWNqxyY
-//   Adapted from this.
-
 AmbientImpact.onGlobals([
   'ally.maintain.disabled',
   'document.documentElement.animate',
