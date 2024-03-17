@@ -6,6 +6,7 @@ AmbientImpact.onGlobals([
   'ally.maintain.disabled',
   'document.documentElement.animate',
   'Motion.animate',
+  'ResizeObserver',
 ], function() {
 AmbientImpact.on(['fastdom'], function(aiFastDom) {
 AmbientImpact.addComponent('details', function(aiDetails, $) {
@@ -167,6 +168,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     #allyMaintainDisabled;
 
     /**
+     * ResizeObserver instance to notify us of summary and content size changes.
+     *
+     * @type {ResizeObserver}
+     */
+    #resizeObserver;
+
+    /**
      * Constructor.
      *
      * @param {jQuery|HTMLElement} $details
@@ -234,6 +242,14 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         that.#bindEventHandlers();
 
+        that.#resizeObserver = new ResizeObserver(function(entries) {
+          that.#resizeObserverHandler(entries);
+        });
+
+        that.#resizeObserver.observe(that.#$summary[0]);
+
+        that.#resizeObserver.observe(that.#$contentClone[0]);
+
       });
 
     }
@@ -245,6 +261,8 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      *   A Promise that resolves when various DOM tasks are complete.
      */
     destroy() {
+
+      this.#resizeObserver.disconnect();
 
       this.#unbindEventHandlers();
 
@@ -296,6 +314,41 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     #unbindEventHandlers() {
 
       this.#$details.off(`toggle.${eventNamespace}`, this.#toggleHandler);
+
+    }
+
+    /**
+     * ResizeObserver handler to update inline height properties.
+     *
+     * @param {ResizeObserverEntry} entries
+     */
+    #resizeObserverHandler(entries) {
+
+      // Don't do anything if we're currently animating. The animation shouldn't
+      // trigger the ResizeObserver since we specifically only observe the
+      // summary and content clone elements, but we can potentially interfere
+      // with the animation if something else triggers the ResizeObserver while
+      // the animation is running, e.g. window resize or font size change.
+      if (this.#animation !== null) {
+        return;
+      }
+
+      /**
+       * Reference to the current instance.
+       *
+       * @type {this}
+       */
+      const that = this;
+
+      this.#setHeightProperties().then(function() {
+
+        // Note passing 'false' as the parameter to have this method use the
+        // actual height of the summary and cloned content rather than the
+        // current details height, the latter of which would effectively result
+        // in no change in the inline style.
+        that.#setInlineHeight(false);
+
+      });
 
     }
 
@@ -380,10 +433,14 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     /**
      * Set the current height of the details as inline style.
      *
+     * @param {Boolean} useDetailsHeight
+     *   Whether to use the current details element height or build it from the
+     *   summary and content clone heights.
+     *
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      */
-    #setInlineHeight() {
+    #setInlineHeight(useDetailsHeight) {
 
       /**
        * Reference to the current instance.
@@ -394,7 +451,17 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       return fastdom.measure(function() {
 
-        return that.#$details.innerHeight();
+        if (useDetailsHeight !== false) {
+          return that.#$details.innerHeight();
+        }
+
+        // If currently closed, use just the summary outer height.
+        if (that.#isOpen === false) {
+          return that.#$summary.outerHeight();
+        }
+
+        // If open, use the combined summary and content clone outer heights.
+        return that.#$summary.outerHeight() + that.#$contentClone.outerHeight();
 
       }).then(function(detailsHeight) { return fastdom.mutate(function() {
 
@@ -443,6 +510,19 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
           // Only remove the inline height when having closed.
           that.#$details.removeClass(openClass).css('height', '');
         }
+
+      }).then(function() {
+
+        return that.#setHeightProperties();
+
+      }).then(function() {
+
+        // Don't set inline height if closed at this point.
+        if (open === false) {
+          return;
+        }
+
+        return that.#setInlineHeight();
 
       });
 
