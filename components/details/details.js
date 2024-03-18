@@ -8,7 +8,7 @@ AmbientImpact.onGlobals([
   'Motion.animate',
   'ResizeObserver',
 ], function() {
-AmbientImpact.on(['fastdom', 'mediaQuery'], function(aiFastDom, aiMediaQuery) {
+AmbientImpact.on(['fastdom'], function(aiFastDom) {
 AmbientImpact.addComponent('details', function(aiDetails, $) {
 
   'use strict';
@@ -77,6 +77,34 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
   const summaryHeightProperty = '--details-summary-height';
 
   /**
+   * Open animation duration custom property name.
+   *
+   * @type {String}
+   */
+  const openDurationProperty = '--details-open-duration';
+
+  /**
+   * Open animation easing custom property name.
+   *
+   * @type {String}
+   */
+  const openEasingProperty = '--details-open-easing';
+
+  /**
+   * Close animation duration custom property name.
+   *
+   * @type {String}
+   */
+  const closeDurationProperty = '--details-close-duration';
+
+  /**
+   * Close animation easing custom property name.
+   *
+   * @type {String}
+   */
+  const closeEasingProperty = '--details-close-easing';
+
+  /**
    * Represents a <details> element.
    */
   this.Details = class {
@@ -138,24 +166,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      * @type {Boolean}
      */
     #isOpen;
-
-    /**
-     * Open and close animation duration in seconds.
-     *
-     * @type {Number}
-     *
-     * @see https://motion.dev/guides/waapi-improvements#durations-as-seconds
-     */
-    #animationDuration = 0.2;
-
-    /**
-     * Open and close animation easing.
-     *
-     * @type {String}
-     *
-     * @see https://motion.dev/dom/animate#easing
-     */
-    #animationEasing = 'ease-out';
 
     /**
      * ally.maintain.disabled() handle.
@@ -472,6 +482,98 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     }
 
     /**
+     * Parse easing custom property value into a format Motion understands.
+     *
+     * @param {String} cssValue
+     *   The raw computed CSS custom property value.
+     *
+     * @return {Number[]}
+     *   Array of parsed number values.
+     *
+     * @see https://motion.dev/dom/animate#easing
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function
+     *
+     * @todo Also support keywords like 'ease-in-out', etc.
+     */
+    #parseEasing(cssValue) {
+
+      /**
+       * Custom property with cubic-bezier() removed, leaving only its contents.
+       *
+       * @type {String}
+       */
+      const stripped = cssValue.replace(/cubic-bezier\(([^)]+)\)/, '$1');
+
+      if (cssValue === stripped) {
+
+        throw new Error(
+          'Could not parse easing property value! Got: ' + cssValue,
+        );
+
+      }
+
+      const numericValues = stripped.split(',').map(function(value) {
+
+        const parsed = parseFloat(value);
+
+        if (isNaN(parsed)) {
+          throw new Error('Could not parse easing index value! Got: ' + value);
+        }
+
+        return parsed;
+
+      });
+
+      return numericValues;
+
+    }
+
+    /**
+     * Read the animation custom properties for the details element.
+     *
+     * @param {Boolean} open
+     *   If true, reads open animation values; if false, reads close animation
+     *   values.
+     *
+     * @return {Promise}
+     *   A Promise that resolves with an object containing 'duration' and
+     *   'easing' keys.
+     */
+    #getAnimationPropertyValues(open) {
+
+      /**
+       * Reference to the current instance.
+       *
+       * @type {this}
+       */
+      const that = this;
+
+      return fastdom.measure(function() {
+
+        /**
+         * Computed style declaration for the details element.
+         *
+         * @type {CSSStyleDeclaration}
+         */
+        const style = getComputedStyle(that.#$details[0]);
+
+        return {
+          'duration': style.getPropertyValue(
+            open === true ? openDurationProperty : closeDurationProperty,
+          ),
+          'easing':   that.#parseEasing(
+            style.getPropertyValue(
+              open === true ? openEasingProperty : closeEasingProperty
+            ),
+          )
+        };
+
+      });
+
+    }
+
+    /**
      * Perform tasks when an open or close animation has finished successfully.
      *
      * @param {Boolean} open
@@ -547,45 +649,36 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         return that.#setOpening();
 
-      }).then(function() { return fastdom.measure(function() {
+      }).then(function() {
+
+        return that.#getAnimationPropertyValues(true);
+
+      }).then(function(options) { return fastdom.measure(function() {
 
         return {
-          'details': that.#$details.outerHeight(),
-          'summary': that.#$summary.outerHeight(),
-          'content': that.#$contentClone.outerHeight(),
+          'keyframes': [
+            // Start height.
+            `${that.#$details.outerHeight()}px`,
+            // End height.
+            `${
+              that.#$summary.outerHeight() + that.#$contentClone.outerHeight()
+            }px`,
+          ],
+          'options': options,
         };
 
-      }) }).then(function(heights) { return fastdom.mutate(function() {
-
-        const keyframes = [
-          // Start height.
-          `${heights.details}px`,
-          // End height.
-          `${heights.summary + heights.content}px`,
-        ];
+      }) }).then(function(animationParams) { return fastdom.mutate(function() {
 
         // Stop any existing animation.
         if (that.#animation !== null) {
           that.#animation.stop();
         }
 
-        /**
-         * Animation duration in seconds.
-         *
-         * This uses a value of zero if the '(prefers-reduced-motion)' media
-         * feature matches and the value of that.#animationDuration otherwise.
-         *
-         * @type {Number}
-         */
-        const duration = aiMediaQuery.matches(
-          '(prefers-reduced-motion)',
-        ) ? 0 : that.#animationDuration;
-
         that.#animation = Motion.animate(that.#$details[0], {
-          height: keyframes,
+          height: animationParams.keyframes,
         }, {
-          duration: duration,
-          easing:   that.#animationEasing,
+          duration: animationParams.options.duration,
+          easing:   animationParams.options.easing,
         });
 
         return that.#animation.finished.then(function(animations) {
@@ -629,55 +722,40 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       return this.#setHeightProperties().then(function() {
 
-        return fastdom.measure(function() {
+        return that.#getAnimationPropertyValues(false);
 
-          return {
-            'details': that.#$details.innerHeight(),
-            'summary': that.#$summary.outerHeight(),
-            'content': that.#$contentClone.outerHeight(),
-          };
+      }).then(function(options) { return fastdom.measure(function() {
 
-        });
+        return {
+          'keyframes': [
+            // Start height.
+            `${that.#$details.innerHeight()}px`,
+            // End height.
+            `${that.#$summary.outerHeight()}px`,
+          ],
+          'options': options,
+        };
 
-      }).then(function(heights) {
+      }) }).then(function(animationParams) {
 
         return that.#setClosing().then(function() {
 
-          return heights;
+          return animationParams;
 
         });
 
-      }).then(function(heights) { return fastdom.mutate(function() {
+      }).then(function(animationParams) { return fastdom.mutate(function() {
 
         // Stop any existing animation.
         if (that.#animation !== null) {
           that.#animation.stop();
         }
 
-        const keyframes = [
-          // Start height.
-          `${heights.details}px`,
-          // End height.
-          `${heights.details - heights.content}px`,
-        ];
-
-        /**
-         * Animation duration in seconds.
-         *
-         * This uses a value of zero if the '(prefers-reduced-motion)' media
-         * feature matches and the value of that.#animationDuration otherwise.
-         *
-         * @type {Number}
-         */
-        const duration = aiMediaQuery.matches(
-          '(prefers-reduced-motion)',
-        ) ? 0 : that.#animationDuration;
-
         that.#animation = Motion.animate(that.#$details[0], {
-          height: keyframes,
+          height: animationParams.keyframes,
         }, {
-          duration: duration,
-          easing:   that.#animationEasing,
+          duration: animationParams.options.duration,
+          easing:   animationParams.options.easing,
         });
 
         return that.#animation.finished.then(function(animations) {

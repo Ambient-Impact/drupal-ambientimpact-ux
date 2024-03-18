@@ -2,9 +2,37 @@
 //   Ambient.Impact - UX - Details component
 // -----------------------------------------------------------------------------
 
+@use 'sass/variables/motion';
+
 .details-animated {
 
   position: relative;
+
+  ///
+  /// Details element open animation duration in seconds.
+  ///
+  --details-open-duration: 0.2;
+
+  ///
+  /// Details element open animation easing.
+  ///
+  --details-open-easing: #{motion.$easing-decelerate};
+
+  ///
+  /// Details element close animation duration in seconds.
+  ///
+  --details-close-duration: 0.2;
+
+  ///
+  /// Details element close animation easing.
+  ///
+  --details-close-easing: #{motion.$easing-decelerate};
+
+  // Duration is zero if the user indicates they prefer reduced motion.
+  @media (prefers-reduced-motion: reduce) {
+    --details-open-duration:  0;
+    --details-close-duration: 0;
+  }
 
   // Matches user agent stylesheets.
   > summary:first-of-type {
