@@ -71,8 +71,15 @@ class Details extends ComponentBase {
         $details + [
           '#title' => $this->t('This one starts open'), '#open' => true,
         ],
+        // @todo Re-enable once animating nested <details> is supported.
+        //
+        // $details + [
+        //   '#title' => $this->t('They can be nested'),
+        //   '#open' => true,
+        //   'nested' => $details + ['#title' => $this->t('Hello')],
+        // ],
         $details + [
-          '#title' => $this->t('This one does not animate open and close'),
+          '#title' => $this->t('This one doesn\'t animate open and close'),
           '#attributes' => ['class' => ['details--demo-not-animated']],
         ],
         $details + [
