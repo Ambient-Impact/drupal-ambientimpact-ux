@@ -68,7 +68,21 @@ class Details extends ComponentBase {
       '#demo' => [
         $details + ['#title' => $this->t('Toggle me')],
         $details + ['#title' => $this->t('Toggle me too')],
-        $details + ['#title' => $this->t('This one starts open'), '#open' => true],
+        $details + [
+          '#title' => $this->t('This one starts open'), '#open' => true,
+        ],
+        $details + [
+          '#title' => $this->t('This one does not animate open and close'),
+          '#attributes' => ['class' => ['details--demo-not-animated']],
+        ],
+        $details + [
+          '#title' => $this->t(
+            'This is how it looks with your browser\'s default styles',
+          ),
+          '#attributes' => ['class' => [
+            'details--demo-not-animated', 'details--demo-unstyled',
+          ]],
+        ],
       ],
     ];
 

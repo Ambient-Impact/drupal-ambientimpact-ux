@@ -10,7 +10,7 @@ AmbientImpact.addComponent('detailsDemo', function(aiDetailsDemo, $) {
   this.addBehaviour(
     'AmbientImpactDetailsDemo',
     'ambientimpact-details-details',
-    '.ambientimpact-component-demo details',
+    '.ambientimpact-component-demo details:not(.details--demo-not-animated)',
     function(context, settings) {
 
       $(this).prop('AmbientImpactDetails', new aiDetails.Details(this));
