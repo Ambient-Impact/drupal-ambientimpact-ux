@@ -63,6 +63,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
   const contentCloneClass = `${baseClass}__content-clone`;
 
   /**
+   * BEM element class for the cloned content inner wrapper.
+   *
+   * @type {String}
+   */
+  const contentCloneInnerClass = `${baseClass}__content-clone-inner`;
+
+  /**
    * Content element height CSS custom property name.
    *
    * @type {String}
@@ -136,6 +143,19 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      * @type {jQuery}
      */
     #$contentClone;
+
+    /**
+     * The cloned content element inner wrapper wrapped in a jQuery collection.
+     *
+     * While seemingly unnecessary, this allows us to use the content clone
+     * as a overflow: hidden; so that the inner wrapper can slide within this
+     * view hole while also being correctly clipped and not requiring more
+     * complex clipping on the summary element as that would interfere with the
+     * focus outline, etc.
+     *
+     * @type {jQuery}
+     */
+    #$contentCloneInner;
 
     /**
      * Currently running animation controls or null if none is running.
@@ -226,6 +246,17 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
           'aria-hidden':  true,
         }).appendTo(that.#$summary);
 
+        that.#$contentCloneInner = $('<div></div>').addClass(
+          contentCloneInnerClass,
+        );
+
+        // This does the same thing .wrapAll() would do except that .wrapAll
+        // () seems to copy the wrapper so our reference to it would never be
+        // in the DOM and thus useless for measuring dimensions, etc.
+        that.#$contentCloneInner.append(
+          that.#$contentClone.contents(),
+        ).appendTo(that.#$contentClone);
+
         // If the browser supports the 'inert' attribute, use that rather than
         // ally.js to disable all interaction with the cloned content.
         if (typeof that.#$contentClone.prop('inert') !== 'undefined') {
@@ -258,7 +289,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         that.#resizeObserver.observe(that.#$summary[0]);
 
-        that.#resizeObserver.observe(that.#$contentClone[0]);
+        that.#resizeObserver.observe(that.#$contentCloneInner[0]);
 
       });
 
@@ -397,7 +428,7 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         return {
           'summary': that.#$summary.outerHeight(),
-          'content': that.#$contentClone.outerHeight(),
+          'content': that.#$contentCloneInner.outerHeight(),
         };
 
       }).then(function(heights) { return fastdom.mutate(function() {
@@ -471,7 +502,10 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         }
 
         // If open, use the combined summary and content clone outer heights.
-        return that.#$summary.outerHeight() + that.#$contentClone.outerHeight();
+        return (
+          that.#$summary.outerHeight() +
+          that.#$contentCloneInner.outerHeight()
+        );
 
       }).then(function(detailsHeight) { return fastdom.mutate(function() {
 
@@ -661,7 +695,8 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
             `${that.#$details.outerHeight()}px`,
             // End height.
             `${
-              that.#$summary.outerHeight() + that.#$contentClone.outerHeight()
+              that.#$summary.outerHeight() +
+              that.#$contentCloneInner.outerHeight()
             }px`,
           ],
           'options': options,

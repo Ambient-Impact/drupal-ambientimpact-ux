@@ -67,12 +67,37 @@
 
     left:   0;
     right:  0;
+    top:    var(--details-summary-height);
     bottom: 0;
 
     // Needs to be set even if inert so it doesn't block clicks.
     pointer-events: none;
 
     visibility: hidden;
+
+    overflow: hidden;
+
+  }
+
+  // Ensures that a frame or two of missing content doesn't happen when the open
+  // attribute gets removed, because there's an async delay between when that
+  // happens and we can add the closing class.
+  &--open:not([open]) &__content-clone,
+  &--opening &__content-clone,
+  &--closing &__content-clone {
+    visibility: visible;
+  }
+
+  &__content-clone-inner {
+
+    position: absolute;
+
+    // Must be positioned to take up the full width and be aligned along the
+    // bottom; must also not be height constrained because this element is used
+    // by the JavaScript to measure the height of the content.
+    left:   0;
+    right:  0;
+    bottom: 0;
 
   }
 
