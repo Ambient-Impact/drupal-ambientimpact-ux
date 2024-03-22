@@ -564,6 +564,43 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     }
 
     /**
+     * Parse duration custom property value into a format Motion understands.
+     *
+     * @param {String} cssValue
+     *   The raw computed CSS custom property value.
+     *
+     * @return {Number}
+     *   The parsed duration as a unitless number. This will always be in
+     *   seconds and will be converted to such from milliseconds if needed.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/time
+     *   At the time of writing, only seconds and milliseconds are defined as
+     *   valid units of time in CSS.
+     *
+     * @see https://motion.dev/guides/waapi-improvements#durations-as-seconds
+     *
+     * @todo Can we build in a failsafe to return zero if the unit can't be
+     *   determined?
+     */
+    #parseDuration(cssValue) {
+
+      /**
+       * Parsed CSS value as a float.
+       *
+       * @type {Number}
+       */
+      const numericValue = parseFloat(cssValue);
+
+      // If this looks like it's in milliseconds, convert it to seconds.
+      if (cssValue.search(`${numericValue}ms`) > -1) {
+        return numericValue / 1000;
+      }
+
+      return numericValue;
+
+    }
+
+    /**
      * Read the animation custom properties for the details element.
      *
      * @param {Boolean} open
@@ -593,9 +630,9 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         const style = getComputedStyle(that.#$details[0]);
 
         return {
-          'duration': style.getPropertyValue(
+          'duration': that.#parseDuration(style.getPropertyValue(
             open === true ? openDurationProperty : closeDurationProperty,
-          ),
+          )),
           'easing':   that.#parseEasing(
             style.getPropertyValue(
               open === true ? openEasingProperty : closeEasingProperty

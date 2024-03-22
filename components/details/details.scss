@@ -9,9 +9,9 @@
   position: relative;
 
   ///
-  /// Details element open animation duration in seconds.
+  /// Details element open animation duration.
   ///
-  --details-open-duration: 0.2;
+  --details-open-duration: 0.3s;
 
   ///
   /// Details element open animation easing.
@@ -19,9 +19,9 @@
   --details-open-easing: #{motion.$easing-decelerate};
 
   ///
-  /// Details element close animation duration in seconds.
+  /// Details element close animation duration.
   ///
-  --details-close-duration: 0.2;
+  --details-close-duration: 0.2s;
 
   ///
   /// Details element close animation easing.
