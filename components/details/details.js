@@ -112,6 +112,16 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
   const closeEasingProperty = '--details-close-easing';
 
   /**
+   * Content update event triggered on the details element.
+   *
+   * The class also listens to this event, allowing parent or ancestor details
+   * elements to update their content when a child or descendent's changes.
+   *
+   * @type {String}
+   */
+  const contentUpdateEvent = 'detailscontentupdate';
+
+  /**
    * Represents a <details> element.
    */
   this.Details = class {
@@ -237,33 +247,27 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
           that.#$details.addClass(openClass);
         }
 
-        that.#$contentClone = that.#$content.clone();
-
-        that.#$contentClone.removeClass('details-wrapper').addClass(
-          contentCloneClass,
-        ).attr({
-          'hidden':       true,
-          'aria-hidden':  true,
-        }).appendTo(that.#$summary);
+        that.#$contentClone = $('<div></div>').addClass(contentCloneClass).attr(
+          'hidden', true,
+        ).appendTo(that.#$summary);
 
         that.#$contentCloneInner = $('<div></div>').addClass(
           contentCloneInnerClass,
-        );
-
-        // This does the same thing .wrapAll() would do except that .wrapAll
-        // () seems to copy the wrapper so our reference to it would never be
-        // in the DOM and thus useless for measuring dimensions, etc.
-        that.#$contentCloneInner.append(
-          that.#$contentClone.contents(),
         ).appendTo(that.#$contentClone);
 
-        // If the browser supports the 'inert' attribute, use that rather than
-        // ally.js to disable all interaction with the cloned content.
+        // If the browser supports the 'inert' attribute and property, use that
+        // rather than ally.js to disable all interaction with the cloned
+        // content.
         if (typeof that.#$contentClone.prop('inert') !== 'undefined') {
 
           that.#$contentClone.prop('inert', true);
 
         } else {
+
+          // The inert attribute also hides the element from the accessibility
+          // tree, so this should only be neccessary if the browser doesn't
+          // support inert.
+          that.#$contentClone.attr('aria-hidden', true);
 
           that.#allyMaintainDisabled = ally.maintain.disabled({
             context: that.#$contentClone,
@@ -273,11 +277,11 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
       }).then(function() {
 
-        return that.#setHeightProperties();
+        return that.#buildClonedContent();
 
       }).then(function() {
 
-        return that.#setInlineHeight();
+        return that.#setHeightProperties();
 
       }).then(function() {
 
@@ -339,11 +343,15 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      */
     #bindEventHandlers() {
 
-      this.#$details.on(`toggle.${eventNamespace}`, {
-        // Pass the current instance to the event handler because 'this' will be
-        // the clicked element in that context.
+      this.#$details.on({
+        // @see https://stackoverflow.com/questions/33194138/template-string-as-object-property-name#67722507
+        [`toggle.${eventNamespace}`]:                this.#toggleHandler,
+        [`${contentUpdateEvent}.${eventNamespace}`]: this.#contentUpdateHandler,
+      }, {
+        // Pass the current instance to the event handlers because 'this' will
+        // be the triggering element in that context.
         that: this,
-      }, this.#toggleHandler);
+      });
 
     }
 
@@ -354,7 +362,11 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
      */
     #unbindEventHandlers() {
 
-      this.#$details.off(`toggle.${eventNamespace}`, this.#toggleHandler);
+      this.#$details.off({
+        // @see https://stackoverflow.com/questions/33194138/template-string-as-object-property-name#67722507
+        [`toggle.${eventNamespace}`]:                this.#toggleHandler,
+        [`${contentUpdateEvent}.${eventNamespace}`]: this.#contentUpdateHandler,
+      });
 
     }
 
@@ -374,6 +386,18 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         return;
       }
 
+      this.#setHeightProperties();
+
+    }
+
+    /**
+     * Build or rebuild the cloned content.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various DOM tasks are complete.
+     */
+    #buildClonedContent() {
+
       /**
        * Reference to the current instance.
        *
@@ -381,20 +405,23 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      this.#setHeightProperties().then(function() {
+      return fastdom.mutate(function() {
 
-        // Note passing 'false' as the parameter to have this method use the
-        // actual height of the summary and cloned content rather than the
-        // current details height, the latter of which would effectively result
-        // in no change in the inline style.
-        that.#setInlineHeight(false);
+        const $cloned = that.#$content.contents().clone();
+
+        // Remove any nested cloned content within this cloned content (wow so
+        // meta) because that way madness lies (it'll break stuff, result in
+        // wrong height measurements, etc.).
+        $cloned.find(`.${contentCloneClass}`).remove();
+
+        that.#$contentCloneInner.empty().append($cloned);
 
       });
 
     }
 
     /**
-     * Summary toggle event handler.
+     * Toggle event handler.
      *
      * @param {jQuery.Event} event
      *   The event object.
@@ -402,6 +429,26 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
     #toggleHandler(event) {
 
       event.data.that.toggle();
+
+    }
+
+    /**
+     * Content update event handler.
+     *
+     * @param {jQuery.Event} event
+     *   The event object.
+     */
+    #contentUpdateHandler(event) {
+
+      // Only update our cloned content if the triggering element is not ours.
+      // This allows child/descendent details elements to inform parent/ancestor
+      // details that they've opened or closed without this instance causing
+      // itself to update content unnecessarily.
+      if (event.data.that.#$details.is(event.target) === true) {
+        return;
+      }
+
+      event.data.that.#buildClonedContent();
 
     }
 
@@ -468,50 +515,6 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
         style.removeProperty(contentHeightProperty);
 
       });
-
-    }
-
-    /**
-     * Set the current height of the details as inline style.
-     *
-     * @param {Boolean} useDetailsHeight
-     *   Whether to use the current details element height or build it from the
-     *   summary and content clone heights.
-     *
-     * @return {Promise}
-     *   A Promise that resolves when various DOM tasks are complete.
-     */
-    #setInlineHeight(useDetailsHeight) {
-
-      /**
-       * Reference to the current instance.
-       *
-       * @type {this}
-       */
-      const that = this;
-
-      return fastdom.measure(function() {
-
-        if (useDetailsHeight !== false) {
-          return that.#$details.innerHeight();
-        }
-
-        // If currently closed, use just the summary outer height.
-        if (that.#isOpen === false) {
-          return that.#$summary.outerHeight();
-        }
-
-        // If open, use the combined summary and content clone outer heights.
-        return (
-          that.#$summary.outerHeight() +
-          that.#$contentCloneInner.outerHeight()
-        );
-
-      }).then(function(detailsHeight) { return fastdom.mutate(function() {
-
-        that.#$details.css('height', `${detailsHeight}px`);
-
-      }) });
 
     }
 
@@ -675,28 +678,22 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
 
         that.#$details.removeClass([
           openingClass, closingClass,
-        ]);
+        ]).css('height', '');
 
         if (open === true) {
           that.#$details.addClass(openClass);
         } else {
-          // Only remove the inline height when having closed.
-          that.#$details.removeClass(openClass).css('height', '');
+          that.#$details.removeClass(openClass);
         }
+
+        return that.#buildClonedContent();
 
       }).then(function() {
 
         return that.#setHeightProperties();
 
       }).then(function() {
-
-        // Don't set inline height if closed at this point.
-        if (open === false) {
-          return;
-        }
-
-        return that.#setInlineHeight();
-
+        that.#$details.trigger(contentUpdateEvent);
       });
 
     }
@@ -716,11 +713,13 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        */
       const that = this;
 
-      return this.#setInlineHeight().then(function() {
+      // Trigger the event once before we begin animating.
+      //
+      // @todo Figure out why this can't be done just at the end of the
+      //   animation but also needed before to fix nesting updates.
+      this.#$details.trigger(contentUpdateEvent);
 
-        return that.#setOpening();
-
-      }).then(function() {
+      return this.#setOpening().then(function() {
 
         return that.#getAnimationPropertyValues(true);
 
@@ -791,6 +790,12 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
        * @type {this}
        */
       const that = this;
+
+      // Trigger the event once before we begin animating.
+      //
+      // @todo Figure out why this can't be done just at the end of the
+      //   animation but also needed before to fix nesting updates.
+      this.#$details.trigger(contentUpdateEvent);
 
       return this.#setHeightProperties().then(function() {
 

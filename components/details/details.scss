@@ -6,6 +6,8 @@
 
 .details-animated {
 
+  $self: &;
+
   position: relative;
 
   ///
@@ -51,7 +53,7 @@
     list-style-type: disclosure-closed;
   }
 
-  &:not(&--closing) > .details-wrapper {
+  > .details-wrapper {
     position: absolute;
     visibility: hidden;
   }
@@ -59,6 +61,19 @@
   &--open[open] > .details-wrapper {
     position: revert;
     visibility: visible;
+  }
+
+  // This ensures the actual (not cloned) content of open nested details
+  // elements remain hidden when a parent or ancestor is opening. Without this,
+  // you'll get some pretty whacky duplicate floaty content.
+  //
+  // @todo Figure out if we can fix the content open/close selectors so this
+  //   isn't necessary?
+  &--opening,
+  &[open]:not(&--opening):not(&--open) {
+    > :not(summary:first-of-type) #{$self}--open[open] > .details-wrapper {
+      visibility: hidden;
+    }
   }
 
   &__content-clone {
@@ -82,10 +97,27 @@
   // Ensures that a frame or two of missing content doesn't happen when the open
   // attribute gets removed, because there's an async delay between when that
   // happens and we can add the closing class.
-  &--open:not([open]) &__content-clone,
-  &--opening &__content-clone,
-  &--closing &__content-clone {
+  &--open:not([open]) > summary:first-of-type > &__content-clone,
+  &--opening > summary:first-of-type > &__content-clone,
+  &--closing > summary:first-of-type > &__content-clone {
     visibility: visible;
+  }
+
+  // When the open attribute is removed right before we start animating closed,
+  // this ensures the details stays at the last measured open height so that it
+  // doesn't instantly close and we end up with the wrong height due to async
+  // lag.
+  &--open:not([open]),
+  // Same as above. This is overridden by the inline height once the animation
+  // begins.
+  &--closing {
+    height: calc(var(--details-summary-height) + var(--details-content-height));
+  }
+
+  // Ensures any nested details within the content clone have any inline height
+  // (hopefully) removed so we don't end up with any unexpected issues.
+  &__content-clone & {
+    height: auto !important;
   }
 
   &__content-clone-inner {
