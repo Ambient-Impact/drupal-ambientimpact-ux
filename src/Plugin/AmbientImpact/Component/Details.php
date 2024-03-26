@@ -188,7 +188,8 @@ class Details extends ComponentBase {
           ],
         ] + $details,
         [
-          '#title' => $this->t('They can start open'), '#open' => true,
+          '#title' => $this->t('They can start open'),
+          '#open' => true,
           '#description'  => [
             'info' => [
               '#type'   => 'html_tag',
