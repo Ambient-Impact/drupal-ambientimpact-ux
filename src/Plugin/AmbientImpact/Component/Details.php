@@ -137,10 +137,10 @@ class Details extends ComponentBase {
               '#list_type'  => 'ol',
               '#items'      => [
                 $this->t(
-                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> becase browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed.',
+                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed.',
                 ),
                 $this->t(
-                  'There is currently no CSS-only way to transition from a fixed height to the natural content height; the workaround most solutions use is to animate the <code>max-height</code> which is set to a large value when open so that there\'s a fixed to transition to; while this does transition open and close, the open transition doesn\'t come to smooth stop but usually ends abruptly due to the transition continuing on past the natural content height.',
+                  'There is currently no CSS-only way to transition from a fixed height to the natural content height; the workaround most solutions use is to animate the <code>max-height</code> which is set to a large value when open so that there\'s a fixed height to transition to; while this does transition open and closed, the open transition doesn\'t come to smooth stop but usually ends abruptly due to the transition continuing on past the natural content height.',
                 ),
               ],
             ],
@@ -178,7 +178,7 @@ class Details extends ComponentBase {
               '#type'   => 'html_tag',
               '#tag'    => 'p',
               '#value'  => $this->t(
-                'The one place in the <code>&lt;details&gt;</code> that the browser doesn\'t automagically hide? The <code>&lt;summary&gt;</code> element. We leave the existing content where it is but clone it to the <code>&lt;summary&gt;</code> element; care is taken to hide the clone from the accessibility tree and to make the it completely uninteractable via @inertMdnLink in browsers that support it and falling back to @allyJsMainDisabledLink in ones that don\'t. This clone is what we use to always have an up to date and accurate measurement of the content height, and doubles as what you see sliding in and out during the open and clone animations. The clone is also kept up to date with the real content so any DOM manipulations after we attach are taken into account.',
+                'The one place in the <code>&lt;details&gt;</code> that the browser doesn\'t automagically hide? The <code>&lt;summary&gt;</code> element. We leave the existing content where it is but clone it to the <code>&lt;summary&gt;</code> element; care is taken to hide the clone from the accessibility tree and to make the it completely uninteractable via @inertMdnLink in browsers that support it and falling back to @allyJsMainDisabledLink in ones that don\'t. This clone is what we use to always have an up to date and accurate measurement of the content height, and doubles as what you see sliding in and out during the open and close animations. The clone is also kept up to date with the real content so any DOM manipulations after we attach are taken into account.',
                 [
                   '@inertMdnLink'           => $inertMdnLink->toString(),
                   '@allyJsMainDisabledLink' => $allyJsMainDisabledLink->toString(),
@@ -194,7 +194,7 @@ class Details extends ComponentBase {
               '#type'   => 'html_tag',
               '#tag'    => 'p',
               '#value'  => $this->t(
-                'Just set @openAttributeMdnLink like you would without this component.',
+                'Just add @openAttributeMdnLink.',
                 [
                   '@openAttributeMdnLink' => $openAttributeMdnLink->toString(),
                 ],
