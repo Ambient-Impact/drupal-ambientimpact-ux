@@ -126,7 +126,7 @@ class Details extends ComponentBase {
               '#type'   => 'html_tag',
               '#tag'    => 'p',
               '#value'  => $this->t(
-                'While it could have been possible to create @cssOnlyPenLink, there are multiple limitations with such an approach:',
+                'While it is possible to create @cssOnlyPenLink, there are multiple limitations with such an approach:',
                 [
                   '@cssOnlyPenLink' => $cssOnlyPenLink->toString(),
                 ],
@@ -153,7 +153,7 @@ class Details extends ComponentBase {
               '#type'   => 'html_tag',
               '#tag'    => 'p',
               '#value'  => $this->t(
-                'The goals were to avoid moving the content outside of the <code>&lt;details&gt;</code> or to a different location within the <code>&lt;details&gt;</code> while also animating the open and close and having them come to a stop smoothly at the natural content height. To accomplish this, a JavaScript solution was needed. Animation is done via @motionOneLink, which allows for precise start and end heights. That solved part of the problem, but:',
+                'To implement the requirements above, a JavaScript solution was needed. Animation is done via @motionOneLink, which allows for precise start and end heights. That solved part of the problem, but:',
                 [
                   '@motionOneLink'  => $motionOneLink->toString(),
                 ],
@@ -211,7 +211,7 @@ class Details extends ComponentBase {
         [
           '#title' => $this->t('They can be nested'),
           '#description'  => $this->t(
-            'This posed additional challenges as parent or ancestor <code>&lt;details&gt;</code> elements now needed to account for child or descendent <code>&lt;details&gt;</code> being open; the original implementation relied on setting an inline height and updating that whenever the content size changed, but this turned out to be a nightmare to keep synced and also not lag behind and so have visible content overflow for a few frames. The solution involves only ever having a fixed height during the open and clone animations, rebuilding the cloned content before every animation, and the last piece of the puzzle: an animated <code>&lt;details&gt;</code> will trigger an event when its cloned content is rebuilt, which bubbles up the <abbr title="Document Object Model">DOM</abbr> tree, allowing any parent or ancestor <code>&lt;details&gt;</code> to rebuild its copy of the cloned content, all without having to know the specifics of its children or descendents.',
+            'This posed additional challenges as parent or ancestor <code>&lt;details&gt;</code> elements now needed to account for child or descendent <code>&lt;details&gt;</code> being open; the original implementation relied on setting an inline height and updating that whenever the content size changed, but this turned out to be a nightmare to keep synced and also not lag behind and so have visible content overflow for a few frames. The solution involves only ever having a fixed height during the open and close animations, rebuilding the cloned content before every animation, and the last piece of the puzzle: an animated <code>&lt;details&gt;</code> will trigger an event when its cloned content is rebuilt, which bubbles up the <abbr title="Document Object Model">DOM</abbr> tree, allowing any parent or ancestor <code>&lt;details&gt;</code> to rebuild its copy of the cloned content, all without having to know the specifics of its children or descendents.',
           ),
           'nested' => [
             '#title' => $this->t('Nest away!'),
