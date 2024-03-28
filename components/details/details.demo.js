@@ -9,7 +9,8 @@ AmbientImpact.addComponent('detailsDemo', function(aiDetailsDemo, $) {
 
   this.addBehaviour(
     'AmbientImpactDetailsDemo',
-    'ambientimpact-details-details',
+    // Themes should use this same once() name to avoid attaching this twice.
+    'ambientimpact-details-animated',
     '.ambientimpact-component-demo details:not(.details--demo-not-animated)',
     function(context, settings) {
 
