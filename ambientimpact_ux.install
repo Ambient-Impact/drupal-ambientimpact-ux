@@ -23,3 +23,12 @@ function ambientimpact_ux_update_10102(): void {
   )->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild library definitions for Details component name changes.
+ */
+function ambientimpact_ux_update_10103(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+}

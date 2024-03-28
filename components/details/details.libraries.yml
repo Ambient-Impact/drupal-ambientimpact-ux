@@ -1,9 +1,9 @@
-component.details:
+component.details.animated:
   css:
     component:
-      details.css: {}
+      details.animated.css: {}
   js:
-    details.js: {}
+    details.animated.js: {}
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.fastdom
@@ -13,4 +13,4 @@ component.details.demo:
   js:
     details.demo.js: {}
   dependencies:
-    - ambientimpact_ux/component.details
+    - ambientimpact_ux/component.details.animated

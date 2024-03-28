@@ -2,7 +2,7 @@
 //   Ambient.Impact - UX - Details component demo
 // -----------------------------------------------------------------------------
 
-AmbientImpact.on(['details'], function(aiDetails) {
+AmbientImpact.on(['details'], function(aiDetailsAnimated) {
 AmbientImpact.addComponent('detailsDemo', function(aiDetailsDemo, $) {
 
   'use strict';
@@ -14,7 +14,10 @@ AmbientImpact.addComponent('detailsDemo', function(aiDetailsDemo, $) {
     '.ambientimpact-component-demo details:not(.details--demo-not-animated)',
     function(context, settings) {
 
-      $(this).prop('AmbientImpactDetails', new aiDetails.Details(this));
+      $(this).prop(
+        'AmbientImpactDetailsAnimated',
+        new aiDetailsAnimated.DetailsAnimated(this),
+      );
 
     },
     function(context, settings, trigger) {
@@ -26,9 +29,9 @@ AmbientImpact.addComponent('detailsDemo', function(aiDetailsDemo, $) {
        */
       const that = this;
 
-      $(this).prop('AmbientImpactDetails').destroy().then(function() {
+      $(this).prop('AmbientImpactDetailsAnimated').destroy().then(function() {
 
-        $(that).removeProp('AmbientImpactDetails');
+        $(that).removeProp('AmbientImpactDetailsAnimated');
 
       });
 

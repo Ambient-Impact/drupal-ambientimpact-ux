@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-//   Ambient.Impact - UX - Details component
+//   Ambient.Impact - UX - Details element component with animation
 // -----------------------------------------------------------------------------
 
 AmbientImpact.onGlobals([
@@ -9,7 +9,7 @@ AmbientImpact.onGlobals([
   'ResizeObserver',
 ], function() {
 AmbientImpact.on(['fastdom'], function(aiFastDom) {
-AmbientImpact.addComponent('details', function(aiDetails, $) {
+AmbientImpact.addComponent('detailsAnimated', function(aiDetailsAnimated, $) {
 
   'use strict';
 
@@ -122,9 +122,9 @@ AmbientImpact.addComponent('details', function(aiDetails, $) {
   const contentUpdateEvent = 'detailscontentupdate';
 
   /**
-   * Represents a <details> element.
+   * Represents an animated <details> element.
    */
-  this.Details = class {
+  this.DetailsAnimated = class {
 
     /**
      * The details element wrapped in a jQuery collection.
