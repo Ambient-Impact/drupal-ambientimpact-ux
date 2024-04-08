@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Rebuild library definitions to pick up the Motion One library.
+ */
+function ambientimpact_ux_update_10101(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+}
+
+/**
+ * Rebuild library definitions and plug-ins for new Details component.
+ */
+function ambientimpact_ux_update_10102(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+  \Drupal::service(
+    'plugin.manager.ambientimpact_component',
+  )->clearCachedDefinitions();
+
+}
+
+/**
+ * Rebuild library definitions for Details component name changes.
+ */
+function ambientimpact_ux_update_10103(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+}

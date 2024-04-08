@@ -13,6 +13,36 @@
   );
 }
 
+.tippy-popper {
+
+  // This fixes some extreme blurry edges occurring in recent Firefox versions
+  // as of end of 2023/start of 2024; we don't currently use Tippy animations
+  // that rely on this and it likely exists in the Tippy/Popper CSS to prompt
+  // browsers to use GPU rendering, but this is likely not needed any more.
+  //
+  // @todo Disable this only when not using perspective animations?
+  //
+  // @todo Remove this when upgrading to latest Tippy and Popper if they no
+  //   longer exhibit the blur bug.
+  perspective: none;
+
+  // These attempt to fix 1px rounding error gaps between the panel and its
+  // arrow when using the SVG-based round arrow.
+  &[x-placement^='top'] .tippy-roundarrow {
+    transform: translateY(-1px);
+  }
+  &[x-placement^='bottom'] .tippy-roundarrow {
+    transform: translateY(1px);
+  }
+  &[x-placement^='left'] .tippy-roundarrow {
+    transform: translateX(-1px);
+  }
+  &[x-placement^='right'] .tippy-roundarrow {
+    transform: translateX(1px);
+  }
+
+}
+
 .tippy-tooltip {
   // Set a max-width for the tooltips so they don't get uncomfortably wide.
   // Note that applying this to .tippy-popper will not work, as it gets

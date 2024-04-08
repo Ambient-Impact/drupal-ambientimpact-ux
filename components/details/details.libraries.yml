@@ -1,0 +1,16 @@
+component.details.animated:
+  css:
+    component:
+      details.animated.css: {}
+  js:
+    details.animated.js: {}
+  dependencies:
+    - ambientimpact_core/ally.js
+    - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/motion_one
+
+component.details.demo:
+  js:
+    details.demo.js: {}
+  dependencies:
+    - ambientimpact_ux/component.details.animated

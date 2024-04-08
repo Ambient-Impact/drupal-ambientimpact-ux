@@ -1,0 +1,136 @@
+// -----------------------------------------------------------------------------
+//   Ambient.Impact - UX - Details element component with animation
+// -----------------------------------------------------------------------------
+
+@use 'sass/variables/motion';
+
+.details-animated {
+
+  $self: &;
+
+  position: relative;
+
+  ///
+  /// Details element open animation duration.
+  ///
+  --details-open-duration: 0.3s;
+
+  ///
+  /// Details element open animation easing.
+  ///
+  --details-open-easing: #{motion.$easing-decelerate};
+
+  ///
+  /// Details element close animation duration.
+  ///
+  --details-close-duration: 0.2s;
+
+  ///
+  /// Details element close animation easing.
+  ///
+  --details-close-easing: #{motion.$easing-decelerate};
+
+  // Duration is zero if the user indicates they prefer reduced motion.
+  @media (prefers-reduced-motion: reduce) {
+    --details-open-duration:  0;
+    --details-close-duration: 0;
+  }
+
+  // Matches user agent stylesheets.
+  > summary:first-of-type {
+    list-style-type: disclosure-closed;
+  }
+
+  &[open] > summary:first-of-type {
+    list-style-type: disclosure-open;
+  }
+
+  // This forces the list marker to display as closed when closing but still
+  // technically open via the open attribute. This feels more intuitive in
+  // response to a user action rather than waiting until the open attribute is
+  // removed.
+  &--closing[open] > summary:first-of-type {
+    list-style-type: disclosure-closed;
+  }
+
+  > .details-wrapper {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  &--open[open] > .details-wrapper {
+    position: revert;
+    visibility: visible;
+  }
+
+  // This ensures the actual (not cloned) content of open nested details
+  // elements remain hidden when a parent or ancestor is opening. Without this,
+  // you'll get some pretty whacky duplicate floaty content.
+  //
+  // @todo Figure out if we can fix the content open/close selectors so this
+  //   isn't necessary?
+  &--opening,
+  &[open]:not(&--opening):not(&--open) {
+    > :not(summary:first-of-type) #{$self}--open[open] > .details-wrapper {
+      visibility: hidden;
+    }
+  }
+
+  &__content-clone {
+
+    position: absolute;
+
+    left:   0;
+    right:  0;
+    top:    var(--details-summary-height);
+    bottom: 0;
+
+    // Needs to be set even if inert so it doesn't block clicks.
+    pointer-events: none;
+
+    visibility: hidden;
+
+    overflow: hidden;
+
+  }
+
+  // Ensures that a frame or two of missing content doesn't happen when the open
+  // attribute gets removed, because there's an async delay between when that
+  // happens and we can add the closing class.
+  &--open:not([open]) > summary:first-of-type > &__content-clone,
+  &--opening > summary:first-of-type > &__content-clone,
+  &--closing > summary:first-of-type > &__content-clone {
+    visibility: visible;
+  }
+
+  // When the open attribute is removed right before we start animating closed,
+  // this ensures the details stays at the last measured open height so that it
+  // doesn't instantly close and we end up with the wrong height due to async
+  // lag.
+  &--open:not([open]),
+  // Same as above. This is overridden by the inline height once the animation
+  // begins.
+  &--closing {
+    height: calc(var(--details-summary-height) + var(--details-content-height));
+  }
+
+  // Ensures any nested details within the content clone have any inline height
+  // (hopefully) removed so we don't end up with any unexpected issues.
+  &__content-clone & {
+    height: auto !important;
+  }
+
+  &__content-clone-inner {
+
+    position: absolute;
+
+    // Must be positioned to take up the full width and be aligned along the
+    // bottom; must also not be height constrained because this element is used
+    // by the JavaScript to measure the height of the content.
+    left:   0;
+    right:  0;
+    bottom: 0;
+
+  }
+
+}

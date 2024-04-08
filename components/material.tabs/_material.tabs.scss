@@ -59,7 +59,9 @@ $stacking-order: container-decoration, item;
 
   overflow-x: auto;
 
-  padding-bottom: $underline-thickness;
+  padding-bottom: var(
+    --material-tabs-underline-thickness, #{$underline-thickness}
+  );
 
   // Force a single line so multiple word items don't wrap to a new line and
   // defeat the purpose of horizontal scrolling the container to minimize
@@ -83,11 +85,16 @@ $stacking-order: container-decoration, item;
     // Use border rather a background colour with height as the latter has
     // issues with sub-pixel rounding issues and can be rendered thicker than
     // intended.
-    border-bottom: $underline-thickness solid
-      $underline-colour-on-light;
+    border-bottom: var(
+      --material-tabs-underline-thickness, #{$underline-thickness}
+    ) solid var(
+      --material-tabs-underline-colour, #{$underline-colour-on-light}
+    );
 
     @include colour.on-dark-scheme {
-      border-bottom-color: $underline-colour-on-dark;
+      border-bottom-color: var(
+        --material-tabs-underline-colour, #{$underline-colour-on-dark}
+      );
     }
 
   }
@@ -108,18 +115,28 @@ $stacking-order: container-decoration, item;
 
   z-index: list.index($stacking-order, item);
 
-  padding:  $padding;
+  padding:  var(--material-tabs-item-padding, #{$padding});
 
   font-weight:    strong;
   text-transform: uppercase;
   line-height:    1;
 
   @include link-state.highlight {
-    background-color: material-colour.$flat-item-interact-on-light;
+
+    background-color: var(
+      --material-tabs-item-hightlight-colour,
+      #{material-colour.$flat-item-interact-on-light}
+    );
 
     @include colour.on-dark-scheme {
-      background-color: material-colour.$flat-item-interact-on-dark;
+
+      background-color: var(
+        --material-tabs-item-hightlight-colour,
+        #{material-colour.$flat-item-interact-on-dark}
+      );
+
     }
+
   }
 
 }
@@ -140,10 +157,16 @@ $stacking-order: container-decoration, item;
   left:   0;
   right:  0;
   // Shift down to cancel out the container underline.
-  bottom: -$underline-thickness;
+  bottom: calc(var(
+      --material-tabs-underline-thickness, #{$underline-thickness}
+    ) * -1);
 
   // Use border rather a background colour with height as the latter has issues
   // with sub-pixel rounding issues and can be rendered thicker than intended.
-  border-bottom: $indicator-thickness solid $indicator-colour;
+  border-bottom: var(
+    --material-tabs-indicator-thickness, #{$indicator-thickness}
+  ) solid var(
+    --material-tabs-indicator-colour, #{$indicator-colour}
+  );
 
 }

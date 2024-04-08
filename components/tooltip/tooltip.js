@@ -267,9 +267,36 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
 		/**
 		 * Settings passed to Tippy.js.
 		 *
-		 * @see https://atomiks.github.io/tippyjs/#all-options
+		 * @see https://github.com/atomiks/tippyjs/blob/v2.6.0/README.md
 		 */
 		tippy: {
+
+      // Display arrows pointing to the triggering element. Note that this
+      // disables the material fill effect.
+      arrow: true,
+
+      // Use the SVG-based round arrow.
+      arrowType: 'round',
+
+      // Uncomment these to debug tooltips without them disappearing on losing
+      // focus.
+      //
+      // hideOnClick: 'persistent',
+      // trigger: 'click',
+
+      // Tippy.js has a default of [0, 20], the first value being the show
+      // delay. Adding a slight delay helps to prevent the tooltips opening
+      // when moving the pointer quickly over elements that are tooltip
+      // triggers unless the pointer lingers/stops there. It's not a perfect
+      // solution as it doesn't take pointer momentum into account like jQuery
+      // hoverIntent does, but it's better than nothing.
+      delay: [50, 20],
+
+      // Order in which to try to place the tooltip depending on available
+      // space, i.e. first prefers top, then bottom, then left, and finally
+      // right.
+      flipBehavior: ['top', 'bottom', 'left', 'right'],
+
 			// This sets the font-size to inherit the document size. This works
 			// because Tippy.js will output whatever is provided to the
 			// data-size attribute, so we use this in the CSS to apply

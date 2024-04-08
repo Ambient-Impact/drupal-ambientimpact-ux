@@ -78,6 +78,19 @@ jquery.onfontresize:
       minified:   true
     }
 
+motion_one:
+  remote: https://motion.dev/
+  version: 10.17.0
+  license:
+    name: MIT
+    url: https://github.com/motiondivision/motionone/blob/main/LICENSE
+    gpl-compatible: true
+  js:
+    vendor/motion/dist/motion.min.js: {
+      attributes: { defer: true },
+      minified:   true,
+    }
+
 popper.js:
   remote: https://popper.js.org/
   version: 2.11.8

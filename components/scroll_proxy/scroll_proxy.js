@@ -2,25 +2,14 @@
 //   Ambient.Impact - UX - Scroll proxy component
 // -----------------------------------------------------------------------------
 
-// @todo Split into sub-components.
+// @todo Refactor as a JavaScript class; make fully object-oriented.
 
 // @todo Add a configurable direction so that this can be applied to the
 //   vertical axis instead if needed.
 
-// @todo Potential optimization: the items's properties are still updated when
-//   it has just gone out of the viewport upwards but the sentinel is still
-//   visible and thus the Intersection Observer is still invoking the callback.
-//   Can an additional Intersection Observer be added to determine when items
-//   are actually still visible and only update the properties if so?
-
-// @see https://alligator.io/js/smooth-scrolling/
-//   It may be more performant to use the browser's scrolling programmatically
-//   rather than transforms. It would also remove the need to account for the
-//   item width, as that would be handled by the browser.
-
 AmbientImpact.onGlobals([
-  'Drupal.debounce',
-  'IntersectionObserver',
+  'Motion.animate',
+  'Motion.scroll',
 ], function() {
 AmbientImpact.on(['fastdom'], function(aiFastDom) {
 AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
@@ -63,45 +52,6 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
   const itemWidthPropertyName = '--scroll-proxy-item-width';
 
   /**
-   * The minimum threshold for the Intersection Observer to act on.
-   *
-   * @type {Number}
-   */
-  const minThreshold = 0.0;
-
-  /**
-   * The maximum threshold for the Intersection Observer to act on.
-   *
-   * @type {Number}
-   */
-  const maxThreshold = 1.0;
-
-  /**
-   * The threshold granularity or steps to generate thresholds with.
-   *
-   * @type {Number}
-   */
-  const thresholdGranularity = 0.01;
-
-  /**
-   * The array of thresholds to pass to the Intersection Observer.
-   *
-   * @type {Number[]}
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#parameters
-   */
-  let thresholds = [];
-
-  /**
-   * The minimum time between DOM updates in milliseconds for the observer.
-   *
-   * This is passed to Drupal.debounce() as the 'wait' parameter.
-   *
-   * @type {Number}
-   */
-  const observerDebounceTimeout = 10;
-
-  /**
    * Sentinel element class.
    *
    * @type {String}
@@ -137,32 +87,6 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
    * @type {String}
    */
   const useScrollProxyPropertyName = '--use-scroll-proxy';
-
-  /**
-   * Get thresholds for the Intersection Observer, building if needed.
-   *
-   * @return {Number[]}
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#parameters
-   */
-  function getThresholds() {
-
-    // If they've already been built, return the existing thresholds.
-    if (thresholds.length > 0) {
-      return thresholds;
-    }
-
-    for (
-      let i = minThreshold;
-      i <= maxThreshold + thresholdGranularity;
-      i += thresholdGranularity
-    ) {
-      thresholds.push(Math.round(i * 100) / 100);
-    }
-
-    return thresholds;
-
-  };
 
   /**
    * Construct a new scroll proxy item.
@@ -243,63 +167,72 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
     let $sentinel = $('<span></span>').addClass(sentinelClass);
 
     /**
-     * Intersection Observer callback.
+     * Motion Controls object for the current animation, if any.
      *
-     * @param {IntersectionObserverEntry[]} entries
-     *   An array of IntersectionObserverEntry objects.
+     * @type {Object|undefined}
      *
-     * @param {IntersectionObserver} observer
-     *   The IntersectionObserver for which the callback is being invoked.
-     *
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#parameters
-     *
-     * @todo Can we remove the loop as there's only ever one entry?
+     * @see https://motion.dev/dom/controls
      */
-    function intersectionCallback(entries, observer) {
+    let animationControls;
 
-      for (let i = 0; i < entries.length; i++) {
+    /**
+     * Start observing scroll.
+     */
+    function startObserving() {
 
-        /**
-         * The value of the intersection property to set on the item.
-         *
-         * @type {Number}
-         */
-        let propertyValue = 0;
+      /**
+       * Motion.scroll() options object.
+       *
+       * @type {Object}
+       *
+       * @see https://motion.dev/dom/scroll
+       */
+      const scrollOptions = {
+        target: $sentinel[0],
+        offset: ['start end', 'end end'],
+      };
 
-        // If the intersection ratio is above the minimum threshold, calculate
-        // the fractional value.
-        //
-        // @todo Can we remove the adjustments for the minimum threshold? It's
-        //   not used and doesn't scale correctly.
-        if (entries[i].intersectionRatio >= minThreshold) {
-          propertyValue = Math.ceil(
-            (entries[i].intersectionRatio * 100) - (minThreshold * 100)
-          ) / 100;
+      animationControls = Motion.animate(function(value) {
+
+        if (value === lastValue) {
+          return;
         }
 
         fastdom.mutate(function() {
+
           $item[0].style.setProperty(
             sentinelIntersectPropertyName,
-            propertyValue
+            value,
           );
-        });
 
-      }
+          lastValue = value;
+
+        });
+      }, {});
+
+      // Pause the animation so it doesn't progress except by being scrubbed on
+      // scroll. This is the same thing that Motion.scroll() does internally
+      // when it creates an animation if you don't pass it an existing
+      // animation.
+      animationControls.pause();
+
+      Motion.scroll(animationControls, scrollOptions);
 
     };
 
     /**
-     * The Intersection Observer for this element.
-     *
-     * @type {IntersectionObserver}
+     * Stop observing scroll.
      */
-    let observer = new IntersectionObserver(
-      Drupal.debounce(intersectionCallback, observerDebounceTimeout),
-      {threshold: getThresholds()}
-    );
+    function stopObserving() {
+
+      animationControls.cancel();
+
+      animationControls = undefined;
+
+    };
 
     /**
-     * Whether the Intersection Observer is currently observing.
+     * Whether we're currently observing.
      *
      * @type {Boolean}
      */
@@ -311,6 +244,13 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
      * @type {Number}
      */
     let lastViewportWidth = 0;
+
+    /**
+     * The last value observed, to avoid unnecessary DOM operations.
+     *
+     * @type {Number}
+     */
+    let lastValue = 0;
 
     fastdom.measure(function() {
       lastViewportWidth = $(window).width();
@@ -326,7 +266,7 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
 
     }).then(function() {
 
-      observer.observe($sentinel[0]);
+      startObserving();
 
       isObserving = true;
 
@@ -382,7 +322,7 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
     }
 
     /**
-     * Update various properties and start/stop the observer if needed.
+     * Update various properties and start/stop observing if needed.
      *
      * @return {Promise}
      *   The Promise returned by FastDom resolved when all updates are complete.
@@ -404,7 +344,7 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
 
           if (shouldObserve === false && isObserving === true) {
 
-            observer.unobserve($sentinel[0]);
+            startObserving();
 
             isObserving = false;
 
@@ -426,7 +366,7 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
             return;
           }
 
-          observer.observe($sentinel[0]);
+          startObserving();
 
           isObserving = true;
 
@@ -443,7 +383,7 @@ AmbientImpact.addComponent('scrollProxy', function(aiScrollProxy, $) {
         'drupalViewportOffsetChange.' + eventNamespace
       ].join(' '), instance.update);
 
-      observer.disconnect();
+      stopObserving();
 
       return fastdom.mutate(function() {
         $sentinel.remove();
