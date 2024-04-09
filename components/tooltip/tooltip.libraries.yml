@@ -7,3 +7,9 @@ component.tooltip:
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_ux/tippy.js
+
+component.tooltip.demo:
+  js:
+    tooltip.demo.js: {}
+  dependencies:
+    - ambientimpact_ux/component.tooltip

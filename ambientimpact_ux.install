@@ -32,3 +32,16 @@ function ambientimpact_ux_update_10103(): void {
   \Drupal::service('library.discovery')->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild library definitions & plug-ins for Tooltip component demo.
+ */
+function ambientimpact_ux_update_10104(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+  \Drupal::service(
+    'plugin.manager.ambientimpact_component',
+  )->clearCachedDefinitions();
+
+}
