@@ -86,7 +86,7 @@ class Tooltip extends ComponentBase {
         'abbr_demo' => [
           '#type'     => 'html_tag',
           '#tag'      => 'blockquote',
-          '#value'    => $this->t('The fundamental languages of the web are <abbr title="HyperText Markup Language">HTML</abbr>, <abbr title="Cascading Style Sheets">CSS</abbr>, and JavaScript. These are delivered to browsers using <abbr title="HyperText Transfer Protocol">HTTP</abbr> or <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr>, the latter of which is preferable because it encrypts data via <abbr title="Transport Layer Security">TLS</abbr> or previously the deprecated <abbr title="Secure Sockets Layer">SSL</abbr>.'),
+          '#value'    => $this->t('The fundamental languages of the web are <abbr title="HyperText Markup Language">HTML</abbr>, <abbr title="Cascading Style Sheets">CSS</abbr>, and JavaScript. These are delivered to browsers using <abbr title="HyperText Transfer Protocol">HTTP</abbr> or <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr>, the latter of which is preferable because it encrypts data via <abbr title="Transport Layer Security">TLS</abbr> or the now deprecated <abbr title="Secure Sockets Layer">SSL</abbr>.'),
         ],
         'button_link_description' => [
           '#type'     => 'html_tag',
