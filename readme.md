@@ -9,7 +9,7 @@ work-in-progress. Stable releases may be provided at a later date.
 
 # Requirements
 
-* [Drupal 9.5 or Drupal 10](https://www.drupal.org/download) ([Drupal 8 is end-of-life](https://www.drupal.org/psa-2021-11-30))
+* [Drupal 10](https://www.drupal.org/download)
 
 * PHP 8.1
 
@@ -57,7 +57,7 @@ In your root `composer.json`, add the following to the `"repositories"` section:
 ### Installing
 
 Once you've completed all of the above, run `composer require
-"drupal/ambientimpact_ux:^1.0@dev"` in the root of your project to have
+"drupal/ambientimpact_ux:^2.0@dev"` in the root of your project to have
 Composer install this and its required dependencies for you.
 
 ## Front-end assets
@@ -81,7 +81,7 @@ Once those are defined, add the following to the `"dependencies"` section of
 your top-level `package.json`:
 
 ```json
-"drupal-ambientimpact-ux": "workspace:^1"
+"drupal-ambientimpact-ux": "workspace:^2"
 ```
 
 Then run `yarn install` and let Yarn do the rest.
@@ -90,23 +90,6 @@ Then run `yarn install` and let Yarn do the rest.
 
 While not required, [yarn.BUILD](https://yarn.build/) is recommended to make
 building all of the front-end assets even easier.
-
-### Optional: use `nvm`
-
-If you want to be sure you're using the same Node.js version we're using, we
-support using [Node Version Manager (`nvm`)](https://github.com/nvm-sh/nvm)
-([Windows port](https://github.com/coreybutler/nvm-windows)). Once `nvm` is
-installed, you can simply navigate to the project root and run `nvm install` to
-install the appropriate version contained in the `.nvmrc` file.
-
-Note that if you're using the [Windows
-port](https://github.com/coreybutler/nvm-windows), it [does not support `.nvmrc`
-files](https://github.com/coreybutler/nvm-windows/wiki/Common-Issues#why-isnt-nvmrc-supported-why-arent-some-nvm-for-macoslinux-features-supported),
-so you'll have to provide the version contained in the `.nvmrc` as a parameter:
-`nvm install <version>` (without the `<` and `>`).
-
-This step is not required, and may be dropped in the future as Node.js is fairly
-mature and stable at this point.
 
 ----
 
@@ -142,3 +125,21 @@ The following major version bumps indicate breaking changes:
   * Requires Drupal 9.5 or [Drupal 10](https://www.drupal.org/project/drupal/releases/10.0.0).
 
   * Increases minimum version of [Hook Event Dispatcher](https://www.drupal.org/project/hook_event_dispatcher) to 3.1, removes deprecated code, and adds support for 4.0 which supports Drupal 10.
+
+* 2.x:
+
+  * Requires Drupal 10.
+
+  * Removed `.nvmrc` file as Node.js is stable enough nowadays to no longer warrant this.
+
+  * Increases minimum version of [Hook Event Dispatcher](https://www.drupal.org/project/hook_event_dispatcher) to 4.0.
+
+  * [Complete rewrite of tooltip component for Tippy.js 6.x](https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/1):
+
+    * Previous spaghetti code has been re-implemented as various [Tippy.js plug-ins](https://atomiks.github.io/tippyjs/v6/plugins/), which means they're now configured using Tippy.js constructor (or global default) properties.
+
+    * The old nested config has been removed as part of the above, with all configuration being sent to Tippy.js, simplifying the way tooltips are constructed.
+
+    * Removed all tooltip stylesheets as these are now the responsibility of the theme. If the theme doesn't provide any styles, the default Tippy.js tooltip theme is used.
+
+    * As a consequence of this rewrite, the abbreviation component has been completely removed; this is now expected to be handled by the theme.
