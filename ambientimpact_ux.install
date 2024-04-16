@@ -45,3 +45,16 @@ function ambientimpact_ux_update_10104(): void {
   )->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild library definitions & plug-ins for Tooltip component rewrite.
+ */
+function ambientimpact_ux_update_10105(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+  \Drupal::service(
+    'plugin.manager.ambientimpact_component',
+  )->clearCachedDefinitions();
+
+}
