@@ -10,19 +10,20 @@ AmbientImpact.addComponent('tooltipDemo', function(aiTooltipDemo, $) {
   this.addBehaviour(
     'AmbientImpactTooltipDemo',
     'ambientimpact-tooltip-demo',
-    '.ambientimpact-component-demo',
+    '.ambientimpact-component-demo__content',
     function(context, settings) {
 
-      aiTooltip.create(this, {
-        tippy: {
-          target: '[title]',
-        },
-      });
+      $(this).prop(
+        'AmbientImpactTooltips',
+        new aiTooltip.Tooltips(this),
+      );
 
     },
     function(context, settings, trigger) {
 
-      aiTooltip.destroy(this);
+      $(this).prop('AmbientImpactTooltips').destroy();
+
+      $(this).removeProp('AmbientImpactTooltips');
 
     }
   );

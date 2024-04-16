@@ -121,3 +121,27 @@ tippy.js:
     }
   dependencies:
     - ambientimpact_ux/popper.js
+    - ambientimpact_ux/tippy.js-animation-shift-away
+    - ambientimpact_ux/tippy.js-svg-arrow
+
+tippy.js-animation-shift-away:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/shift-away.css: {}
+
+tippy.js-svg-arrow:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/dist/svg-arrow.css: {}

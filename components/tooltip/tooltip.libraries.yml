@@ -1,11 +1,9 @@
 component.tooltip:
-  css:
-    component:
-      tooltip.css: {}
   js:
     tooltip.js: {}
   dependencies:
     - ambientimpact_core/ally.js
+    - ambientimpact_core/component.fastdom
     - ambientimpact_ux/tippy.js
 
 component.tooltip.demo:
