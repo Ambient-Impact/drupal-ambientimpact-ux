@@ -260,20 +260,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
         aiTooltip.titleAttributePlugin,
       ],
       target: '[title]',
-      // @see https://github.com/atomiks/tippyjs/blob/master/MIGRATION_GUIDE.md#if-you-were-using-flip-flipbehavior-or-fliponupdate
-      //
-      // @todo Does this make more sense as a Tippy.js plug-in?
-      placement: 'top',
-      popperOptions: {
-        modifiers: [
-          {
-            name: 'flip',
-            options: {
-              fallbackPlacements: ['bottom', 'left', 'right'],
-            },
-          },
-        ],
-      },
     };
 
     /**
