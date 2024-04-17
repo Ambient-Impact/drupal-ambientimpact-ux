@@ -330,12 +330,18 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       // take pointer momentum into account like hoverIntent does, but it's
       // better than nothing.
       delay: [50, 0],
+      // This chooses the position of the tooltip based on the closest text
+      // fragment when text wraps over more than one line.
+      //
+      // @see https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning
       inlinePositioning: true,
-      // Similar to hoverIntent, these prevent interactive tooltips from hiding
-      // if the pointer leaves the tooltip briefly. Note that unlike
-      // hoverIntent, Tippy.js seems to consider any pointer movement outside
-      // of the tooltip as contributing to the debounce, even if it's several
-      // seconds, and will only stop the debounce once the pointer stops.
+      // Similar to hoverIntent, this and interactiveDebounce prevent
+      // interactive tooltips from hiding if the pointer leaves the tooltip
+      // briefly. Note that unlike hoverIntent, Tippy.js seems to consider any
+      // pointer movement outside of the tooltip as contributing to the
+      // interactiveDebounce, even if it's several seconds, and will only stop
+      // the debounce once the pointer stops; because of that, the property is
+      // not currently used, with just interactiveBorder used.
       interactiveBorder: 10, // px
       plugins: [
         aiTooltip.debugPlugin,
