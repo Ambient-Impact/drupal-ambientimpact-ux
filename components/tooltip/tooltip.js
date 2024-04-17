@@ -150,6 +150,57 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
   // };
 
   /**
+   * Placement fallback Tippy.js plug-in.
+   *
+   * @type {Object}
+   *
+   * @see https://github.com/atomiks/tippyjs/blob/master/MIGRATION_GUIDE.md#if-you-were-using-flip-flipbehavior-or-fliponupdate
+   *
+   * @todo The Popper options don't see to take effect; maybe this is too late
+   *   in the initialization? Try to get working.
+   */
+  this.placementFallbackPlugin = {
+    name: 'placementFallback',
+    defaultValue: false,
+    fn: function() { return {
+
+      onCreate: function(instance) {
+
+        if (!instance.props.placementFallback) {
+          return;
+        }
+
+        let fallbacks;
+
+        if (typeof instance.props.placementFallback === 'string') {
+
+          fallbacks = [instance.props.placementFallback];
+
+        } else if (Array.isArray(instance.props.placementFallback)) {
+
+          fallbacks = instance.props.placementFallback;
+
+        } else {
+          return;
+        }
+
+        instance.setProps($.extend(true, {}, instance.props, {
+          popperOptions: {
+            modifiers: [
+              {
+                name: 'flip',
+                options: {fallbackPlacements: fallbacks},
+              },
+            ],
+          },
+        }));
+
+      },
+
+    }},
+  };
+
+  /**
    * Title attribute Tippy.js plug-in.
    *
    * @type {Object}
@@ -257,9 +308,12 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       plugins: [
         aiTooltip.debugPlugin,
         aiTooltip.hideOnEscPlugin,
+        aiTooltip.placementFallbackPlugin,
         aiTooltip.titleAttributePlugin,
       ],
       target: '[title]',
+      placement: 'top',
+      placementFallback: ['bottom', 'left', 'right'],
     };
 
     /**
