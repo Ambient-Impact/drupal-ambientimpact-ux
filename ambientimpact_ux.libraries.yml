@@ -124,6 +124,73 @@ tippy.js:
     - ambientimpact_ux/tippy.js-animation-shift-away
     - ambientimpact_ux/tippy.js-svg-arrow
 
+tippy.js-animation-perspective-extreme:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/perspective-extreme.css: {}
+
+tippy.js-animation-perspective-subtle:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/perspective-subtle.css: {}
+
+tippy.js-animation-perspective:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/perspective.css: {}
+
+
+tippy.js-animation-scale-extreme:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/scale-extreme.css: {}
+
+tippy.js-animation-scale-subtle:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/scale-subtle.css: {}
+
+tippy.js-animation-scale:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/scale.css: {}
+
 tippy.js-animation-shift-away:
   remote: https://atomiks.github.io/tippyjs/
   version: 6.3.7
@@ -134,6 +201,61 @@ tippy.js-animation-shift-away:
   css:
     component:
       vendor/tippy.js/animations/shift-away.css: {}
+
+tippy.js-animation-shift-away-extreme:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/shift-away-extreme.css: {}
+
+tippy.js-animation-shift-away-subtle:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/shift-away-subtle.css: {}
+
+tippy.js-animation-shift-toward-extreme:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/shift-toward-extreme.css: {}
+
+tippy.js-animation-shift-toward-subtle:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/shift-toward-subtle.css: {}
+
+tippy.js-animation-shift-toward:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/animations/shift-toward.css: {}
 
 tippy.js-svg-arrow:
   remote: https://atomiks.github.io/tippyjs/
