@@ -180,68 +180,116 @@ class Tooltip extends ComponentBase {
         '#attached' => [
           'library' => ['ambientimpact_ux/component.tooltip.demo'],
         ],
-        'abbr_description' => [
-          '#type'     => 'html_tag',
-          '#tag'      => 'p',
-          '#value'    => $this->t(
-            'Tooltips can be attached to almost any element, though the most common are those with a @titleAttrMdnLink such as the @abbrMdnLink:',
-            [
-              '@titleAttrMdnLink' => $titleAttrMdnLink->toString(),
-              '@abbrMdnLink'      => $abbrMdnLink->toString(),
-            ],
-          ),
-        ],
-        'abbr_demo' => [
-          '#type'     => 'html_tag',
-          '#tag'      => 'blockquote',
-          '#value'    => $this->t(
-            'The fundamental languages of the web are <abbr title="HyperText Markup Language">HTML</abbr>, <abbr title="Cascading Style Sheets">CSS</abbr>, and JavaScript. These are delivered to browsers using <abbr title="HyperText Transfer Protocol">HTTP</abbr> or <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr>, the latter of which is preferable because it encrypts data via <abbr title="Transport Layer Security">TLS</abbr> or the now deprecated <abbr title="Secure Sockets Layer">SSL</abbr>.',
-          ),
-        ],
-        'button_link_description' => [
-          '#type'     => 'html_tag',
-          '#tag'      => 'p',
-          '#value'    => $this->t(
-            'Buttons and links are another common use for tooltips, but beware that this is not recommended unless special care is taken since touch screens don\'t usually provide a way for a user to hover over an element before activating it, and so would result in pretty bad <abbr title="user experience">UX</abbr>. For an example, tap the following link on a mobile device (it opens in a new tab) and then hit your back button to return to this page: @mdnLink',
-            [
-              '@mdnLink' => $mdnLink->toString(),
-            ],
-          ),
-        ],
-        'button_description' => [
-          '#type'     => 'html_tag',
-          '#tag'      => 'p',
-          '#value'    => $this->t(
-            'Here\'s a button that doesn\'t do anything when activated:',
-          ),
-        ],
-        'button_demo' => [
-          '#type'         => 'actions',
+        'title_attribute' => [
+          '#type' => 'container',
 
-          'button' => [
-            '#type'         => 'button',
-            '#button_type'  => 'button',
-            '#value'        => $this->t('I\'m a button'),
-            '#attributes' => [
-              'title' => $this->t(
-                'If this button submitted a form, this tooltip would disappear soon after being shown',
-              ),
+          'heading' => [
+            '#type'   => 'html_tag',
+            '#tag'    => 'h2',
+            '#value'  => $this->t('The title attribute'),
+          ],
+
+          'description' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'Tooltips can be attached to almost any element, though the most common are those with a @titleAttrMdnLink such as the @abbrMdnLink:',
+              [
+                '@titleAttrMdnLink' => $titleAttrMdnLink->toString(),
+                '@abbrMdnLink'      => $abbrMdnLink->toString(),
+              ],
+            ),
+          ],
+
+          'demo' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'blockquote',
+            '#value'    => $this->t(
+              'The fundamental languages of the web are <abbr title="HyperText Markup Language">HTML</abbr>, <abbr title="Cascading Style Sheets">CSS</abbr>, and JavaScript. These are delivered to browsers using <abbr title="HyperText Transfer Protocol">HTTP</abbr> or <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr>, the latter of which is preferable because it encrypts data via <abbr title="Transport Layer Security">TLS</abbr> or the now deprecated <abbr title="Secure Sockets Layer">SSL</abbr>.',
+            ),
+          ],
+
+          'plugin' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'This component provides a plug-in to automate this, and is enabled by default. To opt out of this behaviour, set <code>titleAttribute: false</code> in your Tippy.js properties.',
+            ),
+          ],
+
+        ],
+        'ux_issues' => [
+          '#type' => 'container',
+
+          'heading' => [
+            '#type'   => 'html_tag',
+            '#tag'    => 'h2',
+            '#value'  => $this->t(
+              '<abbr title="user experience">UX</abbr> issues and considerations',
+            ),
+          ],
+
+          'description' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'Buttons and links are another common use for tooltips, but beware that this is not recommended unless special care is taken since touch screens don\'t usually provide a way for a user to hover over an element before activating it, and so would result in pretty bad <abbr title="user experience">UX</abbr>. For an example, tap the following link on a mobile device (it opens in a new tab) and then hit your back button to return to this page: @mdnLink',
+              [
+                '@mdnLink' => $mdnLink->toString(),
+              ],
+            ),
+          ],
+
+          'button_description' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'Here\'s a button that doesn\'t do anything when activated:',
+            ),
+          ],
+          'button_demo' => [
+            '#type'         => 'actions',
+
+            'button' => [
+              '#type'         => 'button',
+              '#button_type'  => 'button',
+              '#value'        => $this->t('I\'m a button'),
+              '#attributes' => [
+                'title' => $this->t(
+                  'If this button submitted a form, this tooltip would disappear soon after being shown',
+                ),
+              ],
             ],
           ],
+
         ],
-        'long_links' => [
-          '#type'     => 'html_tag',
-          '#tag'      => 'p',
-          '#value'    => $this->t(
-            'Another neat trick Tippy.js can do is @longLink1 when text wraps over more than one line @longLink2, which we set to true by default. Try hovering over these or long pressing on a touch screen @longLink3 and watch the tooltip appear where it feels most intuitive rather than at the centre of the entire links\' bounding boxes. In the unlikely case none of these links wrap to a new line, @longLink4.',
-            [
-              '@longLink1' => $longLink1->toString(),
-              '@longLink2' => $longLink2->toString(),
-              '@longLink3' => $longLink3->toString(),
-              '@longLink4' => $longLink4->toString(),
-            ],
-          ),
+        'inline_positioning' => [
+          '#type' => 'container',
+
+          'heading' => [
+            '#type'   => 'html_tag',
+            '#tag'    => 'h2',
+            '#value'  => $this->t(
+              'Inline positioning',
+            ),
+          ],
+
+          'long_links' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'Another neat trick Tippy.js can do is @longLink1 when text wraps over more than one line @longLink2, which we set to true by default. Try hovering over these or long pressing on a touch screen @longLink3 and watch the tooltip appear where it feels most intuitive rather than at the centre of the entire links\' bounding boxes. In the unlikely case none of these links wrap to a new line, @longLink4.',
+              [
+                '@longLink1' => $longLink1->toString(),
+                '@longLink2' => $longLink2->toString(),
+                '@longLink3' => $longLink3->toString(),
+                '@longLink4' => $longLink4->toString(),
+              ],
+            ),
+          ],
+
         ],
+
         'animations' => [
           '#type' => 'container',
 
