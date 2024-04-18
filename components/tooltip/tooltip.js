@@ -322,7 +322,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
      * @see https://atomiks.github.io/tippyjs/v6/all-props/
      */
     #properties = {
-      animation: 'shift-away',
       arrow: arrow,
       // Adding a slight delay helps to prevent the tooltips opening when moving
       // the pointer quickly over elements that are tooltip triggers unless the

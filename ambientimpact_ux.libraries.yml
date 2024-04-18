@@ -121,7 +121,6 @@ tippy.js:
     }
   dependencies:
     - ambientimpact_ux/popper.js
-    - ambientimpact_ux/tippy.js-animation-shift-away
     - ambientimpact_ux/tippy.js-svg-arrow
 
 tippy.js-animation-perspective-extreme:
