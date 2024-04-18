@@ -7,6 +7,20 @@ AmbientImpact.addComponent('tooltipDemo', function(aiTooltipDemo, $) {
 
   'use strict';
 
+  /**
+   * Event namespace name.
+   *
+   * @type {String}
+   */
+  const eventNamespace = this.getName();
+
+  const tooltipDemoDoubleTap = {
+    name: 'tooltipDemoDoubleTap',
+    defaultValue: false,
+    fn: function() {
+    },
+  };
+
   this.addBehaviour(
     'AmbientImpactTooltipDemo',
     'ambientimpact-tooltip-demo',

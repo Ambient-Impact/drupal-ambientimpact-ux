@@ -24,6 +24,8 @@ class Tooltip extends ComponentBase {
    */
   public function getDemo(): array {
 
+    $requireDoubleTapClass = 'tooltip-demo-require-double-tap';
+
     /** @var \Drupal\Core\Link */
     $tippyLink = new Link($this->t('Tippy.js'), Url::fromUri(
       'https://atomiks.github.io/tippyjs/',
@@ -70,12 +72,35 @@ class Tooltip extends ComponentBase {
     );
 
     /** @var \Drupal\Core\Link */
+    $doubleTapLink = new Link($this->t('require tapping a link a second time'), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/v6/misc/#b-make-android-behave-like-ios-double-tap-to-click', [
+        'attributes' => [
+          'title'   => $this->t(
+            'Tap this link again if using a touch screen to open it',
+          ),
+          'class'   => [$requireDoubleTapClass],
+        ],
+      ],
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $touchHoldLink = new Link($this->t('Tippy.js'), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/v6/misc/#hold-long-press', [
+        'attributes' => [
+          'title'   => $this->t('You did it!'),
+          'data-tippy-touch' => 'hold',
+        ],
+      ],
+    ));
+
+    /** @var \Drupal\Core\Link */
     $longLink1 = new Link($this->t(
       'to choose the position of the tooltip based on the closest text fragment',
       ), Url::fromUri(
         'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning', [
           'attributes' => [
             'title'   => $this->t('Hello!'),
+            'class'   => [$requireDoubleTapClass],
           ],
         ],
       ),
@@ -88,6 +113,7 @@ class Tooltip extends ComponentBase {
         'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning', [
           'attributes' => [
             'title' => $this->t('Hello again!'),
+            'class'   => [$requireDoubleTapClass],
           ],
         ],
       ),
@@ -100,6 +126,7 @@ class Tooltip extends ComponentBase {
         'https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects', [
           'attributes' => [
             'title' => $this->t('Hellooooo!'),
+            'class'   => [$requireDoubleTapClass],
           ],
         ],
       ),
@@ -112,6 +139,7 @@ class Tooltip extends ComponentBase {
         'https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design', [
           'attributes' => [
             'title' => $this->t('Henlo!'),
+            'class'   => [$requireDoubleTapClass],
           ],
         ],
       ),
@@ -260,6 +288,17 @@ class Tooltip extends ComponentBase {
                 ),
               ],
             ],
+          ],
+
+          'potential_solutions' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'There are some potential solutions for this. A best practice is to include important information in the page content itself and only place optional or additional information in tooltips that aren\'t required for the core tasks a user is performing. Some complementary techniques for when you\'d really like a user to see the tooltip before they follow a link might be to require a second tap when using a touch screen to actually open the link, like so: @touchHoldLink',
+              [
+                '@touchHoldLink' => $touchHoldLink->toString(),
+              ],
+            ),
           ],
 
         ],
