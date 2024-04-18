@@ -168,7 +168,7 @@ class Tooltip extends ComponentBase {
         '#type'       => 'html_tag',
         '#tag'        => 'p',
         '#value'      => $this->t(
-          'This provides a wrapper component around @tippyLink which builds on the library\'s API, sets various default values, and customizes the theming of the tooltips.',
+          'This provides a wrapper component around @tippyLink which sets various default values and provides several new plug-ins for themes to customize the behaviour of tooltips with.',
           // Unfortunately, this needs to be rendered here or it'll cause a
           // fatal error when Drupal tries to pass them to \htmlspecialchars().
           [
