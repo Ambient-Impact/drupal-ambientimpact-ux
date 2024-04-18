@@ -267,3 +267,47 @@ tippy.js-svg-arrow:
   css:
     component:
       vendor/tippy.js/dist/svg-arrow.css: {}
+
+tippy.js-theme-light-border:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/themes/light-border.css: {}
+
+tippy.js-theme-light:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/themes/light.css: {}
+
+tippy.js-theme-material:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/themes/material.css: {}
+
+tippy.js-theme-translucent:
+  remote: https://atomiks.github.io/tippyjs/
+  version: 6.3.7
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  css:
+    component:
+      vendor/tippy.js/themes/translucent.css: {}
