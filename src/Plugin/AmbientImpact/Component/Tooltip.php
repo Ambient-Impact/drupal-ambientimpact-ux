@@ -117,6 +117,52 @@ class Tooltip extends ComponentBase {
       ),
     );
 
+    /** @var \Drupal\Core\Link */
+    $tippyAnimationsDemoLink = new Link($this->t(
+      'all the optional animations',
+    ), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/#extra-included-animations',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $tippyAnimationsDocsLink = new Link($this->t(
+      'the Tippy.js animations documentation',
+    ), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/v6/animations/',
+    ));
+
+    $animationButtons = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['tooltip-demo-animation-triggers']],
+    ];
+
+    foreach ([
+      'shift-away',
+      'shift-away-subtle',
+      'shift-away-extreme',
+      'shift-toward',
+      'shift-toward-subtle',
+      'shift-toward-extreme',
+      'scale',
+      'scale-subtle',
+      'scale-extreme',
+      'perspective',
+      'perspective-subtle',
+      'perspective-extreme',
+    ] as $animationName) {
+
+      $animationButtons[$animationName] = [
+        '#type'         => 'button',
+        '#button_type'  => 'button',
+        '#value'        => $animationName,
+        '#attributes' => [
+          'title' => $this->t('I\'m a tooltip!'),
+          'data-tippy-animation' => $animationName,
+        ],
+      ];
+
+    }
+
     return [
       '#intro' => [
         '#type'       => 'html_tag',
@@ -195,6 +241,30 @@ class Tooltip extends ComponentBase {
               '@longLink4' => $longLink4->toString(),
             ],
           ),
+        ],
+        'animations' => [
+          '#type' => 'container',
+
+          'heading' => [
+            '#type'   => 'html_tag',
+            '#tag'    => 'h2',
+            '#value'  => $this->t('Animations'),
+          ],
+
+          'description' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'This also supports @tippyAnimationsDemoLink that ship with Tippy.js, and adding new ones supported as described in @tippyAnimationsDocsLink.',
+              [
+                '@tippyAnimationsDemoLink' => $tippyAnimationsDemoLink->toString(),
+                '@tippyAnimationsDocsLink' => $tippyAnimationsDocsLink->toString(),
+              ],
+            ),
+          ],
+
+          'buttons' => $animationButtons,
+
         ],
       ],
     ];

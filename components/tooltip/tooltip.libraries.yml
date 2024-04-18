@@ -7,7 +7,22 @@ component.tooltip:
     - ambientimpact_ux/tippy.js
 
 component.tooltip.demo:
+  css:
+    component:
+      tooltip.demo.css: {}
   js:
     tooltip.demo.js: {}
   dependencies:
     - ambientimpact_ux/component.tooltip
+    - ambientimpact_ux/tippy.js-animation-perspective-extreme
+    - ambientimpact_ux/tippy.js-animation-perspective-subtle
+    - ambientimpact_ux/tippy.js-animation-perspective
+    - ambientimpact_ux/tippy.js-animation-scale-extreme
+    - ambientimpact_ux/tippy.js-animation-scale-subtle
+    - ambientimpact_ux/tippy.js-animation-scale
+    - ambientimpact_ux/tippy.js-animation-shift-away
+    - ambientimpact_ux/tippy.js-animation-shift-away-extreme
+    - ambientimpact_ux/tippy.js-animation-shift-away-subtle
+    - ambientimpact_ux/tippy.js-animation-shift-toward-extreme
+    - ambientimpact_ux/tippy.js-animation-shift-toward-subtle
+    - ambientimpact_ux/tippy.js-animation-shift-toward

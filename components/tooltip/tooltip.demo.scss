@@ -1,0 +1,25 @@
+// -----------------------------------------------------------------------------
+//   Ambient.Impact - UX - Tooltip component demo
+// -----------------------------------------------------------------------------
+
+.tooltip-demo-animation-triggers {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(10em, 1fr));
+  grid-gap: 0.5em;
+
+  margin-top: 0.5em;
+
+  > * {
+    // Under most circumstances, using !important is a bad idea as specificity
+    // is more granular and extensible a method, but in this case themes can
+    // break this grid layout with margins.
+    //
+    // @todo Rework grid as a more generic set of demo styles, preferably in the
+    //   base theme.
+    margin: 0 !important;
+  }
+
+}
+
