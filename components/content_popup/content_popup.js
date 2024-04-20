@@ -69,9 +69,7 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     // These are passed to the tooltip component.
     tooltip:  {
-      tippy: {
-        interactive:  true
-      }
+      interactive: true,
     },
     // These are passed to the offcanvas component. Note that we currently
     // have one panel active, so changing these per group of triggers has
@@ -205,7 +203,7 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
     // there's any error in the preceding code, to avoid preventing the
     // action when we don't have a tooltip or panel operating correctly.
     if (
-      typeof $trigger.attr('data-tippy') === 'string' ||
+      typeof $trigger.prop('_tippy') !== 'undefined' ||
       $panel.hasClass('offcanvas-panel--is-ready')
     ) {
       event.preventDefault();
@@ -245,7 +243,7 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
         $trigger: $trigger,
         $title:   $title,
         $content: $content,
-        tippy:    undefined
+        tooltip:  undefined,
       };
 
     // Make sure the theme is a valid value, using the default if not.
@@ -255,9 +253,8 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     // Set the tooltip theme with our theme setting if none has been set.
     // @todo Should this be hard-coded?
-    if (!('theme' in settings.tooltip.tippy)) {
-      settings.tooltip.tippy.theme =
-        'material-' + itemObject.settings.theme;
+    if (!('theme' in settings.tooltip)) {
+      settings.tooltip.theme = `material material-${itemObject.settings.theme}`;
     }
 
     // Add classes to the title and content to identify them.
@@ -331,7 +328,11 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     itemObject = items[i];
 
-    aiTooltip.destroy(trigger);
+    if (typeof itemObject.tooltip !== 'undefined') {
+
+      itemObject.tooltip.destroy();
+
+    }
 
     $trigger.off('click.aiContentPopUp');
 
@@ -381,13 +382,12 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     // If a Tippy tooltip already exists on the element, enable it and
     // return.
-    if (
-      AmbientImpact.objectPathExists('tippy.enable', itemObject) &&
-      typeof itemObject.tippy.enable === 'function'
-    ) {
-      itemObject.tippy.enable();
+    if (AmbientImpact.objectPathExists('tooltip.tippy', itemObject)) {
+
+      itemObject.tooltip.tippy.enable();
 
       return;
+
     }
 
     // Remove the panel title and content classes from this item's
@@ -410,17 +410,19 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     // Create the tooltip, passing it a created container which contains the
     // title/content.
-    aiTooltip.create(
+    itemObject.tooltip = new aiTooltip.Tooltip(
       itemObject.$trigger[0],
-      $.extend(true, {}, itemObject.settings.tooltip, {tippy: {
-        html: $('<div></div>').addClass(baseClass).append(
+      $.extend(true, {}, itemObject.settings.tooltip, {
+        content: $('<div></div>').addClass(baseClass).append(
           itemObject.$title,
-          itemObject.$content
-        )[0]
-      }})
+          itemObject.$content,
+        )[0],
+        allowHTML: true,
+        titleAttribute: false,
+      })
+
     );
 
-    itemObject.tippy = itemObject.$trigger[0]._tippy;
   };
 
   /**
@@ -447,14 +449,11 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
     }
 
     for (var i = items.length - 1; i >= 0; i--) {
-      if (
-        !AmbientImpact.objectPathExists('tippy.disable', items[i]) ||
-        typeof items[i].tippy.disable !== 'function'
-      ) {
+      if (!AmbientImpact.objectPathExists('tooltip.tippy', items[i])) {
         continue;
       }
 
-      items[i].tippy.disable();
+      items[i].tooltip.tippy.disable();
     }
   }
 
@@ -528,6 +527,10 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
   /**
    * Destroy the currently active instance.
+   *
+   * Note that this doesn't destroy tooltips because those should be destroyed
+   * by external code that (hopefully) cleans up after itself via a behaviour
+   * detach which removes elements via this.removeItems().
    */
   function destroy() {
 
