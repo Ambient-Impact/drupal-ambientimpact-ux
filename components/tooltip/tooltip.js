@@ -296,6 +296,121 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
   }};
 
   /**
+   * Default set of properties passed to the Tippy.js instances we create.
+   *
+   * Note that this is not global in the same way as calling
+   * tippy.setDefaultProps() would be. In the future, these may be moved to
+   * being set that way, but currently taking a more conservative approach.
+   *
+   * @type {Object}
+   */
+  const defaultProperties = {
+    arrow: arrow,
+    // Adding a slight delay helps to prevent the tooltips opening when moving
+    // the pointer quickly over elements that are tooltip triggers unless the
+    // pointer lingers/stops there. It's not a perfect solution as it doesn't
+    // take pointer momentum into account like hoverIntent does, but it's
+    // better than nothing.
+    delay: [50, 0],
+    // This chooses the position of the tooltip based on the closest text
+    // fragment when text wraps over more than one line.
+    //
+    // @see https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning
+    inlinePositioning: true,
+    // Similar to hoverIntent, this and interactiveDebounce prevent interactive
+    // tooltips from hiding if the pointer leaves the tooltip briefly. Note
+    // that unlike hoverIntent, Tippy.js seems to consider any pointer movement
+    // outside of the tooltip as contributing to the interactiveDebounce, even
+    // if it's several seconds, and will only stop the debounce once the
+    // pointer stops; because of that, the property is not currently used, with
+    // just interactiveBorder used.
+    interactiveBorder: 10, // px
+    plugins: [
+      aiTooltip.debugPlugin,
+      aiTooltip.hideOnEscPlugin,
+      aiTooltip.hideOnOutOfBoundsPlugin,
+      aiTooltip.titleAttributePlugin,
+    ],
+  };
+
+  /**
+   * Represents a single, non-delegated Tippy.js instance.
+   */
+  this.Tooltip = class {
+
+    /**
+     * A jQuery collection containing a single target element.
+     *
+     * @type {jQuery}
+     */
+    #$target;
+
+    /**
+     * Tippy.js instance we create.
+     *
+     * @type {Object}
+     */
+    #tippy;
+
+    /**
+     * Tippy.js properties passed to its constructor.
+     *
+     * The default properties in defaultProperties are merged on top of this,
+     * and then any properties passed to our constructor are merged on top of
+     * that.
+     *
+     * @type {Object}
+     *
+     * @see https://atomiks.github.io/tippyjs/v6/all-props/
+     */
+    #properties = {};
+
+    /**
+     * Constructor.
+     *
+     * @param {jQuery|HTMLElement} $target
+     *   A jQuery collection containing a single target element.
+     *
+     * @param {Object} properties
+     *   Tippy.js properties to pass to its constructor. Merged on top of our
+     *   defaults.
+     */
+    constructor($target, properties) {
+
+      // Ensure this is a jQuery collection and that it contains only the first
+      // element if passed a collection containing multiple elements.
+      this.#$target = $($target).first();
+
+      $.extend(true, this.#properties, defaultProperties, properties);
+
+      this.#tippy = tippy(
+        this.#$target[0], this.#properties,
+      );
+
+    }
+
+    /**
+     * Destroy this instance.
+     */
+    destroy() {
+
+      this.#tippy.destroy();
+
+    }
+
+    /**
+     * Getter for the Tippy.js instance we create.
+     *
+     * @return {Object}
+     */
+    get tippy() {
+      return this.#tippy;
+    }
+
+
+  }
+
+  /**
    * Represents a delegated group of Tippy.js tooltips.
    */
   this.Tooltips = class {
@@ -317,37 +432,15 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     /**
      * Tippy.js properties passed to its constructor.
      *
+     * The default properties in defaultProperties are merged on top of this,
+     * and then any properties passed to our constructor are merged on top of
+     * that.
+     *
      * @type {Object}
      *
      * @see https://atomiks.github.io/tippyjs/v6/all-props/
      */
     #properties = {
-      arrow: arrow,
-      // Adding a slight delay helps to prevent the tooltips opening when moving
-      // the pointer quickly over elements that are tooltip triggers unless the
-      // pointer lingers/stops there. It's not a perfect solution as it doesn't
-      // take pointer momentum into account like hoverIntent does, but it's
-      // better than nothing.
-      delay: [50, 0],
-      // This chooses the position of the tooltip based on the closest text
-      // fragment when text wraps over more than one line.
-      //
-      // @see https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning
-      inlinePositioning: true,
-      // Similar to hoverIntent, this and interactiveDebounce prevent
-      // interactive tooltips from hiding if the pointer leaves the tooltip
-      // briefly. Note that unlike hoverIntent, Tippy.js seems to consider any
-      // pointer movement outside of the tooltip as contributing to the
-      // interactiveDebounce, even if it's several seconds, and will only stop
-      // the debounce once the pointer stops; because of that, the property is
-      // not currently used, with just interactiveBorder used.
-      interactiveBorder: 10, // px
-      plugins: [
-        aiTooltip.debugPlugin,
-        aiTooltip.hideOnEscPlugin,
-        aiTooltip.hideOnOutOfBoundsPlugin,
-        aiTooltip.titleAttributePlugin,
-      ],
       target: '[title]',
     };
 
@@ -367,7 +460,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       // element if passed a collection containing multiple elements.
       this.#$container = $($container).first();
 
-      $.extend(true, this.#properties, properties);
+      $.extend(true, this.#properties, defaultProperties, properties);
 
       this.#delegateInstance = tippy.delegate(
         this.#$container[0], this.#properties,
