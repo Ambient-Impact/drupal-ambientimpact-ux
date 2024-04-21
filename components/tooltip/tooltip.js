@@ -233,6 +233,106 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
   };
 
   /**
+   * Move transition disable on create Tippy.js plug-in.
+   *
+   * This works around an issue with the moveTransition property which can
+   * cause it to be applied when first creating the tooltip. We fix that by
+   * removing the property (if it's set) on create, and then restoring it once
+   * the tooltip has been shown and all transforms are applied.
+   *
+   * @type {Object}
+   *
+   * @see https://github.com/atomiks/tippyjs/issues/1133
+   *   Bug describing a similar issue but only when minifying.
+   *
+   * @see https://github.com/atomiks/tippyjs/issues/168
+   *   Old issue from the 2.x series also describing a similar issue.
+   *
+   * @todo Can this first check if the transition contains 'transform' and avoid
+   *   doing anything if it doesn't? Right now it assumes the transition is
+   *   applied to the transform style property.
+   */
+  this.moveTransitionDisabledOnCreate = {
+    name: 'moveTransitionDisabledOnCreate',
+    defaultValue: true,
+    fn: function(instance) {
+
+      // console.debug(instance.props.moveTransition);
+
+      // Don't register any callbacks if there's no moveTransition.
+      if (instance.props.moveTransition === '') {
+        return {};
+      }
+
+      /**
+       * The original moveTransition property when created.
+       *
+       * @type {String}
+       */
+      let originalMoveTransition;
+
+      /**
+       * Whether we need to restore the stored movedTransition.
+       *
+       * @type {Boolean}
+       */
+      let needsRestore = true;
+
+      async function restore(event) {
+
+        // Wait for a frame to be painted before restoring the moveTransition.
+        // This is necessary so that any changes to transform are already made
+        // to avoid the transition kicking in. Also note that we have to
+        // request twice because the first time only queues to the start of the
+        // next frame, but that frame will not have been painted yet, so we
+        // have to request a second time to wait until the start of the next
+        // frame after that.
+        await new Promise(requestAnimationFrame);
+        await new Promise(requestAnimationFrame);
+
+        // This is literally all Tippy.js does when originally setting it.
+        instance.popper.style.transition = originalMoveTransition;
+
+      };
+
+      function onCreate() {
+
+        originalMoveTransition = instance.props.moveTransition;
+
+        instance.setProps({moveTransition: ''});
+
+      };
+
+      function onShown() {
+
+        if (needsRestore === false) {
+          return;
+        }
+
+        // Note that this doesn't set the style property until the next time the
+        // tooltip is shown, so...
+        instance.setProps({moveTransition: originalMoveTransition});
+
+        // ...we have to restore it manually just this once, but we have to wait
+        // until transitions have finished to avoid triggering a new transition.
+        instance.popper.addEventListener(
+          'transitionend', restore, {once: true},
+        );
+
+        needsRestore = false;
+
+      }
+
+      return {
+        onCreate: onCreate,
+        onShown: onShown,
+      };
+
+    },
+
+  };
+
+  /**
    * Title attribute Tippy.js plug-in.
    *
    * @type {Object}
@@ -325,10 +425,12 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     // pointer stops; because of that, the property is not currently used, with
     // just interactiveBorder used.
     interactiveBorder: 10, // px
+    moveTransition: 'transform 0.15s ease-out',
     plugins: [
       aiTooltip.debugPlugin,
       aiTooltip.hideOnEscPlugin,
       aiTooltip.hideOnOutOfBoundsPlugin,
+      aiTooltip.moveTransitionDisabledOnCreate,
       aiTooltip.titleAttributePlugin,
     ],
   };
