@@ -257,6 +257,12 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
       settings.tooltip.theme = `material material-${itemObject.settings.theme}`;
     }
 
+    // Always add 'content-popup' as a Tippy.js theme so that Drupal themes can
+    // target Tippy.js tooltips created by this component.
+    settings.tooltip.theme = [
+      settings.tooltip.theme, 'content-popup',
+    ].join(' ');
+
     // Add classes to the title and content to identify them.
     $title.addClass(titleClass);
     $content.addClass(contentClass);
