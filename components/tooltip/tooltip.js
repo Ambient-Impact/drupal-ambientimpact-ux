@@ -439,16 +439,16 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
   this.Tooltip = class {
 
     /**
-     * A jQuery collection containing a single target element.
+     * A jQuery collection containing one or more target elements.
      *
      * @type {jQuery}
      */
-    #$target;
+    #$targets;
 
     /**
-     * Tippy.js instance we create.
+     * Tippy.js instances we create.
      *
-     * @type {Object}
+     * @type {Object[]}
      */
     #tippy;
 
@@ -468,24 +468,21 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     /**
      * Constructor.
      *
-     * @param {jQuery|HTMLElement} $target
-     *   A jQuery collection containing a single target element.
+     * @param {jQuery|HTMLElement} $targets
+     *   A jQuery collection containing one or more target elements.
      *
      * @param {Object} properties
      *   Tippy.js properties to pass to its constructor. Merged on top of our
      *   defaults.
      */
-    constructor($target, properties) {
+    constructor($targets, properties) {
 
-      // Ensure this is a jQuery collection and that it contains only the first
-      // element if passed a collection containing multiple elements.
-      this.#$target = $($target).first();
+      // Ensure this is a jQuery collection if passed an HTMLElement.
+      this.#$targets = $($targets);
 
       $.extend(true, this.#properties, defaultProperties, properties);
 
-      this.#tippy = tippy(
-        this.#$target[0], this.#properties,
-      );
+      this.#tippy = tippy(this.#$targets.toArray(), this.#properties);
 
     }
 
@@ -499,9 +496,9 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     }
 
     /**
-     * Getter for the Tippy.js instance we create.
+     * Getter for the Tippy.js instances we create.
      *
-     * @return {Object}
+     * @return {Object[]}
      */
     get tippy() {
       return this.#tippy;
