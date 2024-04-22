@@ -420,6 +420,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     // just interactiveBorder used.
     interactiveBorder: 10, // px
     moveTransition: 'transform 0.15s ease-out',
+    isSingleton: false,
     plugins: [
       aiTooltip.debugPlugin,
       aiTooltip.hideOnEscPlugin,
@@ -427,6 +428,46 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       aiTooltip.moveTransitionDisabledOnCreate,
       aiTooltip.titleAttributePlugin,
     ],
+  });
+
+  /**
+   * The original (real) tippy.createSingleton().
+   *
+   * @type {Function}
+   */
+  const originalCreateSingleton = tippy.createSingleton;
+
+  /**
+   * Override tippy.createSingleton() so we can mark the instance as singleton.
+   *
+   * While there are a few ways we could infer an instance is a singleton in
+   * a custom plug-in, there's no guarantee those heuristics won't change
+   * without warning and break our detection. While not an ideal solution,
+   * replacing tippy.createSingleton() with our own function allows us to know
+   * exactly when an instance is a singleton, and mark all others as not a
+   * singleton with certainty.
+   *
+   * @param {Object[]} instances
+   *
+   * @param {Object|undefined} properties
+   *
+   * @return {Object}
+   */
+  tippy.createSingleton = function(instances, properties) {
+
+    if (typeof properties !== 'object') {
+      properties = {};
+    }
+
+    // Always set the property before creating the singleton as doing so after
+    // creating may foil plug-ins' attempts at knowing whether this is a
+    // singleton if they do their check during their 'fn' function.
+    properties.isSingleton = true;
+
+    const singleton = originalCreateSingleton(instances, properties);
+
+    return singleton;
+
   };
 
   /**
