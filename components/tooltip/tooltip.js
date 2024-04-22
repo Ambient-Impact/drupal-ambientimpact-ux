@@ -422,7 +422,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     // pointer stops; because of that, the property is not currently used, with
     // just interactiveBorder used.
     interactiveBorder: 10, // px
-    moveTransition: 'transform 0.15s ease-out',
     isSingleton: false,
     plugins: [
       aiTooltip.debugPlugin,
