@@ -259,6 +259,9 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     fn: function(instance) {
 
       if (
+        // Don't do anything if the instance is a singleton since it doesn't
+        // need fixing and will actually break it if we try to.
+        instance.props.isSingleton ||
         !instance.props.moveTransitionDisabledOnCreate ||
         // If there's no move transition set, there's no point in registering
         // callbacks.
