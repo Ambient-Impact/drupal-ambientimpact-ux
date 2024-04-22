@@ -541,7 +541,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
      * @see https://atomiks.github.io/tippyjs/v6/all-props/
      */
     #properties = {
-      target: '[title]',
     };
 
     /**

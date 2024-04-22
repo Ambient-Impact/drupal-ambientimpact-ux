@@ -15,7 +15,7 @@ AmbientImpact.addComponent('tooltipDemo', function(aiTooltipDemo, $) {
 
       $(this).prop(
         'AmbientImpactTooltips',
-        new aiTooltip.Tooltips(this),
+        new aiTooltip.Tooltips(this, {target: '[title]'}),
       );
 
     },
