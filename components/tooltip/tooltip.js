@@ -257,8 +257,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     defaultValue: true,
     fn: function(instance) {
 
-      // console.debug(instance.props.moveTransition);
-
       // Don't register any callbacks if there's no moveTransition.
       if (instance.props.moveTransition === '') {
         return {};
@@ -508,7 +506,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     get tippy() {
       return this.#tippy;
     }
-
 
   }
 
