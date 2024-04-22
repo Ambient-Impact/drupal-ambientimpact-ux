@@ -257,8 +257,12 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     defaultValue: true,
     fn: function(instance) {
 
-      // Don't register any callbacks if there's no moveTransition.
-      if (instance.props.moveTransition === '') {
+      if (
+        !instance.props.moveTransitionDisabledOnCreate ||
+        // If there's no move transition set, there's no point in registering
+        // callbacks.
+        instance.props.moveTransition === ''
+      ) {
         return {};
       }
 
