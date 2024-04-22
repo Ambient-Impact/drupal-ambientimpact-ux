@@ -5,6 +5,7 @@
 AmbientImpact.onGlobals([
   'ally.when.key',
   'tippy.delegate',
+  'tippy.setDefaultProps',
 ], function() {
 AmbientImpact.on(['fastdom'], function(aiFastDom) {
 AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
@@ -397,16 +398,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     };
   }};
 
-  /**
-   * Default set of properties passed to the Tippy.js instances we create.
-   *
-   * Note that this is not global in the same way as calling
-   * tippy.setDefaultProps() would be. In the future, these may be moved to
-   * being set that way, but currently taking a more conservative approach.
-   *
-   * @type {Object}
-   */
-  const defaultProperties = {
+  tippy.setDefaultProps({
     arrow: arrow,
     // Adding a slight delay helps to prevent the tooltips opening when moving
     // the pointer quickly over elements that are tooltip triggers unless the
@@ -457,19 +449,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     #tippy;
 
     /**
-     * Tippy.js properties passed to its constructor.
-     *
-     * The default properties in defaultProperties are merged on top of this,
-     * and then any properties passed to our constructor are merged on top of
-     * that.
-     *
-     * @type {Object}
-     *
-     * @see https://atomiks.github.io/tippyjs/v6/all-props/
-     */
-    #properties = {};
-
-    /**
      * Constructor.
      *
      * @param {jQuery|HTMLElement} $targets
@@ -484,9 +463,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       // Ensure this is a jQuery collection if passed an HTMLElement.
       this.#$targets = $($targets);
 
-      $.extend(true, this.#properties, defaultProperties, properties);
-
-      this.#tippy = tippy(this.#$targets.toArray(), this.#properties);
+      this.#tippy = tippy(this.#$targets.toArray(), properties);
 
     }
 
@@ -530,20 +507,6 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     #delegateInstance;
 
     /**
-     * Tippy.js properties passed to its constructor.
-     *
-     * The default properties in defaultProperties are merged on top of this,
-     * and then any properties passed to our constructor are merged on top of
-     * that.
-     *
-     * @type {Object}
-     *
-     * @see https://atomiks.github.io/tippyjs/v6/all-props/
-     */
-    #properties = {
-    };
-
-    /**
      * Constructor.
      *
      * @param {jQuery|HTMLElement} $container
@@ -559,10 +522,8 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
       // element if passed a collection containing multiple elements.
       this.#$container = $($container).first();
 
-      $.extend(true, this.#properties, defaultProperties, properties);
-
       this.#delegateInstance = tippy.delegate(
-        this.#$container[0], this.#properties,
+        this.#$container[0], properties,
       );
 
     }
