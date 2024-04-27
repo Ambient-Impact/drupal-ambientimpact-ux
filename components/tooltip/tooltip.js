@@ -401,6 +401,19 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     };
   }};
 
+  const defaultPlugins = tippy.defaultProps.plugins;
+
+  // Push our plug-ins onto the existing array so that we don't remove the
+  // plug-ins Tippy.js includes by default, e.g. inlinePositioning, etc.
+  // Tippy.js doesn't seem to merge this array but replaces it with the new one.
+  defaultPlugins.push(
+    this.debugPlugin,
+    this.hideOnEscPlugin,
+    this.hideOnOutOfBoundsPlugin,
+    this.moveTransitionDisabledOnCreate,
+    this.titleAttributePlugin,
+  );
+
   tippy.setDefaultProps({
     arrow: arrow,
     // Adding a slight delay helps to prevent the tooltips opening when moving
@@ -423,13 +436,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     // just interactiveBorder used.
     interactiveBorder: 10, // px
     isSingleton: false,
-    plugins: [
-      aiTooltip.debugPlugin,
-      aiTooltip.hideOnEscPlugin,
-      aiTooltip.hideOnOutOfBoundsPlugin,
-      aiTooltip.moveTransitionDisabledOnCreate,
-      aiTooltip.titleAttributePlugin,
-    ],
+    plugins: defaultPlugins,
   });
 
   /**
@@ -465,6 +472,10 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     // creating may foil plug-ins' attempts at knowing whether this is a
     // singleton if they do their check during their 'fn' function.
     properties.isSingleton = true;
+
+    // For whatever reason, singleton breaks with inline positioning on, so
+    // ensure it's off for the singleton itself.
+    properties.inlinePositioning = false;
 
     const singleton = originalCreateSingleton(instances, properties);
 
