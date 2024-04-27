@@ -66,14 +66,14 @@ class Details extends ComponentBase {
 
     /** @var \Drupal\Core\Link */
     $openPropertyMdnLink = new Link($this->t(
-      'the <code>open</code> <abbr title="Document Object Model">DOM</abbr> property',
+      'the <code>open</code> DOM property',
     ), Url::fromUri(
       'https://developer.mozilla.org/en-US/docs/Web/API/HTMLDetailsElement/open',
     ));
 
     /** @var \Drupal\Core\Link */
     $cssOnlyPenLink = new Link($this->t(
-      'a <abbr title="Cascading Style Sheets">CSS</abbr>-only solution',
+      'a CSS-only solution',
     ), Url::fromUri('https://codepen.io/jgustavoas/pen/rNQyxWa'));
 
     /** @var \Drupal\Core\Link */
