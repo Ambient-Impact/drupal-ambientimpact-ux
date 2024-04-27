@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\ambientimpact_ux\Plugin\AmbientImpact\Component;
 
 use Drupal\ambientimpact_core\ComponentBase;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 
@@ -135,6 +136,38 @@ class Tooltip extends ComponentBase {
       '#type' => 'container',
       '#attributes' => ['class' => ['tooltip-demo-animation-triggers']],
     ];
+
+    /** @var \Drupal\Core\Link */
+    $domParserMdnLink = new Link($this->t(
+      '<code>DOMParser.parseFromString()</code>',
+    ), Url::fromUri(
+      'https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $tippyHtmlContentLink = new Link($this->t('HTML content'), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/v6/html-content/',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $tippyAllowHtmlPropLink = new Link($this->t(
+      'the <code>allowHTML</code> property',
+    ), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/v6/all-props/#allowhtml',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $xssMdnLink = new Link($this->t(
+      'cross-site scripting (XSS)',
+    ), Url::fromUri(
+      'https://developer.mozilla.org/en-US/docs/Glossary/Cross-site_scripting',
+    ));
+
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup */
+    $htmlContent = $this->t(
+      '<strong>HTML content</strong> can be automatically parsed while protecting against <em>cross-site scripting exploits</em>. @tippyLink is pretty neat.',
+      ['@tippyLink' => $tippyLink->toString()]
+    );
 
     foreach ([
       'shift-away',
@@ -312,6 +345,47 @@ class Tooltip extends ComponentBase {
           ],
 
           'buttons' => $animationButtons,
+
+        ],
+
+        'html_content' => [
+          '#type' => 'container',
+
+          'heading' => [
+            '#type'   => 'html_tag',
+            '#tag'    => 'h2',
+            '#value'  => $this->t('HTML content'),
+          ],
+
+          'description' => [
+            '#type'     => 'html_tag',
+            '#tag'      => 'p',
+            '#value'    => $this->t(
+              'Tippy.js supports @tippyHtmlContentLink, but it must be explicitly opted in via the @tippyAllowHtmlPropLink to protect against @xssMdnLink. We provide a plug-in that defines a <code>htmlContentAttribute</code> property; if this property is set to a string, we attempt to retrieve HTML content from an attribute by that name; we then parse it using @domParserMdnLink which will automatically strip any cross-site scripts for us, and we unescape any HTML entities while doing so. Note that this means you should always escape any HTML you place into this attribute to ensure it doesn\'t get parsed incorrectly by browsers.',
+              [
+                '@domParserMdnLink' => $domParserMdnLink->toString(),
+                '@tippyAllowHtmlPropLink' => $tippyAllowHtmlPropLink->toString(),
+                '@tippyHtmlContentLink' => $tippyHtmlContentLink->toString(),
+                '@xssMdnLink' => $xssMdnLink->toString(),
+              ],
+            ),
+          ],
+
+          'buttons' => [
+            '#type' => 'container',
+            'button1' => [
+              '#type'         => 'button',
+              '#button_type'  => 'button',
+              '#value'        => $this->t('HTML content'),
+              '#attributes' => [
+                'data-tippy-interactive' => 'true',
+                'data-tippy-htmlContentAttribute' => 'data-tooltip-html-content',
+                'data-tooltip-html-content' => Html::escape(
+                  (string) $htmlContent,
+                ),
+              ],
+            ]
+          ],
 
         ],
       ],

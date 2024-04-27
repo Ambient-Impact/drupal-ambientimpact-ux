@@ -18,8 +18,16 @@ AmbientImpact.addComponent('tooltipDemo', function(aiTooltipDemo, $) {
         new aiTooltip.Tooltips(this, {target: '[title]'}),
       );
 
+      $(this).prop('AmbientImpactTooltipsHtml', new aiTooltip.Tooltips(
+        this, {target: '[data-tippy-htmlContentAttribute]'},
+      ));
+
     },
     function(context, settings, trigger) {
+
+      $(this).prop('AmbientImpactTooltipsHtml').destroy();
+
+      $(this).removeProp('AmbientImpactTooltipsHtml');
 
       $(this).prop('AmbientImpactTooltips').destroy();
 

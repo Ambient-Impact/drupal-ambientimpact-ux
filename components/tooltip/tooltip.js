@@ -234,6 +234,76 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
   };
 
   /**
+   * HTML content from attribute Tippy.js plug-in.
+   *
+   * This safely parses and unescapes HTML entities from a specified attribute
+   * and sets it as the Tippy.js content, setting {allowHTML: true} once it's
+   * done so.
+   *
+   * @type {Object}
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Glossary/Cross-site_scripting
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString
+   *
+   * @see https://atomiks.github.io/tippyjs/v6/html-content/
+   *
+   * @see https://atomiks.github.io/tippyjs/v6/all-props/#allowhtml
+   */
+  this.htmlContentAttributePlugin = {
+    name: 'htmlContentAttribute',
+    defaultValue: false,
+    fn: function(instance) {
+
+      if (
+        !instance.props.htmlContentAttribute ||
+        typeof instance.props.htmlContentAttribute !== 'string' ||
+        instance.props.htmlContentAttribute.length === 0
+      ) {
+        return {};
+      }
+
+      async function onCreate() {
+
+        const $target = $(instance.reference);
+
+        const attributeValue = await fastdom.measure(function() {
+          return $target.attr(instance.props.htmlContentAttribute);
+        });
+
+        if (
+          typeof attributeValue !== 'string' ||
+          attributeValue.trim().length === 0
+        ) {
+          return;
+        }
+
+        const parsedDocument = new DOMParser().parseFromString(
+          attributeValue, 'text/html',
+        );
+
+        const parsedHtml = $(parsedDocument).text();
+
+        if (parsedHtml.trim().length === 0) {
+          return;
+        }
+
+        // Only auto enable the allowHTML property if we've gotten this far and
+        // determined that there's HTML content to be shown.
+        instance.setProps({allowHTML: true});
+
+        instance.setContent(parsedHtml);
+
+      };
+
+      return {
+        onCreate: onCreate,
+      };
+
+    },
+  };
+
+  /**
    * Move transition disable on create Tippy.js plug-in.
    *
    * This works around an issue with the moveTransition property which can
@@ -410,6 +480,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     this.debugPlugin,
     this.hideOnEscPlugin,
     this.hideOnOutOfBoundsPlugin,
+    this.htmlContentAttributePlugin,
     this.moveTransitionDisabledOnCreate,
     this.titleAttributePlugin,
   );
