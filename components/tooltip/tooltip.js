@@ -126,21 +126,58 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     },
   };
 
-  // /**
-  //  * Hide on blur Tippy.js plug-in.
-  //  *
-  //  * @type {Object}
-  //  *
-  //  * @see https://atomiks.github.io/tippyjs/v6/plugins/#hideonpopperblur
-  //  *   Loosely based on this.
-  //  */
-  // this.hideOnBlurPlugin = {
-  //   name: 'hideOnBlur',
-  //   defaultValue: true,
-  //   fn: function() { return {
-  //     // @todo
-  //   }}
-  // };
+  /**
+   * Hide on blur Tippy.js plug-in.
+   *
+   * This hides the tooltip if neither the reference element nor the tooltip
+   * or any elements therein have focus on a focusout event.
+   *
+   * @type {Object}
+   *
+   * @see https://atomiks.github.io/tippyjs/v6/plugins/#hideonpopperblur
+   *   Loosely based on this.
+   */
+  this.hideOnBlurPlugin = {
+    name: 'hideOnBlur',
+    defaultValue: true,
+    fn: function(instance) {
+
+      const $reference = $(instance.reference);
+
+      const $tooltip = $(instance.popper);
+
+      function focusOutHandler(event) {
+
+        if (
+          !instance.props.hideOnBlur ||
+          $reference.is(event.relatedTarget) ||
+          $reference.has(event.relatedTarget).length > 0 ||
+          $tooltip.is(event.relatedTarget) ||
+          $tooltip.has(event.relatedTarget).length > 0
+        ) {
+          return;
+        }
+
+        instance.hide();
+
+      };
+
+      return {
+        onCreate: function() {
+
+          $tooltip.on('focusout', focusOutHandler);
+
+        },
+        onDestroy: function() {
+
+          // Probably not necessary but it's a good practice to clean up
+          // handlers.
+          $tooltip.off('focusout', focusOutHandler);
+
+        },
+      }
+    }
+  };
 
   /**
    * Hide on out of bounds Tippy.js plug-in.
@@ -478,6 +515,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
   // Tippy.js doesn't seem to merge this array but replaces it with the new one.
   defaultPlugins.push(
     this.debugPlugin,
+    this.hideOnBlurPlugin,
     this.hideOnEscPlugin,
     this.hideOnOutOfBoundsPlugin,
     this.htmlContentAttributePlugin,
