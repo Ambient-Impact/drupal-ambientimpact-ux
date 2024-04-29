@@ -55,6 +55,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
         }
 
         instance.setProps({
+          hideOnBlur:   false,
           hideOnClick:  false,
           trigger:      'click',
         });
