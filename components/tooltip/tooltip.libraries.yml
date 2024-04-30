@@ -1,6 +1,7 @@
 component.tooltip:
   js:
     tooltip.js: {}
+    tooltip.singleton.js: {}
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.fastdom
