@@ -1,7 +1,14 @@
 component.tooltip:
   js:
     tooltip.js: {}
+    tooltip.debug.js: {}
+    tooltip.hide_on_blur.js: {}
+    tooltip.hide_on_esc.js: {}
+    tooltip.hide_on_out_of_bounds.js: {}
+    tooltip.html_content_attribute.js: {}
+    tooltip.move_transition_disabled_on_create.js: {}
     tooltip.singleton.js: {}
+    tooltip.title_attribute.js: {}
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.fastdom
