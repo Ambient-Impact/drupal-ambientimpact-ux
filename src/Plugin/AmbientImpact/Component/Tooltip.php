@@ -71,19 +71,7 @@ class Tooltip extends ComponentBase {
     );
 
     /** @var \Drupal\Core\Link */
-    $longLink1 = new Link($this->t(
-      'to choose the position of the tooltip based on the closest text fragment',
-      ), Url::fromUri(
-        'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning', [
-          'attributes' => [
-            'title'   => $this->t('Hello!'),
-          ],
-        ],
-      ),
-    );
-
-    /** @var \Drupal\Core\Link */
-    $longLink2 = new Link($this->t(
+    $inlinePositioningLink = new Link($this->t(
       'via the <code>inlinePositioning</code> property',
       ), Url::fromUri(
         'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning', [
@@ -94,29 +82,75 @@ class Tooltip extends ComponentBase {
       ),
     );
 
-    /** @var \Drupal\Core\Link */
-    $longLink3 = new Link($this->t(
-      'on these links at the end or start of a line where they wrap',
-      ), Url::fromUri(
-        'https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects', [
-          'attributes' => [
-            'title' => $this->t('Hellooooo!'),
-          ],
-        ],
-      ),
-    );
+    $pseudoLink1 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('to choose the position of the tooltip'),
+      '#attributes' => [
+        'title'             => $this->t('Hello!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
 
-    /** @var \Drupal\Core\Link */
-    $longLink4 = new Link($this->t(
-      'resize your browser window if you\'re able to, or rotate your mobile device',
-      ), Url::fromUri(
-        'https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design', [
-          'attributes' => [
-            'title' => $this->t('Henlo!'),
-          ],
-        ],
-      ),
-    );
+    $pseudoLink2 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('the closest text fragment'),
+      '#attributes' => [
+        'title'             => $this->t('Hellooooo!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
+
+    $pseudoLink3 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('on these pseudo-links'),
+      '#attributes' => [
+        'title'             => $this->t('Hewwo!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
+
+    $pseudoLink4 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('a line where they wrap'),
+      '#attributes' => [
+        'title'             => $this->t('Henlo!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
+
+    $pseudoLink5 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('the pseudo-links\' bounding boxes'),
+      '#attributes' => [
+        'title'             => $this->t('Greetings!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
+
+    $pseudoLink6 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('resize your browser window'),
+      '#attributes' => [
+        'title'             => $this->t('Howdy!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
+
+    $pseudoLink7 = [
+      '#type'   => 'html_tag',
+      '#tag'    => 'a',
+      '#value'  => $this->t('rotate your mobile device'),
+      '#attributes' => [
+        'title'             => $this->t('Higgledy-piggledy!'),
+        'data-pseudo-link'  => true,
+      ],
+    ];
 
     /** @var \Drupal\Core\Link */
     $tippyAnimationsDemoLink = new Link($this->t(
@@ -311,12 +345,20 @@ class Tooltip extends ComponentBase {
             '#type'     => 'html_tag',
             '#tag'      => 'p',
             '#value'    => $this->t(
-              'Another neat trick Tippy.js can do is @longLink1 when text wraps over more than one line @longLink2, which we set to true by default. Try hovering over these or long pressing on a touch screen @longLink3 and watch the tooltip appear where it feels most intuitive rather than at the centre of the entire links\' bounding boxes. In the unlikely case none of these links wrap to a new line, @longLink4.',
+              'Another neat trick Tippy.js can do is @pseudoLink1 based on @pseudoLink2 when text wraps over more than one line @inlinePositioningLink, which we set to true by default. Try hovering over these or long pressing on a touch screen @pseudoLink3 at the start or end of @pseudoLink4 and watch the tooltip appear where it feels most intuitive rather than at the centre of @pseudoLink5. In the unlikely case none of these links wrap to a new line, @pseudoLink6 if you\'re able to, @pseudoLink7.',
               [
-                '@longLink1' => $longLink1->toString(),
-                '@longLink2' => $longLink2->toString(),
-                '@longLink3' => $longLink3->toString(),
-                '@longLink4' => $longLink4->toString(),
+                '@inlinePositioningLink' => $inlinePositioningLink->toString(),
+                // @todo These produce newlines since they're not inline
+                //   templates but can't be cast to strings here or Drupal will
+                //   escape their HTML. Can we use '#type' => 'inline_template'
+                //   instead or something else?
+                '@pseudoLink1' => $this->renderer->render($pseudoLink1),
+                '@pseudoLink2' => $this->renderer->render($pseudoLink2),
+                '@pseudoLink3' => $this->renderer->render($pseudoLink3),
+                '@pseudoLink4' => $this->renderer->render($pseudoLink4),
+                '@pseudoLink5' => $this->renderer->render($pseudoLink5),
+                '@pseudoLink6' => $this->renderer->render($pseudoLink6),
+                '@pseudoLink7' => $this->renderer->render($pseudoLink7),
               ],
             ),
           ],
