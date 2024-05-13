@@ -73,14 +73,9 @@ class Tooltip extends ComponentBase {
     /** @var \Drupal\Core\Link */
     $inlinePositioningLink = new Link($this->t(
       'via the <code>inlinePositioning</code> property',
-      ), Url::fromUri(
-        'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning', [
-          'attributes' => [
-            'title' => $this->t('Hello again!'),
-          ],
-        ],
-      ),
-    );
+    ), Url::fromUri(
+      'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning',
+    ));
 
     $pseudoLink1 = [
       '#type'   => 'html_tag',
