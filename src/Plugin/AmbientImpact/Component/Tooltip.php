@@ -100,7 +100,7 @@ class Tooltip extends ComponentBase {
     $pseudoLink3 = [
       '#type'   => 'html_tag',
       '#tag'    => 'a',
-      '#value'  => $this->t('on these pseudo-links'),
+      '#value'  => $this->t('these pseudo-links'),
       '#attributes' => [
         'title'             => $this->t('Hewwo!'),
         'data-pseudo-link'  => true,
@@ -340,7 +340,7 @@ class Tooltip extends ComponentBase {
             '#type'     => 'html_tag',
             '#tag'      => 'p',
             '#value'    => $this->t(
-              'Another neat trick Tippy.js can do is @pseudoLink1 based on @pseudoLink2 when text wraps over more than one line @inlinePositioningLink, which we set to true by default. Try hovering over these or long pressing on a touch screen @pseudoLink3 at the start or end of @pseudoLink4 and watch the tooltip appear where it feels most intuitive rather than at the centre of @pseudoLink5. In the unlikely case none of these links wrap to a new line, @pseudoLink6 if you\'re able to, @pseudoLink7.',
+              'Another neat trick Tippy.js can do is @pseudoLink1 based on @pseudoLink2 when text wraps over more than one line @inlinePositioningLink, which we set to true by default. Try hovering over or tapping @pseudoLink3 at the start or end of @pseudoLink4 and watch the tooltip appear where it feels most intuitive rather than at the centre of @pseudoLink5. In the unlikely case none of these links wrap to a new line, @pseudoLink6 if you\'re able to, @pseudoLink7.',
               [
                 '@inlinePositioningLink' => $inlinePositioningLink->toString(),
                 // @todo These produce newlines since they're not inline
@@ -373,7 +373,7 @@ class Tooltip extends ComponentBase {
             '#type'     => 'html_tag',
             '#tag'      => 'p',
             '#value'    => $this->t(
-              'This also supports @tippyAnimationsDemoLink that ship with Tippy.js, and adding new ones supported as described in @tippyAnimationsDocsLink.',
+              'This also supports @tippyAnimationsDemoLink that ship with Tippy.js, and adding new ones is supported as described in @tippyAnimationsDocsLink.',
               [
                 '@tippyAnimationsDemoLink' => $tippyAnimationsDemoLink->toString(),
                 '@tippyAnimationsDocsLink' => $tippyAnimationsDocsLink->toString(),
