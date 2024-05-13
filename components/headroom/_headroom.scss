@@ -37,11 +37,12 @@ $headroom-translate-unpinned: -105% !default;
 @mixin headroom-base {
   position: sticky;
 
-  // The CSS 'top' value for sticky positioning. Defaults to --displace-top if
-  // it's defined, or 0 if it isn't defined. Note that this is not the same as
-  // the Headroom top/bottom offset, which is what Headroom uses to decide when
-  // an element has hit the relevant edge and should transition to hidden.
-  --headroom-top:       var(--displace-top, 0);
+  // The CSS 'top' value for sticky positioning. Defaults to
+  // --drupal-displace-offset-top if it's defined, or 0 if it isn't defined.
+  // Note that this is not the same as the Headroom top/bottom offset, which is
+  // what Headroom uses to decide when an element has hit the relevant edge and
+  // should transition to hidden.
+  --headroom-top:       var(--drupal-displace-offset-top, 0);
   --headroom-duration:  #{$headroom-duration};
   --headroom-easing:    #{$headroom-easing};
 
