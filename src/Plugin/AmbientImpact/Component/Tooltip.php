@@ -77,6 +77,11 @@ class Tooltip extends ComponentBase {
       'https://atomiks.github.io/tippyjs/v6/all-props/#inlinepositioning',
     ));
 
+    /** @var \Drupal\Core\Link */
+    $inlineFloatingUiLink = new Link($this->t(
+      'the Floating UI inline modifier documentation',
+    ), Url::fromUri('https://floating-ui.com/docs/inline'));
+
     $pseudoLink1 = [
       '#type'   => 'html_tag',
       '#tag'    => 'a',
@@ -355,6 +360,15 @@ class Tooltip extends ComponentBase {
                 '@pseudoLink6' => $this->renderer->render($pseudoLink6),
                 '@pseudoLink7' => $this->renderer->render($pseudoLink7),
               ],
+            ),
+          ],
+
+          'more_info' => [
+            '#type'   => 'html_tag',
+            '#tag'    => 'p',
+            '#value'  => $this->t(
+              'Please see the diagrams in the @inlineFloatingUiLink for a visual demonstration of the problem without <code>inlinePositioning</code> enabled.',
+              ['@inlineFloatingUiLink' => $inlineFloatingUiLink->toString()],
             ),
           ],
 
