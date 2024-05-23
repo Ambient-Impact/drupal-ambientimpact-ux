@@ -197,6 +197,13 @@ class Tooltip extends ComponentBase {
       'https://developer.mozilla.org/en-US/docs/Glossary/Cross-site_scripting',
     ));
 
+    /** @var \Drupal\Core\Link */
+    $drupalHtmlUtilityLink = new Link($this->t(
+      '<code>Drupal\Component\Utility\Html::escape()</code>',
+    ), Url::fromUri(
+      'https://git.drupalcode.org/project/drupal/-/blob/d40360cb42b154235c5ec3f2edf7696f211f5726/core/lib/Drupal/Component/Utility/Html.php#L431',
+    ));
+
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup */
     $htmlContent = $this->t(
       '<strong>HTML content</strong> can be automatically parsed while protecting against <em>cross-site scripting exploits</em>. @tippyLink is pretty neat.',
@@ -412,12 +419,13 @@ class Tooltip extends ComponentBase {
             '#type'     => 'html_tag',
             '#tag'      => 'p',
             '#value'    => $this->t(
-              'Tippy.js supports @tippyHtmlContentLink, but it must be explicitly opted in via the @tippyAllowHtmlPropLink to protect against @xssMdnLink. We provide a plug-in that defines a <code>htmlContentAttribute</code> property; if this property is set to a string, we attempt to retrieve HTML content from an attribute by that name; we then parse it using @domParserMdnLink which will automatically strip any cross-site scripts for us, and we unescape any HTML entities while doing so. Note that this means you should always escape any HTML you place into this attribute to ensure it doesn\'t get parsed incorrectly by browsers.',
+              'Tippy.js supports @tippyHtmlContentLink, but it must be explicitly opted in via the @tippyAllowHtmlPropLink to protect against @xssMdnLink. We provide a plug-in that defines a <code>htmlContentAttribute</code> property; if this property is set to a string, we attempt to retrieve HTML content from an attribute by that name; we then parse it using @domParserMdnLink which will automatically strip any cross-site scripts for us, and we unescape any HTML entities while doing so. Note that this means you should always escape any HTML you place into this attribute - for example using @drupalHtmlUtilityLink - to ensure it doesn\'t get parsed incorrectly by browsers.',
               [
                 '@domParserMdnLink' => $domParserMdnLink->toString(),
                 '@tippyAllowHtmlPropLink' => $tippyAllowHtmlPropLink->toString(),
                 '@tippyHtmlContentLink' => $tippyHtmlContentLink->toString(),
                 '@xssMdnLink' => $xssMdnLink->toString(),
+                '@drupalHtmlUtilityLink' => $drupalHtmlUtilityLink->toString(),
               ],
             ),
           ],
