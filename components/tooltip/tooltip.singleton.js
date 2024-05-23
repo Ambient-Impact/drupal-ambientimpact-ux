@@ -27,8 +27,8 @@ AmbientImpact.addComponent('tooltipSingleton', function(aiTooltipSingleton, $) {
    *
    * While there are a few ways we could infer an instance is a singleton in
    * a custom plug-in, there's no guarantee those heuristics won't change
-   * without warning and break our detection. While not an ideal solution,
-   * replacing tippy.createSingleton() with our own function allows us to know
+   * without warning and break our detection. While not an ideal solution, we
+   * wrap tippy.createSingleton() with our own function which allows us to know
    * exactly when an instance is a singleton, and mark all others as not a
    * singleton with certainty.
    *
