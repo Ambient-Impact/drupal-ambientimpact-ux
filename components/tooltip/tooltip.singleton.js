@@ -53,9 +53,7 @@ AmbientImpact.addComponent('tooltipSingleton', function(aiTooltipSingleton, $) {
     // ensure it's off for the singleton itself.
     properties.inlinePositioning = false;
 
-    const singleton = originalCreateSingleton(instances, properties);
-
-    return singleton;
+    return originalCreateSingleton(instances, properties);
 
   };
 
