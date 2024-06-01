@@ -137,7 +137,7 @@ class Details extends ComponentBase {
               '#list_type'  => 'ol',
               '#items'      => [
                 $this->t(
-                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed.',
+                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed. No, really - unlike a lot of things, you can\'t even force the content to be visible via <code>display: block !important;</code> <code>visibility: visible !important;</code> or similar; go and try.',
                 ),
                 $this->t(
                   'There is currently no CSS-only way to transition from a fixed height to the natural content height; the workaround most solutions use is to animate the <code>max-height</code> which is set to a large value when open so that there\'s a fixed height to transition to; while this does transition open and closed, the open transition doesn\'t come to smooth stop but usually ends abruptly due to the transition continuing on past the natural content height.',
@@ -225,13 +225,13 @@ class Details extends ComponentBase {
         ] + $details,
         [
           '#title' => $this->t(
-            'This one is styled but opening and closing is left as the browser default',
+            'This one is styled but not animated',
           ),
           '#description'  => [
             'boring' => [
               '#type'   => 'html_tag',
               '#tag'    => 'p',
-              '#value'  => $this->t('In other words, this is how it behaves if the JavaScript fails to load or attach: not as smooth, but you can still access the content within.'),
+              '#value'  => $this->t('In other words, this is how it behaves if the JavaScript fails to load or attach: it falls back to the browser default which is not as smooth, but you can still access the content within.'),
             ],
             'lorem' => [
               '#type'   => 'html_tag',
@@ -243,13 +243,13 @@ class Details extends ComponentBase {
         ] + $details,
         [
           '#title' => $this->t(
-            'This is how it looks with your browser\'s default styles',
+            'This is unstyled and not animated',
           ),
           '#description'  => [
             'boring' => [
               '#type'   => 'html_tag',
               '#tag'    => 'p',
-              '#value'  => $this->t('Pretty boring, right?'),
+              '#value'  => $this->t('This is how it looks with your browser\'s default styles. Pretty boring, right?'),
             ],
             'lorem' => [
               '#type'   => 'html_tag',
