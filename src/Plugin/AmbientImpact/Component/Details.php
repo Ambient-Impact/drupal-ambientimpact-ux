@@ -261,6 +261,26 @@ class Details extends ComponentBase {
             'details--demo-not-animated', 'details--demo-unstyled',
           ]],
         ] + $details,
+        [
+          '#title' => $this->t(
+            'This is not styled and but <em>is</em> animated',
+          ),
+          '#description'  => [
+            'boring' => [
+              '#type'   => 'html_tag',
+              '#tag'    => 'p',
+              '#value'  => $this->t('In case you were wondering how that would look.'),
+            ],
+            'lorem' => [
+              '#type'   => 'html_tag',
+              '#tag'    => 'p',
+              '#value'  => $lorem,
+            ],
+          ],
+          '#attributes' => ['class' => [
+            'details--demo-unstyled',
+          ]],
+        ] + $details,
       ],
     ];
 
