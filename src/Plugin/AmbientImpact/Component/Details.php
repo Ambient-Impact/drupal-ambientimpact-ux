@@ -263,7 +263,7 @@ class Details extends ComponentBase {
         ] + $details,
         [
           '#title' => $this->t(
-            'This is not styled and but <em>is</em> animated',
+            'This is not styled but <em>is</em> animated',
           ),
           '#description'  => [
             'boring' => [
