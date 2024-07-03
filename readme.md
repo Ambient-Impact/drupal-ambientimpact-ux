@@ -134,12 +134,14 @@ The following major version bumps indicate breaking changes:
 
   * Increases minimum version of [Hook Event Dispatcher](https://www.drupal.org/project/hook_event_dispatcher) to 4.0.
 
-  * [Complete rewrite of tooltip component for Tippy.js 6.x](https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/1):
+  * [Multiple components have been removed that are no longer needed and/or better alternatives exist](https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/5):
+
+    * `abbr`: Removed as part of the `tooltip` component rewrite farther down; this is now expected to be handled by the theme.
+
+  * [Complete rewrite of `tooltip` component for Tippy.js 6.x](https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/1):
 
     * Previous spaghetti code has been re-implemented as various [Tippy.js plug-ins](https://atomiks.github.io/tippyjs/v6/plugins/), which means they're now configured using Tippy.js constructor (or global default) properties.
 
     * The old nested config has been removed as part of the above, with all configuration being sent to Tippy.js, simplifying the way tooltips are constructed.
 
     * Removed all tooltip stylesheets as these are now the responsibility of the theme. If the theme doesn't provide any styles, the default Tippy.js tooltip theme is used.
-
-    * As a consequence of this rewrite, the abbreviation component has been completely removed; this is now expected to be handled by the theme.
