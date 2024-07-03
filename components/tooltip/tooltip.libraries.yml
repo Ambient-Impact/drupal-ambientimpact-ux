@@ -34,3 +34,9 @@ component.tooltip.demo:
     - ambientimpact_ux/tippy.js-animation-shift-toward-extreme
     - ambientimpact_ux/tippy.js-animation-shift-toward-subtle
     - ambientimpact_ux/tippy.js-animation-shift-toward
+
+component.tooltip.events:
+  js:
+    tooltip.events.js: {}
+  dependencies:
+    - ambientimpact_ux/tippy.js
