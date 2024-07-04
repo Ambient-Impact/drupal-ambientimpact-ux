@@ -139,6 +139,8 @@ The following major version bumps indicate breaking changes:
     * `abbr`: Removed as part of the `tooltip` component rewrite farther down; this is now expected to be handled by the theme.
 
     * `gin`: This only existed to auto toggle between light and dark modes, and this functionality is now in [the Gin theme](https://www.drupal.org/project/gin) itself.
+    
+    * `toolbar`: This was a port of improvements layered on top of the old Drupal 7 [Navbar](https://www.drupal.org/project/navbar) to Drupal 8 but was no longer used if the [Gin theme](https://www.drupal.org/project/gin) was the admin theme; note that this also removes the `data-drupal-theme` attribute that was added to the `<html>` element as that was the only use for it.
 
     * `seven`: [The Seven theme](https://www.drupal.org/project/seven) was removed from Drupal core 10.0 in favour of Claro.
 
