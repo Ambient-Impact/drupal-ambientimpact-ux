@@ -138,6 +138,8 @@ The following major version bumps indicate breaking changes:
 
     * `abbr`: Removed as part of the `tooltip` component rewrite farther down; this is now expected to be handled by the theme.
 
+    * `content_visibility`: This was only ever used on one page on ambientimpact.com, which is no longer used, and as a component was over-engineered.
+
     * `gin`: This only existed to auto toggle between light and dark modes, and this functionality is now in [the Gin theme](https://www.drupal.org/project/gin) itself.
     
     * `toolbar`: This was a port of improvements layered on top of the old Drupal 7 [Navbar](https://www.drupal.org/project/navbar) to Drupal 8 but was no longer used if the [Gin theme](https://www.drupal.org/project/gin) was the admin theme; note that this also removes the `data-drupal-theme` attribute that was added to the `<html>` element as that was the only use for it.

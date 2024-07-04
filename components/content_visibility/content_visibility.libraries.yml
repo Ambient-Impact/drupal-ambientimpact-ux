@@ -1,5 +1,0 @@
-component.content_visibility:
-  js:
-    content_visibility.js: {}
-  dependencies:
-    - ambientimpact_core/component.fastdom
