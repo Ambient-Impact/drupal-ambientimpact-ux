@@ -140,6 +140,8 @@ The following major version bumps indicate breaking changes:
 
     * `gin`: This only existed to auto toggle between light and dark modes, and this functionality is now in [the Gin theme](https://www.drupal.org/project/gin) itself.
 
+    * `seven`: [The Seven theme](https://www.drupal.org/project/seven) was removed from Drupal core 10.0 in favour of Claro.
+
   * [Complete rewrite of `tooltip` component for Tippy.js 6.x](https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/1):
 
     * Previous spaghetti code has been re-implemented as various [Tippy.js plug-ins](https://atomiks.github.io/tippyjs/v6/plugins/), which means they're now configured using Tippy.js constructor (or global default) properties.
