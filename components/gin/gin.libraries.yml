@@ -1,5 +1,0 @@
-component.gin:
-  js:
-    gin.js: {}
-  dependencies:
-    - ambientimpact_core/component.media_query

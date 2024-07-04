@@ -138,6 +138,8 @@ The following major version bumps indicate breaking changes:
 
     * `abbr`: Removed as part of the `tooltip` component rewrite farther down; this is now expected to be handled by the theme.
 
+    * `gin`: This only existed to auto toggle between light and dark modes, and this functionality is now in [the Gin theme](https://www.drupal.org/project/gin) itself.
+
   * [Complete rewrite of `tooltip` component for Tippy.js 6.x](https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/1):
 
     * Previous spaghetti code has been re-implemented as various [Tippy.js plug-ins](https://atomiks.github.io/tippyjs/v6/plugins/), which means they're now configured using Tippy.js constructor (or global default) properties.
