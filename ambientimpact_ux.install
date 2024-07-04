@@ -58,3 +58,18 @@ function ambientimpact_ux_update_10105(): void {
   )->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild container, libraries, and component plug-ins for 2.x removals.
+ */
+function ambientimpact_ux_update_10201(): void {
+
+  \Drupal::service('kernel')->invalidateContainer();
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+  \Drupal::service(
+    'plugin.manager.ambientimpact_component',
+  )->clearCachedDefinitions();
+
+}
