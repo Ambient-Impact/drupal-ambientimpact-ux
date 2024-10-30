@@ -110,7 +110,7 @@ class Details extends ComponentBase {
         [
           '#title'        => $this->t('How and why'),
           '#description'  => $this->t(
-            'This was originally inspired by @cssTricksLink but was completely overhauled from the original implementation; unlike the CSS-Tricks implementaton, we <em>do not</em> listen to <code>click</code> or other UI events, instead acting only on @toggleEventMdnLink which is the recommended approach as it\'s triggered whenever anything adds or removes @openAttributeMdnLink or changes @openPropertyMdnLink, be it mouse, keyboard, touch, a screen reader, etc. We also <em>do not</em> change the the <code>open</code> attribute or property at any point to accomplish the animation, unlike the CSS-Tricks solution.',
+            'This was originally inspired by @cssTricksLink but was completely overhauled from the original implementation; unlike the CSS-Tricks implementaton, we <em>do not</em> listen to <code>click</code> or other UI events, instead acting only on @toggleEventMdnLink which is the recommended approach as it\'s triggered whenever anything adds or removes @openAttributeMdnLink or changes @openPropertyMdnLink, be it mouse, keyboard, touch, a screen reader, etc. We also <em>do not</em> change the <code>open</code> attribute or property at any point to accomplish the animation, unlike the CSS-Tricks solution.',
             [
               '@cssTricksLink'        => $cssTricksLink->toString(),
               '@toggleEventMdnLink'   => $toggleEventMdnLink->toString(),
