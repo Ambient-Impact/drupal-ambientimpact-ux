@@ -206,7 +206,7 @@ class Tooltip extends ComponentBase {
 
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup */
     $htmlContent = $this->t(
-      '<strong>HTML content</strong> can be automatically parsed while protecting against <em>cross-site scripting exploits</em>. @tippyLink is pretty neat.',
+      '<strong>HTML content</strong> can be automatically parsed while protecting against <em>cross-site scripting exploits</em>. @tippyLink is pretty neat like that.',
       ['@tippyLink' => $tippyLink->toString()]
     );
 
