@@ -390,7 +390,9 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
     // return.
     if (AmbientImpact.objectPathExists('tooltip.tippy', itemObject)) {
 
-      itemObject.tooltip.tippy.enable();
+      for (let i = 0; i < itemObject.tooltip.tippy.length; i++) {
+        itemObject.tooltip.tippy[i].enable();
+      }
 
       return;
 
@@ -459,7 +461,10 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
         continue;
       }
 
-      items[i].tooltip.tippy.disable();
+      for (let j = 0; j < items[i].tooltip.tippy.length; j++) {
+        items[i].tooltip.tippy[j].disable();
+      }
+
     }
   }
 
