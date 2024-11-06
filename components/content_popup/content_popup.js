@@ -340,6 +340,17 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
 
     }
 
+    if (typeof itemObject.$trigger.attr(
+      'data-original-title',
+    ) !== 'undefined') {
+
+      // Restore a backed up title attribute and remove data-original-title.
+      itemObject.$trigger.attr(
+        'title', itemObject.$trigger.attr('data-original-title'),
+      ).removeAttr('data-original-title');
+
+    }
+
     $trigger.off('click.aiContentPopUp');
 
     items.splice(i, 1);
@@ -426,10 +437,21 @@ AmbientImpact.addComponent('contentPopUp', function(aiContentPopUp, $) {
           itemObject.$content,
         )[0],
         allowHTML: true,
+        // Disable the title attribute plug-in so that it doesn't overwrite our
+        // content with the title attribute contents.
         titleAttribute: false,
-      })
-
+      }),
     );
+
+    if (typeof itemObject.$trigger.attr('title') === 'undefined') {
+      return;
+    }
+
+    // Save existing title attribute to data-original-title in the same way as
+    // the title attribute plug-in does, and remove the title attribute.
+    itemObject.$trigger.attr(
+      'data-original-title', itemObject.$trigger.attr('title'),
+    ).removeAttr('title');
 
   };
 
