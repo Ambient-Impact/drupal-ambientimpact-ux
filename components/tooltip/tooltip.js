@@ -18,7 +18,7 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
    *
    * @type {String}
    */
-  const arrow = '<svg width="16" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M 8 0 C 6.9300011 0.005999994 5.8509207 0.89976711 4.6699219 2.3847656 C 1.7959247 5.986762 0 6 0 6 L 0 8 L 16 8 L 16 6 C 16 6 14.233747 6.004762 11.34375 2.3847656 C 10.148751 0.88676712 9.0699989 -0.005999994 8 0 z "></svg>';
+  const arrow = '<svg width="16" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M8 .19c-1.07.005-2.15.878-3.33 2.328C1.796 6.034 0 6.048 0 6.048V8h16V6.047s-1.766.005-4.656-3.53C10.149 1.056 9.07.185 8 .19Z"/></svg>';
 
   tippy.setDefaultProps({
     arrow: arrow,
