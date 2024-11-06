@@ -86,7 +86,9 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
      */
     destroy() {
 
-      this.#tippy.destroy();
+      for (let i = 0; i < this.#tippy.length; i++) {
+        this.#tippy[i].destroy();
+      }
 
     }
 
