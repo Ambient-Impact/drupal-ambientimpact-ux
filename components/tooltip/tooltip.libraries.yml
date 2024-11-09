@@ -40,3 +40,10 @@ component.tooltip.events:
     tooltip.events.js: {}
   dependencies:
     - ambientimpact_ux/tippy.js
+
+component.tooltip.shrinkwrap:
+  js:
+    tooltip.shrinkwrap.js: {}
+  dependencies:
+    - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/tippy.js
