@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    width="16"
-   height="8"
+   height="12"
    version="1.1"
    id="svg1"
    sodipodi:docname="arrow.svg"
@@ -23,7 +23,7 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="47.5"
      inkscape:cx="8.1157895"
-     inkscape:cy="2.9684211"
+     inkscape:cy="5.0315789"
      inkscape:window-width="1920"
      inkscape:window-height="1043"
      inkscape:window-x="0"
@@ -32,5 +32,6 @@
      inkscape:current-layer="svg1" />
   <path
      id="path1"
-     d="M 8,0.18947297 C 6.9300011,0.19533086 5.8509207,1.0679299 4.6699219,2.5177575 1.7959247,6.0344438 0,6.0473682 0,6.0473682 V 8 H 16 V 6.0473682 c 0,0 -1.766253,0.00465 -4.65625,-3.5296107 C 10.148751,1.0552378 9.0699989,0.18361508 8,0.18947297 Z" />
+     d="M 8,0.18947297 C 6.9300011,0.19533086 5.8509207,1.0679299 4.6699219,2.5177575 1.7959247,6.0344438 0,6.0473682 0,6.0473682 V 12 H 16 V 6.0473682 c 0,0 -1.766253,0.00465 -4.65625,-3.5296107 C 10.148751,1.0552378 9.0699989,0.18361508 8,0.18947297 Z"
+     sodipodi:nodetypes="sccccccs" />
 </svg>
