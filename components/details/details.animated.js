@@ -502,6 +502,13 @@ AmbientImpact.addComponent('detailsAnimated', function(aiDetailsAnimated, $) {
      */
     #unsetHeightProperties() {
 
+      /**
+       * Reference to the current instance.
+       *
+       * @type {this}
+       */
+      const that = this;
+
       return fastdom.mutate(function() {
 
         /**
