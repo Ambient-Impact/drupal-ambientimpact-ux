@@ -46,16 +46,47 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
         return;
       }
 
+      /**
+       * Prevents visible transitions or layout jumps on the Popper element.
+       *
+       * This is necessary when making changes during the show phase because
+       * we aren't always able to prevent a frame or two being painted before
+       * we make our changes, resulting in the tooltip visibly moving.
+       *
+       * @param {Tippy} instance
+       */
+      async function lock(instance) {
+
+        await fastdom.mutate(function() {
+
+          $(instance.popper).css({
+            'opacity':              0,
+            'transition-duration':  '0s',
+          });
+
+        });
+
+      }
+
+      /**
+       * Unlock transitions and opacity on the Popper element.
+       *
+       * @param {Tippy} instance
+       */
+      async function unlock(instance) {
+
+        await fastdom.mutate(function() {
+          $(instance.popper).css({
+            'opacity':              '',
+            'transition-duration':  '',
+          });
+        });
+
+      }
+
       async function modify(instance) {
 
-        const originalMoveTransition = instance.props.moveTransition;
-
-        instance.setProps({moveTransition: ''});
-
-        // Wait for a frame to be painted before proceeding to reduce the
-        // chances of a move transition kicking in when we update the width.
-        await new Promise(requestAnimationFrame);
-        await new Promise(requestAnimationFrame);
+        await lock(instance);
 
         const $content = $(instance.popper).find('.tippy-content');
 
@@ -64,7 +95,11 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
         // Return if we find more than one child node or the child node is not
         // a text node, as we don't yet support more complex use-cases.
         if (childNodes.length !== 1 || childNodes[0].nodeName !== '#text') {
+
+          await unlock(instance);
+
           return;
+
         }
 
         const $textNode = $(childNodes[0]);
@@ -95,13 +130,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
         // @see https://popper.js.org/docs/v2/lifecycle/#manual-update
         instance.popperInstance.update();
 
-        // Wait for a frame to be painted before restoring the original move
-        // transition to hopefully avoid it kicking in.
-        await new Promise(requestAnimationFrame);
-        await new Promise(requestAnimationFrame);
-
-        // This is literally all Tippy.js does when originally setting it.
-        instance.popper.style.transition = originalMoveTransition;
+        await unlock(instance);
 
       }
 
@@ -122,6 +151,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
         });
 
+        await unlock(instance);
 
       }
 
