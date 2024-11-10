@@ -43,7 +43,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
     fn: function(instance) {
 
       if (!instance.props.shrinkwrap) {
-        return;
+        return {};
       }
 
       /**
