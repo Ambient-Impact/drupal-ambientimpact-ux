@@ -41,6 +41,13 @@ AmbientImpact.addComponent('tooltip', function(aiTooltip, $) {
     // pointer stops; because of that, the property is not currently used, with
     // just interactiveBorder used.
     interactiveBorder: 10, // px
+
+    // Allows tooltip transitions to be defined via CSS. If this needs to be
+    // overridden per-tooltip, setting --tooltip-move-transition based on a
+    // class or theme in CSS is recommended rather than changing moveTransition
+    // directly.
+    moveTransition: 'var(--tooltip-move-transition)',
+
   });
 
   /**

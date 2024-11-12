@@ -57,11 +57,13 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
        */
       async function lock(instance) {
 
+        const originalMoveTransition = instance.props.moveTransition;
+
         await fastdom.mutate(function() {
 
           $(instance.popper).css({
-            'opacity':              0,
-            'transition-duration':  '0s',
+            'opacity': 0,
+            '--tooltip-move-transition': 'none',
           });
 
         });
@@ -76,10 +78,12 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
       async function unlock(instance) {
 
         await fastdom.mutate(function() {
+
           $(instance.popper).css({
-            'opacity':              '',
-            'transition-duration':  '',
+            'opacity': '',
+            '--tooltip-move-transition': '',
           });
+
         });
 
       }
@@ -127,8 +131,24 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
         // during the show transition which then snaps to the correct
         // positioning when the transition finishes.
         //
+        // Note that in rare cases this will result in an error that
+        // instance.popperInstance.update is null if triggering tooltips
+        // rapidly, so we must try to catch it as a fallback to hopefully
+        // prevent broken tooltip layout.
+        //
         // @see https://popper.js.org/docs/v2/lifecycle/#manual-update
-        instance.popperInstance.update();
+        //
+        // @see https://stackoverflow.com/a/40886720
+        //   Solutions to not being able to catch an error when using await.
+        try {
+          instance.popperInstance.update();
+        } catch (error) {
+
+          await unmodify(instance);
+
+          throw error;
+
+        }
 
         await unlock(instance);
 
@@ -156,22 +176,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
       }
 
       return {
-        onShow: async function(instance) {
-
-          // Failsafe to undo our changes if there's any error while trying to
-          // shrink-wrap. This significantly reduces the chances of broken
-          // tooltips.
-          try {
-            await modify(instance);
-          } catch (error) {
-
-            await unmodify(instance);
-
-            throw error;
-
-          }
-
-        },
+        onShow:   modify,
         onHidden: unmodify,
       };
 

@@ -3,6 +3,7 @@
 // -----------------------------------------------------------------------------
 
 AmbientImpact.onGlobals(['tippy.setDefaultProps'], function() {
+AmbientImpact.on(['fastdom'], function(aiFastDom) {
 AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
   aiTooltipMoveTransitionDisabledOnCreate, $,
 ) {
@@ -10,12 +11,19 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
   'use strict';
 
   /**
+   * FastDom instance.
+   *
+   * @type {FastDom}
+   */
+  const fastdom = aiFastDom.getInstance();
+
+  /**
    * Move transition disable on create Tippy.js plug-in.
    *
    * This works around an issue with the moveTransition property which can
    * cause it to be applied when first creating the tooltip. We fix that by
-   * removing the property (if it's set) on create, and then restoring it once
-   * the tooltip has been shown and all transforms are applied.
+   * setting --tooltip-move-transition: none on create, and then removing it
+   * once the tooltip has been shown and all transforms are applied.
    *
    * @type {Object}
    *
@@ -47,59 +55,47 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
       }
 
       /**
-       * The original moveTransition property when created.
-       *
-       * @type {String}
-       */
-      let originalMoveTransition;
-
-      /**
-       * Whether we need to restore the stored movedTransition.
+       * Whether we need to remove our inline --tooltip-move-transition.
        *
        * @type {Boolean}
        */
       let needsRestore = true;
 
-      async function restore(event) {
+      async function onCreate() {
 
-        // Wait for a frame to be painted before restoring the moveTransition.
-        // This is necessary so that any changes to transform are already made
-        // to avoid the transition kicking in. Also note that we have to
-        // request twice because the first time only queues to the start of the
-        // next frame, but that frame will not have been painted yet, so we
-        // have to request a second time to wait until the start of the next
-        // frame after that.
-        await new Promise(requestAnimationFrame);
-        await new Promise(requestAnimationFrame);
+        await fastdom.mutate(function() {
 
-        // This is literally all Tippy.js does when originally setting it.
-        instance.popper.style.transition = originalMoveTransition;
+          $(instance.popper).css({
+            '--tooltip-move-transition': 'none',
+          });
+
+        });
 
       };
 
-      function onCreate() {
-
-        originalMoveTransition = instance.props.moveTransition;
-
-        instance.setProps({moveTransition: ''});
-
-      };
-
-      function onShown() {
+      async function onShown() {
 
         if (needsRestore === false) {
           return;
         }
 
-        // Note that this doesn't set the style property until the next time the
-        // tooltip is shown, so...
-        instance.setProps({moveTransition: originalMoveTransition});
+        // Wait for a frame to be painted before removing
+        // --tooltip-move-transition. This is necessary so that any changes to
+        // transform are already made to avoid the transition kicking in. Also
+        // note that we have to request twice because the first time only
+        // queues to the start of the next frame, but that frame will not have
+        // been painted yet, so we have to request a second time to wait until
+        // the start of the next frame after that.
+        await new Promise(requestAnimationFrame);
+        await new Promise(requestAnimationFrame);
 
-        // ...we have to restore it manually just this once, but we have to wait
-        // until transitions have finished to avoid triggering a new transition.
-        instance.popper.addEventListener(
-          'transitionend', restore, {once: true},
-        );
+        await fastdom.mutate(function() {
+
+          $(instance.popper).css({
+            '--tooltip-move-transition': '',
+          });
+
+        });
 
         needsRestore = false;
 
@@ -107,7 +103,7 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
 
       return {
         onCreate: onCreate,
-        onShown: onShown,
+        onShown:  onShown,
       };
 
     },
@@ -120,5 +116,6 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
   // Tippy.js needs to be informed of the changes.
   tippy.setDefaultProps({plugins: tippy.defaultProps.plugins});
 
+});
 });
 });
