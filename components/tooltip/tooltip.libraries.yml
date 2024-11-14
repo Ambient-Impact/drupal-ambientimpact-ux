@@ -1,17 +1,17 @@
 component.tooltip:
   js:
     tooltip.js: {}
-    tooltip.debug.js: {}
-    tooltip.hide_on_blur.js: {}
-    tooltip.hide_on_esc.js: {}
-    tooltip.hide_on_out_of_bounds.js: {}
-    tooltip.html_content_attribute.js: {}
-    tooltip.move_transition_disabled_on_create.js: {}
-    tooltip.singleton.js: {}
-    tooltip.title_attribute.js: {}
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/component.tooltip.debug
+    - ambientimpact_ux/component.tooltip.hide_on_blur
+    - ambientimpact_ux/component.tooltip.hide_on_esc
+    - ambientimpact_ux/component.tooltip.hide_on_out_of_bounds
+    - ambientimpact_ux/component.tooltip.html_content_attribute
+    - ambientimpact_ux/component.tooltip.move_transition_disabled_on_create
+    - ambientimpact_ux/component.tooltip.singleton
+    - ambientimpact_ux/component.tooltip.title_attribute
     - ambientimpact_ux/tippy.js
 
 component.tooltip.demo:
@@ -35,15 +35,67 @@ component.tooltip.demo:
     - ambientimpact_ux/tippy.js-animation-shift-toward-subtle
     - ambientimpact_ux/tippy.js-animation-shift-toward
 
+component.tooltip.debug:
+  js:
+    tooltip.debug.js: {}
+  dependencies:
+    - ambientimpact_ux/tippy.js
+
 component.tooltip.events:
   js:
     tooltip.events.js: {}
   dependencies:
     - ambientimpact_ux/tippy.js
 
+component.tooltip.hide_on_blur:
+  js:
+    tooltip.hide_on_blur.js: {}
+  dependencies:
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.hide_on_esc:
+  js:
+    tooltip.hide_on_esc.js: {}
+  dependencies:
+    - ambientimpact_core/ally.js
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.hide_on_out_of_bounds:
+  js:
+    tooltip.hide_on_out_of_bounds.js: {}
+  dependencies:
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.html_content_attribute:
+  js:
+    tooltip.html_content_attribute.js: {}
+  dependencies:
+    - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.move_transition_disabled_on_create:
+  js:
+    tooltip.move_transition_disabled_on_create.js: {}
+  dependencies:
+    - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/tippy.js
+
 component.tooltip.shrinkwrap:
   js:
     tooltip.shrinkwrap.js: {}
+  dependencies:
+    - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.singleton:
+  js:
+    tooltip.singleton.js: {}
+  dependencies:
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.title_attribute:
+  js:
+    tooltip.title_attribute.js: {}
   dependencies:
     - ambientimpact_core/component.fastdom
     - ambientimpact_ux/tippy.js
