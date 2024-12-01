@@ -129,24 +129,8 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
         // during the show transition which then snaps to the correct
         // positioning when the transition finishes.
         //
-        // Note that in rare cases this will result in an error that
-        // instance.popperInstance.update is null if triggering tooltips
-        // rapidly, so we must try to catch it as a fallback to hopefully
-        // prevent broken tooltip layout.
-        //
         // @see https://popper.js.org/docs/v2/lifecycle/#manual-update
-        //
-        // @see https://stackoverflow.com/a/40886720
-        //   Solutions to not being able to catch an error when using await.
-        try {
-          instance.popperInstance.update();
-        } catch (error) {
-
-          await unmodify(instance);
-
-          throw error;
-
-        }
+        instance.popperInstance.update();
 
         await unlock(instance);
 
@@ -156,17 +140,21 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
         const $measure = $(instance.popper).find(`.${measureElementClass}`);
 
-        if ($measure.length === 0) {
-          return;
+        // Unwrap if we can find the measure. Note that we have to continue past
+        // this without returning here in case this is called to catch a failure
+        // state where the content may have not have been wrapped but an inline
+        // width was still applied.
+        if ($measure.length > 0) {
+
+          await fastdom.mutate(function() {
+            $($measure[0].childNodes).unwrap();
+          });
+
         }
 
+        // Remove the explicit width if found.
         await fastdom.mutate(function() {
-
-          $($measure[0].childNodes).unwrap();
-
-          // Remove the explicit width.
           $(instance.popper).find('.tippy-content').css('width', '');
-
         });
 
         await unlock(instance);
@@ -174,7 +162,23 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
       }
 
       return {
-        onShow:   modify,
+        // This should catch any errors while modifying and undo modifications
+        // before throwing the error that was received.
+        //
+        // A notable example of this is in rare cases when moving the pointer
+        // rapidly across trigger elements, you'll get:
+        //
+        // TypeError: can't access property "update", instance.popperInstance is
+        // null
+        //
+        // @see https://stackoverflow.com/questions/33562284/how-do-i-catch-thrown-errors-with-async-await
+        onShow: (instance) => modify(instance).catch(async (reason) => {
+
+          await unmodify(instance);
+
+          throw reason;
+
+        }),
         onHidden: unmodify,
       };
 
