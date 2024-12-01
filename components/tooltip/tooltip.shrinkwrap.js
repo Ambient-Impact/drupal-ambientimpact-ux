@@ -57,8 +57,6 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
        */
       async function lock(instance) {
 
-        const originalMoveTransition = instance.props.moveTransition;
-
         await fastdom.mutate(function() {
 
           $(instance.popper).css({
