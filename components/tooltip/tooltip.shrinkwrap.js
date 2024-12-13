@@ -42,7 +42,16 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
     defaultValue: true,
     fn: function(instance) {
 
-      if (!instance.props.shrinkwrap) {
+      if (
+        !instance.props.shrinkwrap ||
+        // We don't currently support singletons because the current
+        // implementation ends up setting the inline width only when the
+        // singleton is shown and keeps that same fixed width when it moves to
+        // another trigger. Even if we adapt this to update on moving, it may
+        // be potentially difficult to have it transition to new shrink-wrapped
+        // width from a previous one.
+        instance.props.isSingleton === true
+      ) {
         return {};
       }
 
