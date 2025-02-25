@@ -232,6 +232,13 @@ class Tooltip extends ComponentBase {
         '#attributes' => [
           'title' => $this->t('I\'m a tooltip!'),
           'data-tippy-animation' => $animationName,
+          // Shrinkwrap doesn't currently work well with some of these,
+          // resulting in incorrect and often very narrow widths.
+          //
+          // @todo Fix shrinkwrap pls.
+          //
+          // @see https://github.com/Ambient-Impact/drupal-ambientimpact-ux/issues/7
+          'data-tippy-shrinkwrap' => 'false',
         ],
       ];
 
