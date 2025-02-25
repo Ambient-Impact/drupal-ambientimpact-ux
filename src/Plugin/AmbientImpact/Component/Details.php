@@ -93,6 +93,34 @@ class Details extends ComponentBase {
       '<code>ally.maintain.disabled</code>',
     ), Url::fromUri('https://allyjs.io/api/maintain/disabled.html'));
 
+    /** @var \Drupal\Core\Link */
+    $standardsLink1 = new Link($this->t(
+      'w3c/csswg-drafts#9879',
+    ), Url::fromUri(
+      'https://github.com/w3c/csswg-drafts/issues/9879',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $standardsLink2 = new Link($this->t(
+      'w3c/csswg-drafts#2084',
+    ), Url::fromUri(
+      'https://github.com/w3c/csswg-drafts/issues/2084',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $standardsLink3 = new Link($this->t(
+      'w3c/csswg-drafts#9951',
+    ), Url::fromUri(
+      'https://github.com/w3c/csswg-drafts/issues/9951',
+    ));
+
+    /** @var \Drupal\Core\Link */
+    $standardsLink4 = new Link($this->t(
+      'whatwg/html#10265',
+    ), Url::fromUri(
+      'https://github.com/whatwg/html/pull/10265',
+    ));
+
     return [
       '#intro' => [
         '#type'       => 'html_tag',
@@ -137,7 +165,13 @@ class Details extends ComponentBase {
               '#list_type'  => 'ol',
               '#items'      => [
                 $this->t(
-                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed. No, really - unlike a lot of things, you can\'t even force the content to be visible via <code>display: block !important;</code> <code>visibility: visible !important;</code> or similar; go and try.',
+                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed. No, really - unlike a lot of things, you can\'t even force the content to be visible via <code>display: block !important;</code> <code>visibility: visible !important;</code> or similar. There are ongoing standards discussions to allow CSS-only display of the content when the <code>open</code> is not present: @standardsLink1, @standardsLink2, @standardsLink3, @standardsLink4',
+                  [
+                    '@standardsLink1'  => $standardsLink1->toString(),
+                    '@standardsLink2'  => $standardsLink2->toString(),
+                    '@standardsLink3'  => $standardsLink3->toString(),
+                    '@standardsLink4'  => $standardsLink4->toString(),
+                  ],
                 ),
                 $this->t(
                   'There is currently no CSS-only way to transition from a fixed height to the natural content height; the workaround most solutions use is to animate the <code>max-height</code> which is set to a large value when open so that there\'s a fixed height to transition to; while this does transition open and closed, the open transition doesn\'t come to smooth stop but usually ends abruptly due to the transition continuing on past the natural content height.',
@@ -164,7 +198,7 @@ class Details extends ComponentBase {
               '#list_type'  => 'ol',
               '#items'      => [
                 $this->t(
-                  'We couldn\'t rely on the content itself to measure the height of, as it would take up zero height half the time, i.e. when @openAttributeMdnLink was present on the <code>&lt;details&gt;</code>.',
+                  'We couldn\'t rely on the content itself to measure the height of, as it would take up zero height half the time, i.e. when @openAttributeMdnLink is not present on the <code>&lt;details&gt;</code>.',
                   [
                     '@openAttributeMdnLink' => $openAttributeMdnLink->toString(),
                   ],
