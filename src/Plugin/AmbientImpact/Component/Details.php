@@ -165,7 +165,7 @@ class Details extends ComponentBase {
               '#list_type'  => 'ol',
               '#items'      => [
                 $this->t(
-                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed. No, really - unlike a lot of things, you can\'t even force the content to be visible via <code>display: block !important;</code> <code>visibility: visible !important;</code> or similar. There are ongoing standards discussions to allow CSS-only display of the content when the <code>open</code> is not present: @standardsLink1, @standardsLink2, @standardsLink3, @standardsLink4',
+                  'There is no way to prevent the content disappearing instantly before the close animation has started without resorting to moving the content outside of the <code>&lt;details&gt;</code> because browsers seem to provide no way to force the content to be displayed once the the <code>open</code> attribute is removed. No, really - unlike a lot of things, you can\'t even force the content to be visible via <code>display: block !important;</code> <code>visibility: visible !important;</code> or similar. There are ongoing standards discussions to allow CSS-only display of the content when the <code>open</code> attribute is not present: @standardsLink1, @standardsLink2, @standardsLink3, @standardsLink4',
                   [
                     '@standardsLink1'  => $standardsLink1->toString(),
                     '@standardsLink2'  => $standardsLink2->toString(),
