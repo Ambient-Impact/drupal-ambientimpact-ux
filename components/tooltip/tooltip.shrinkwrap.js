@@ -99,9 +99,37 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
         await lock(instance);
 
+        /**
+         * .tippy-box clone for measuring without transforms applied.
+         *
+         * We need a clone that doesn't have transforms applied from animations
+         * to get accurate dimensions. Certain animations - especially the
+         * 'extreme' variants - result in measurements that are wildly off
+         * because we're reading the actual dimensions relative to the viewport
+         * with transforms at that point in time.
+         *
+         * @type {jQuery}
+         *
+         * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+         *   Note "information about the size of an element and its position
+         *   relative to the viewport."
+         */
+        const $boxClone = $(instance.popper).find('> .tippy-box').clone();
+
+        $boxClone
+        .attr({
+          'data-animation': 'none',
+          'data-state':     'hidden',
+        })
+        .css({
+          'position':             'absolute',
+          'transition-duration':  '0s',
+          'transition-property':  'none',
+        });
+
         const $content = $(instance.popper).find('.tippy-content');
 
-        const childNodes = $content[0].childNodes;
+        const childNodes = $boxClone.find('.tippy-content')[0].childNodes;
 
         // Return if we find more than one child node or the child node is not
         // a text node, as we don't yet support more complex use-cases.
@@ -112,6 +140,10 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
           return;
 
         }
+
+        await fastdom.mutate(() => {
+          $(instance.popper).append($boxClone);
+        });
 
         const $textNode = $(childNodes[0]);
 
@@ -131,7 +163,13 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
           return Math.ceil($measure[0].getBoundingClientRect().width);
         });
 
-        $content.width(measuredWidth);
+        await fastdom.mutate(() => {
+
+          $boxClone.remove();
+
+          $content.width(measuredWidth);
+
+        });
 
         // Instruct Popper to update now rather than after the show transition
         // has finished. This fixes incorrect positioning due our resizing
