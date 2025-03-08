@@ -17,9 +17,9 @@
 //
 // @see https://stackoverflow.com/a/37413580
 
-AmbientImpact.onGlobals(['tippy.setDefaultProps'], function() {
-AmbientImpact.on(['fastdom'], function(aiFastDom) {
-AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
+AmbientImpact.onGlobals(['tippy.setDefaultProps'], () => {
+AmbientImpact.on(['fastdom'], (aiFastDom) => {
+AmbientImpact.addComponent('tooltipShrinkwrap', (component, $) => {
 
   'use strict';
 
@@ -37,10 +37,10 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
    */
   const measureElementClass = 'tippy-shrink-wrap-measure';
 
-  this.shrinkwrapPlugin = {
+  component.shrinkwrapPlugin = {
     name: 'shrinkwrap',
     defaultValue: true,
-    fn: function(instance) {
+    fn: (instance) => {
 
       if (
         !instance.props.shrinkwrap ||
@@ -64,9 +64,9 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
        *
        * @param {Tippy} instance
        */
-      async function lock(instance) {
+      const lock = async (instance) => {
 
-        await fastdom.mutate(function() {
+        await fastdom.mutate(() => {
 
           $(instance.popper).css({
             'opacity': 0,
@@ -82,9 +82,9 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
        *
        * @param {Tippy} instance
        */
-      async function unlock(instance) {
+      const unlock = async (instance) => {
 
-        await fastdom.mutate(function() {
+        await fastdom.mutate(() => {
 
           $(instance.popper).css({
             'opacity': '',
@@ -95,7 +95,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
       }
 
-      async function modify(instance) {
+      const modify = async (instance) => {
 
         await lock(instance);
 
@@ -147,7 +147,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
         const $textNode = $(childNodes[0]);
 
-        await fastdom.mutate(function() {
+        await fastdom.mutate(() => {
 
           // Text nodes don't seem to support getBoundingClientRect() so we need
           // to wrap the text in an inline element that does support it.
@@ -157,7 +157,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
         const $measure = $textNode.parent();
 
-        const measuredWidth = await fastdom.measure(function() {
+        const measuredWidth = await fastdom.measure(() => {
           // Note that we always want to round up because rounding down will
           // cause additional wrapping in some cases, which we want to avoid.
           return Math.ceil($measure[0].getBoundingClientRect().width);
@@ -183,7 +183,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
 
       }
 
-      async function unmodify(instance) {
+      const unmodify = async (instance) => {
 
         const $measure = $(instance.popper).find(`.${measureElementClass}`);
 
@@ -193,14 +193,14 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
         // width was still applied.
         if ($measure.length > 0) {
 
-          await fastdom.mutate(function() {
+          await fastdom.mutate(() => {
             $($measure[0].childNodes).unwrap();
           });
 
         }
 
         // Remove the explicit width if found.
-        await fastdom.mutate(function() {
+        await fastdom.mutate(() => {
           $(instance.popper).find('.tippy-content').css('width', '');
         });
 
@@ -234,7 +234,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', function(component, $) {
   };
 
   // Always push onto the existing plug-ins so we don't remove existing ones.
-  tippy.defaultProps.plugins.push(this.shrinkwrapPlugin);
+  tippy.defaultProps.plugins.push(component.shrinkwrapPlugin);
 
   // Tippy.js needs to be informed of the changes.
   tippy.setDefaultProps({plugins: tippy.defaultProps.plugins});
