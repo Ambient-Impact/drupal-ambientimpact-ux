@@ -195,6 +195,16 @@ function(propertyToPixelConverter, $) {
 
       return Promise.all(promises).then(function(valuesArray) {
 
+        // If there's only one object, don't $.extend() as that'll cause an
+        // error. Just return the one object instead.
+        if (valuesArray.length === 1) {
+
+          values = valuesArray[0];
+
+          return values;
+
+        }
+
         // Merge all the objects the Promises resolved to into a single object
         // and save it to the values cache.
         values = $.extend.apply(null, valuesArray);
