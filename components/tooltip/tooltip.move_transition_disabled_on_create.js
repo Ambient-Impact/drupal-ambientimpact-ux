@@ -11,6 +11,13 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
   'use strict';
 
   /**
+   * CSS custom property name for the move transition.
+   *
+   * @type {String}
+   */
+  const customPropName = '--tooltip-move-transition';
+
+  /**
    * FastDom instance.
    *
    * @type {FastDom}
@@ -22,7 +29,7 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
    *
    * This works around an issue with the moveTransition property which can
    * cause it to be applied when first creating the tooltip. We fix that by
-   * setting --tooltip-move-transition: none on create, and then removing it
+   * setting the custom property value to 'none' on create, and then removing it
    * once the tooltip has been shown and all transforms are applied.
    *
    * @type {Object}
@@ -32,10 +39,6 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
    *
    * @see https://github.com/atomiks/tippyjs/issues/168
    *   Old issue from the 2.x series also describing a similar issue.
-   *
-   * @todo Can this first check if the transition contains 'transform' and avoid
-   *   doing anything if it doesn't? Right now it assumes the transition is
-   *   applied to the transform style property.
    */
   this.moveTransitionDisabledOnCreatePlugin = {
     name: 'moveTransitionDisabledOnCreate',
@@ -55,21 +58,57 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
       }
 
       /**
-       * Whether we need to remove our inline --tooltip-move-transition.
+       * Whether we need to remove our inline custom propertys.
        *
        * @type {Boolean}
        */
       let needsRestore = true;
 
+      /**
+       * Popper.js modifier to disable move transition as early as possible.
+       *
+       * @type {Object}
+       *
+       * @see https://popper.js.org/docs/v2/modifiers/#custom-modifiers
+       */
+      const modifier = {
+        name:     'tooltipMoveTransitionDisabledOnCreate',
+        enabled:  true,
+        // Same phase as Popper's applyStyles modifier.
+        //
+        // @see https://github.com/floating-ui/floating-ui/blob/v2.x/src/modifiers/applyStyles.js
+        phase:    'write',
+        // Run after Popper's applyStyles modifier. While not completely
+        // necessary, this could keep things more predictable.
+        requires: ['applyStyles'],
+        effect:   (modifierArgs) => {
+
+          if (needsRestore === false) {
+            return;
+          }
+
+          // Not using FastDom here as it's already in a write phase, albeit
+          // Popper's.
+          //
+          // Also note that we're not relying directly on applyStyles applying
+          // this for us because it doesn't seem to work as intended even if we
+          // set it to modifierArgs.state.styles.popper along with
+          // a 'beforeWrite' phase set, for some odd reason.
+          $(modifierArgs.state.elements.popper).css(customPropName, 'none');
+
+        },
+        fn: (modifierArgs) => {},
+      };
+
       async function onCreate() {
 
-        await fastdom.mutate(function() {
+        if (!('modifiers' in instance.props.popperOptions)) {
+          instance.props.popperOptions.modifiers = [];
+        }
 
-          $(instance.popper).css({
-            '--tooltip-move-transition': 'none',
-          });
+        instance.props.popperOptions.modifiers.push(modifier);
 
-        });
+        instance.setProps(instance.props);
 
       };
 
