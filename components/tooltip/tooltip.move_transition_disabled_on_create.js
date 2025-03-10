@@ -24,6 +24,16 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
    */
   const fastdom = aiFastDom.getInstance();
 
+  tippy.setDefaultProps({
+
+    // Allows tooltip transitions to be defined via CSS. If this needs to be
+    // overridden per-tooltip, setting --tooltip-move-transition based on a
+    // class or theme in CSS is recommended rather than changing moveTransition
+    // directly.
+    moveTransition: `var(${customPropName})`,
+
+  });
+
   /**
    * Move transition disable on create Tippy.js plug-in.
    *
