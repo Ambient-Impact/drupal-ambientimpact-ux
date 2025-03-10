@@ -9,7 +9,7 @@ component.tooltip:
     - ambientimpact_ux/component.tooltip.hide_on_esc
     - ambientimpact_ux/component.tooltip.hide_on_out_of_bounds
     - ambientimpact_ux/component.tooltip.html_content_attribute
-    - ambientimpact_ux/component.tooltip.move_transition_disabled_on_create
+    - ambientimpact_ux/component.tooltip.move_transition_custom_property
     - ambientimpact_ux/component.tooltip.offset_padding_custom_properties
     - ambientimpact_ux/component.tooltip.singleton
     - ambientimpact_ux/component.tooltip.title_attribute
@@ -74,9 +74,9 @@ component.tooltip.html_content_attribute:
     - ambientimpact_core/component.fastdom
     - ambientimpact_ux/tippy.js
 
-component.tooltip.move_transition_disabled_on_create:
+component.tooltip.move_transition_custom_property:
   js:
-    tooltip.move_transition_disabled_on_create.js: {}
+    tooltip.move_transition_custom_property.js: {}
   dependencies:
     - ambientimpact_core/component.fastdom
     - ambientimpact_ux/tippy.js
