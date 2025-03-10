@@ -1,12 +1,12 @@
 // -----------------------------------------------------------------------------
-//   Ambient.Impact - UX - Tooltip move transition disabled on create component
+//   Ambient.Impact - UX - Tooltip move transition custom property component
 // -----------------------------------------------------------------------------
 
-AmbientImpact.onGlobals(['tippy.setDefaultProps'], function() {
-AmbientImpact.on(['fastdom'], function(aiFastDom) {
-AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
-  aiTooltipMoveTransitionDisabledOnCreate, $,
-) {
+AmbientImpact.onGlobals(['tippy.setDefaultProps'], () => {
+AmbientImpact.on(['fastdom'], (aiFastDom) => {
+AmbientImpact.addComponent('tooltipMoveTransitionCustomProperty', (
+  component, $,
+) => {
 
   'use strict';
 
@@ -50,7 +50,7 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
    * @see https://github.com/atomiks/tippyjs/issues/168
    *   Old issue from the 2.x series also describing a similar issue.
    */
-  this.moveTransitionDisabledOnCreatePlugin = {
+  component.plugin = {
     name: 'moveTransitionDisabledOnCreate',
     defaultValue: true,
     fn: function(instance) {
@@ -160,7 +160,7 @@ AmbientImpact.addComponent('tooltipMoveTransitionDisabledOnCreate', function(
   };
 
   // Always push onto the existing plug-ins so we don't remove existing ones.
-  tippy.defaultProps.plugins.push(this.moveTransitionDisabledOnCreatePlugin);
+  tippy.defaultProps.plugins.push(component.plugin);
 
   // Tippy.js needs to be informed of the changes.
   tippy.setDefaultProps({plugins: tippy.defaultProps.plugins});
