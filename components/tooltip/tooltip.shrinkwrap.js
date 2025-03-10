@@ -177,7 +177,7 @@ AmbientImpact.addComponent('tooltipShrinkwrap', (component, $) => {
         // positioning when the transition finishes.
         //
         // @see https://popper.js.org/docs/v2/lifecycle/#manual-update
-        instance.popperInstance.update();
+        await instance.popperInstance.update();
 
         await unlock(instance);
 
