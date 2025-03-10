@@ -4,6 +4,7 @@ component.tooltip:
   dependencies:
     - ambientimpact_core/ally.js
     - ambientimpact_core/component.fastdom
+    - ambientimpact_ux/component.tooltip.arrow
     - ambientimpact_ux/component.tooltip.debug
     - ambientimpact_ux/component.tooltip.hide_on_blur
     - ambientimpact_ux/component.tooltip.hide_on_esc
@@ -13,6 +14,12 @@ component.tooltip:
     - ambientimpact_ux/component.tooltip.offset_padding_custom_properties
     - ambientimpact_ux/component.tooltip.singleton
     - ambientimpact_ux/component.tooltip.title_attribute
+    - ambientimpact_ux/tippy.js
+
+component.tooltip.arrow:
+  js:
+    tooltip.arrow.js: {}
+  dependencies:
     - ambientimpact_ux/tippy.js
 
 component.tooltip.demo:
