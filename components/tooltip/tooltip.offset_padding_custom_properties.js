@@ -79,17 +79,17 @@ AmbientImpact.addComponent('tooltipOffsetPaddingCustomProperties', (
 
         if (definedProperties[blockPropName] === true) {
 
-          modifier.options.padding.top = values[blockPropName];
+          modifier.options.padding.top = Math.round(values[blockPropName]);
 
-          modifier.options.padding.bottom = values[blockPropName];
+          modifier.options.padding.bottom = Math.round(values[blockPropName]);
 
         }
 
         if (definedProperties[inlinePropName] === true) {
 
-          modifier.options.padding.left = values[inlinePropName];
+          modifier.options.padding.left = Math.round(values[inlinePropName]);
 
-          modifier.options.padding.right = values[inlinePropName];
+          modifier.options.padding.right = Math.round(values[inlinePropName]);
 
         }
 
