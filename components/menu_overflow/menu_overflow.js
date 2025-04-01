@@ -23,7 +23,7 @@ AmbientImpact.on([
   aiFastDom, aiMenuOverflowMeasure, aiMenuOverflowMode,
   aiMenuOverflowOverflowMenu, aiMenuOverflowShared, aiMenuOverflowToggle
 ) {
-AmbientImpact.onGlobals('ally.maintain.disabled', function() {
+AmbientImpact.onGlobals(['ally.maintain.disabled', 'ResizeObserver'], () => {
 AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
 
   'use strict';
@@ -69,14 +69,13 @@ AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
     let instance = this;
 
     /**
-     * The viewport width of the last update in pixels.
+     * The last recorded width of the menu.
      *
-     * This is stored to ensure that we only run an update if the viewport width
-     * has changed.
+     * We store this to only make changes when it actually changes.
      *
      * @type {Number}
      */
-    let lastUpdateViewportWidth = 0;
+    let lastUpdateWidth = 0;
 
     /**
      * The top level menu to attach to.
@@ -176,59 +175,6 @@ AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
     this.getMode = function() {
       return overflowMode.getMode();
     }
-
-    /**
-     * Update viewport check callback.
-     *
-     * @param {Boolean} forceUpdate
-     *   Whether to force an update even when the viewport width has not
-     *   changed.
-     *
-     * @return {Boolean}
-     *   True if the viewport width has changed since the last check or if the
-     *   forceUpdate parameter is true, and false otherwise.
-     */
-    function updateViewportCheck(forceUpdate) {
-
-      /**
-       *  The current viewport width in pixels.
-       *
-       * @type {Number}
-       */
-      const viewportWidth = $(window).width();
-
-      // Bail if not forcing an update and the viewport width hasn't changed.
-      if (forceUpdate !== true && lastUpdateViewportWidth === viewportWidth) {
-        return false;
-      }
-
-      // Update the last update viewport width.
-      lastUpdateViewportWidth = viewportWidth;
-
-      return true;
-
-    };
-
-    /**
-     * Intermediate update callback.
-     *
-     * @param {Boolean} shouldUpdate
-     *   True if a previous callback indicated an update should occur, and false
-     *   otherwise.
-     *
-     * @return {Boolean|Promise}
-     *   False if an update should not occur, or a resolved Promise if an update
-     *   should go ahead.
-     */
-    function updateIntermediate(shouldUpdate) {
-
-      if (shouldUpdate === false) {
-        return false;
-      }
-
-      return Promise.resolve();
-
-    };
 
     /**
      * Update active trail callback.
@@ -369,38 +315,49 @@ AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
     }
 
     /**
-     * Update visible and overflow items, based on current space.
+     * Update visible and overflow items based on current space.
      *
-     * @param {Boolean} forceUpdate
-     *   Whether to force an update even when the viewport width has not
-     *   changed.
+     * @param {Boolean} force
+     *   Whether to force an update even if the menu's width hasn't changed.
+     *
+     * @param {Number} currentWidth
+     *   The current menu width, if available. Will be measured if this is not
+     *   provided. This is allows the ResizeObserver to pass the width it's
+     *   received without us having to measure the element unnecessarily.
      *
      * @return {Promise}
      *   A Promise that resolves when various update tasks are complete.
      */
-    this.update = function(forceUpdate) {
+    const update = async (force, currentWidth) => {
 
-      return fastdom.measure(function() {
+      if (typeof currentWidth === 'undefined') {
+        currentWidth = menu.getBoundingClientRect().width;
+      }
 
-        return updateViewportCheck(forceUpdate);
+      // If not forced and the width didn't change, just resolve without doing
+      // anything.
+      if (force !== true && lastUpdateWidth === currentWidth) {
+        return Promise.resolve();
+      }
 
-      }).then(updateIntermediate).then(function(shouldUpdate) {
+      lastUpdateWidth = currentWidth;
 
-        if (shouldUpdate === false) {
-          return;
-        }
+      const $overflowingMenuItems = await measure.getOverflowingMenuItems();
 
-        return measure.getOverflowingMenuItems().then(function(
-          $overflowingMenuItems
-        ) { return fastdom.mutate(function() {
-
-          return updateVisibility($overflowingMenuItems);
-
-        })});
-
-      });
+      return fastdom.mutate(() => updateVisibility($overflowingMenuItems));
 
     };
+
+    /**
+     * Update visible and overflow items based on current space.
+     *
+     * @param {Boolean} force
+     *   Whether to force an update even if the menu's width hasn't changed.
+     *
+     * @return {Promise}
+     *   A Promise that resolves when various update tasks are complete.
+     */
+    this.update = (force) => update(force);
 
     overflowMode.setMode('some');
 
@@ -452,18 +409,23 @@ AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
       // 'menuOverflowAttached' event.
       measure = aiMenuOverflowMeasure.createMeasure($menuMeasureShadow[0]);
 
-      // Run once on attach.
-      instance.update();
-
     });
 
-    // Add event handlers to trigger on our debounced resize event and when
-    // the viewport offsets change, such as when the Drupal toolbar trays open
-    // or close in vertical mode.
-    $(window).on([
-      'lazyResize.' + eventNamespace,
-      'drupalViewportOffsetChange.' + eventNamespace
-    ].join(' '), this.update);
+    const resizeObserverCallback = (entries) => {
+
+      update(false, entries[0].contentBoxSize[0].inlineSize);
+
+    };
+
+    const resizeObserver = new ResizeObserver(
+      resizeObserverCallback,
+    );
+
+    // Start observing. Note that this will trigger the callback at least once
+    // on starting observation.
+    //
+    // @see https://stackoverflow.com/questions/67751039/javascript-resizeobserver-is-triggered-unexpected
+    resizeObserver.observe(menu);
 
     /**
      * Destroy this instance.
@@ -474,10 +436,7 @@ AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
      */
     this.destroy = function() {
 
-      $(window).off([
-        'lazyResize.' + eventNamespace,
-        'drupalViewportOffsetChange.' + eventNamespace
-      ].join(' '), this.update);
+      resizeObserver.disconnect();
 
       overflowMenu.destroy();
 
