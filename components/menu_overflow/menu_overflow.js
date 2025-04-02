@@ -330,6 +330,14 @@ AmbientImpact.addComponent('menuOverflow', function(aiMenuOverflow, $) {
      */
     const update = async (force, currentWidth) => {
 
+      // Wait for a frame to be rendered before attempting to update. While not
+      // necessary after the initial attach - ResizeObserver is throttled by
+      // the browser to minimize performance issues - this seems to fix odd
+      // errors when navigating with RefreshLess during the first update after
+      // an attach.
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+
       if (typeof currentWidth === 'undefined') {
         currentWidth = menu.getBoundingClientRect().width;
       }
