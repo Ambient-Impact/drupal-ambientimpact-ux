@@ -764,7 +764,7 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
        */
       const that = this;
 
-      $(this).prop('aiToTop').destroy().then(function() {
+      $(this).prop('aiToTop')?.destroy().then(function() {
 
         $(that).removeProp('aiToTop');
 
