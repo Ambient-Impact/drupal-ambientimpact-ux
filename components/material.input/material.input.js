@@ -371,16 +371,6 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
         // Run attach().
         attach(inputSelector, context);
       }, detach: function (context, settings, trigger) {
-        // Don't detach if we're not unloading. For example, we don't
-        // need to detach on the serialize trigger, which is run on any
-        // sort of Ajax request, including uploading a file via a file
-        // form item. Detaching then would cause unnecessary layout
-        // jumps, without any good reason to, since form is still
-        // available for the user to view and interact with.
-        if (trigger !== 'unload') {
-          return;
-        }
-
         // Run detach().
         detach(inputSelector, context);
       }
@@ -410,17 +400,6 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
             }
           });
         }, detach: function (context, settings, trigger) {
-          // Don't detach if we're not unloading. For example, we
-          // don't need to detach on the serialize trigger, which is
-          // run on any sort of Ajax request, including uploading a
-          // file via a file form item. Detaching then would cause
-          // unnecessary layout jumps, without any good reason to,
-          // since form is still available for the user to view and
-          // interact with.
-          if (trigger !== 'unload') {
-            return;
-          }
-
           // Run detach().
           detach(textareaSelector, context);
 
