@@ -295,6 +295,13 @@ AmbientImpact.addComponent('scrollbarGutter', function(aiScrollbarGutter, $) {
       destroyMeasure().then(function() {
         return fastdom.mutate(function() {
 
+          // Leave the data property and CSS custom property in place if we're
+          // detaching in preparation for RefreshLess caching the page to avoid
+          // visible layout and style changes.
+          if (trigger === 'refreshless:before-cache') {
+            return;
+          }
+
           $(behaviourTarget)
           .removeAttr(attributeName)
           .prop('style').removeProperty(propertyName);
