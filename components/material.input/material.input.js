@@ -7,8 +7,20 @@ AmbientImpact.onGlobals(['ally.get.activeElement', 'once'], function() {
 AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
   'use strict';
 
-  var inputSelector     = '.form-item :textall',
-    textareaSelector    = '.form-item-textarea--autosize textarea',
+  // once() doesn't understand our custom :textall selector so we have to build
+  // a selector that it does understand.
+  const inputSelector = `.form-item input:is([type="${[
+    'text',
+    'password',
+    'search',
+    'email',
+    'tel',
+    'url',
+    'number',
+    'range',
+  ].join('"],[type="')}"])`;
+
+  var textareaSelector    = '.form-item-textarea--autosize textarea',
     // textareaSelector   = '.form-type-textarea textarea',
 
     containerClass      = 'material-input',
@@ -119,15 +131,15 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
           .find('.' + messagesClass)
             .text('');
       }
-    },
+    };
+
     // Attach to specified input selectors, within context.
-    attach = function(selector, context) {
-      $(once(containerClass, $(selector, context))).each(function() {
+    function attach(element, selector, context) {
         var inputID, tempInputID, messagesID;
 
         // Get the input ID - required for generating the ID on the
         // messages element so that we can use aria-describedby
-        inputID = $(this).attr('id');
+        inputID = $(element).attr('id');
 
         // If the input doesn't have an ID, we generate one, but we
         // rarely have to do this because Drupal's form API does this
@@ -151,9 +163,9 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
         // as the input. Drupal normally ensures this, but some modules
         // have weird placement. E.g. Views exposed filters.
         $('label[for="' + inputID + '"]', context)
-          .insertBefore(this);
+          .insertBefore(element);
 
-        $(this)
+        $(element)
           // Attach events.
           .on('focus',        focusEvent)
           .on('blur',         blurEvent)
@@ -176,7 +188,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
             .find('label')
               .addClass(labelClass)
               // .each(function() {
-              //   var $label = $(this);
+              //   var $label = $(element);
 
               //   // Add an optional indicator for better UX:
               //   // http://uxmovement.com/forms/why-users-fill-out-less-if-you-mark-required-fields/
@@ -191,7 +203,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
               //     return;
               //   }
 
-              //   $(this).append(
+              //   $(element).append(
               //     '<em class="' + optionalIndicatorClass + '"> ' +
               //       Drupal.t('(optional)') +
               //     '</em>'
@@ -206,25 +218,25 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
 
         // Trigger the focus handlers if the input is already
         // focused by the time we've attached events to it.
-        if (this === ally.get.activeElement()) {
-          $(this).triggerHandler('focus');
+        if (element === ally.get.activeElement()) {
+          $(element).triggerHandler('focus');
         }
 
         // Add a class if a placeholder is present and not empty.
-        if ($(this).is('[placeholder][placeholder!=""]')) {
-          $(this).closest('.' + containerClass)
+        if ($(element).is('[placeholder][placeholder!=""]')) {
+          $(element).closest('.' + containerClass)
             .addClass(containerHasPlaceholderClass);
         }
 
         // Add a class if Drupal has marked this field as being in
         // error.
-        if ($(this).is('.error')) {
-          $(this).closest('.' + containerClass)
+        if ($(element).is('.error')) {
+          $(element).closest('.' + containerClass)
             .addClass(containerIsInvalidClass);
         }
 
         // Check if this is a single input inside of a Link field.
-        var $linkField = $(this).closest('.form-type-link-field');
+        var $linkField = $(element).closest('.form-type-link-field');
         if (
           $linkField.length &&
           $linkField.find(selector).length === 1
@@ -258,10 +270,10 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
 
         // Add a class to any containing Views exposed widget to
         // indicate it contains a Material input.
-        $(this).closest('.views-exposed-widget')
+        $(element).closest('.views-exposed-widget')
           .addClass(viewsExposedWidgetHasInputClass);
 
-        var $input = $(this),
+        var $input = $(element),
           triggerEmptyCallback = function() {
             $input.triggerHandler('input.empty');
           };
@@ -277,16 +289,15 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
           'formUpdated.AmbientImpactMaterialInput',
           triggerEmptyCallback
         );
-      });
-    },
+    };
+
     // Detach from specified input selectors, within context.
-    detach = function(selector, context) {
-      $(once.remove(containerClass, $(selector, context))).each(function() {
+    function detach(element, selector, context) {
         var $linkField, $linkFieldLabel, $linkURLLabel,
           $linkURLLabelText, $viewsExposedWidget;
 
         // Check if this is a single input inside of a Link field
-        $linkField = $(this).closest('.form-type-link-field');
+        $linkField = $(element).closest('.form-type-link-field');
         if (
           $linkField.length &&
           $linkField.find(selector).length === 1
@@ -308,7 +319,7 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
           $linkURLLabel.removeData(linkFieldURLLabelData);
         }
 
-        $(this)
+        $(element)
           // Detach events.
           .off('focus',         focusEvent)
           .off('blur',          blurEvent)
@@ -346,81 +357,102 @@ AmbientImpact.addComponent('material.input', function(aiMaterialInput, $) {
 
         // Remove the empty input checking event from any parent
         // fieldsets.
-        $(this).closest('fieldset').off(
+        $(element).closest('fieldset').off(
           'formUpdated.AmbientImpactMaterialInput'
         );
 
-        $viewsExposedWidget = $(this).closest('.views-exposed-widget');
+        $viewsExposedWidget = $(element).closest('.views-exposed-widget');
         if ($viewsExposedWidget.length > 0) {
           // Place the label for a Views exposed widget back in its
           // non-standard location.
-          $('label[for="' + $(this).attr('id') + '"]', context)
+          $('label[for="' + $(element).attr('id') + '"]', context)
             .prependTo($viewsExposedWidget);
 
           // Remove the class indicating it contains a Material input.
           $viewsExposedWidget
             .removeClass(viewsExposedWidgetHasInputClass);
         }
-      });
     };
 
-  // Add behaviors for single-line inputs.
-  this.addBehaviors({
-    AmbientImpactMaterialInput: {
-      attach: function (context, settings) {
-        // Run attach().
-        attach(inputSelector, context);
-      }, detach: function (context, settings, trigger) {
-        // Run detach().
-        detach(inputSelector, context);
-      }
-    }
-  });
+  // We want this to be detached on leaving a page and before rendering a
+  // cached snapshot, but critically we should not detach
+  // on 'refreshless:before-cache' because that will cause the header to pop
+  // in to view before the page has transitioned out.
+  //
+  // @todo Fix delaying caching not working in RefreshLess and remove this?
+  const triggers = AmbientImpact.defaults.detachTriggers.filter(
+    (trigger) => trigger !== 'refreshless:before-cache',
+  );
 
-  // Add behaviors to textareas when the Textarea component has loaded and
-  // attached Autosize to them.
+  triggers.push('refreshless:cached-snapshot');
+
+  // Single-line inputs.
+  this.addBehaviour(
+    'MaterialInput',
+    'material-input',
+    inputSelector,
+    triggers,
+    function(context, settings) {
+
+      attach(this, inputSelector, context);
+
+    },
+    function(context, settings, trigger) {
+
+      detach(this, inputSelector, context);
+
+    },
+  );
+
   AmbientImpact.on('textarea', function(aiTextarea) {
-    aiMaterialInput.addBehaviors({
-      AmbientImpactMaterialInputTextarea: {
-        attach: function (context, settings) {
-          // Run attach().
-          attach(textareaSelector, context);
 
-          $(once(containerTextareaClass, $(textareaSelector, context))).each(function() {
-            // Set the initial rows to 1 and update Autosize. This
-            // is to match the Material Design style.
-            if (window.autosize) {
-              $(this)
-                // Backup old rows value.
-                .data('material-input-old-rows', $(this).attr('rows'))
-                // Set to a single row.
-                .attr('rows', 1)
-              // Give Autosize a poke.
-              autosize.update(this);
-            }
-          });
-        }, detach: function (context, settings, trigger) {
-          // Run detach().
-          detach(textareaSelector, context);
+    // Multiple-line inputs, i.e. <textarea>s.
+    aiMaterialInput.addBehaviour(
+      'MaterialInputTextarea',
+      'material-input-textarea',
+      textareaSelector,
+      triggers,
+      function(context, settings) {
 
-          $(once.remove(containerTextareaClass, $(textareaSelector, context))).each(function() {
-            // Restore the previous rows attribute, if any.
-            if ($(this).data('material-input-old-rows')) {
-              $(this)
-                .attr(
-                  'rows',
-                  $(this).data('material-input-old-rows')
-                )
-                .removeData('material-input-old-rows');
-            }
-            if (window.autosize) {
-              // Give Autosize a poke.
-              autosize.update(this);
-            }
-          });
+        attach(this, textareaSelector, context);
+
+        if (!window.autosize) {
+          return;
         }
-      }
-    });
+
+        // Set the initial rows to 1 and update Autosize. This
+        // is to match the Material Design style.
+        $(this)
+          // Backup old rows value.
+          .data('material-input-old-rows', $(this).attr('rows'))
+          // Set to a single row.
+          .attr('rows', 1)
+        // Give Autosize a poke.
+        autosize.update(this);
+
+      },
+      function(context, settings, trigger) {
+
+        detach(this, textareaSelector, context);
+
+        // Restore the previous rows attribute, if any.
+        if ($(this).data('material-input-old-rows')) {
+          $(this)
+            .attr(
+              'rows',
+              $(this).data('material-input-old-rows')
+            )
+            .removeData('material-input-old-rows');
+        }
+
+        if (window.autosize) {
+          // Give Autosize a poke.
+          autosize.update(this);
+        }
+
+      },
+    );
+
   });
 
   // Drupal autocomplete customizations.
