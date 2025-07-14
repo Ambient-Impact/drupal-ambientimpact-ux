@@ -179,8 +179,9 @@ AmbientImpact.addComponent('menuDropDown', function(aiMenuDropDown, $) {
      */
     var $triggers = $();
 
-    // Menu items start off with the closed class applied.
-    $menuItems.addClass(menuItemClosedClass);
+    // Menu items start off with the closed class applied. If the open class is
+    // present when we attach, remove it to avoid unexpected issues.
+    $menuItems.addClass(menuItemClosedClass).removeClass(menuItemOpenClass);
 
     /**
      * Object exposing API and helper methods/properties.
