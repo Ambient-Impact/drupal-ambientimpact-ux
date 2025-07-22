@@ -37,11 +37,11 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
   const invisibleClass = `${baseClass}--invisible`;
 
   /**
-   * The BEM descendent class for the link.
+   * The BEM descendent class for the trigger.
    *
    * @type {String}
    */
-  const linkClass = `${baseClass}__link`;
+  const triggerClass = `${baseClass}__trigger`;
 
   /**
    * Our event namespace.
@@ -478,16 +478,16 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
   }
 
   /**
-   * To top link class.
+   * To top trigger class.
    *
-   * This encapsulates just the link, its click handler, and logic for whether
-   * or not scrolling should be smooth or instantaneous based on the
+   * This encapsulates just the trigger, its click handler, and logic for
+   * whether or not scrolling should be smooth or instantaneous based on the
    * prefers-reduced-motion media query.
    */
-  class ToTopLink {
+  class ToTopTrigger {
 
     /**
-     * The link element wrapped in a jQuery collection.
+     * The trigger element wrapped in a jQuery collection.
      *
      * @type {jQuery}
      */
@@ -498,7 +498,7 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
       this.#$element = $('<a></a>')
         .attr('href', `#${aiToTop.settings.topAnchorID}`)
         .attr('title', Drupal.t('Go to the top'))
-        .addClass(linkClass)
+        .addClass(triggerClass)
         .text(Drupal.t('Top'))
         .wrapTextWithIcon('arrow-up', {
           bundle:       'core',
@@ -600,7 +600,7 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
   }
 
   /**
-   * The to top class; encapsulates the link and container classes.
+   * The to top class; encapsulates the trigger and container classes.
    */
   class ToTop {
 
@@ -612,21 +612,21 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
     #container;
 
     /**
-     * The to top link class instance.
+     * The to top trigger class instance.
      *
-     * @type {ToTopLink}
+     * @type {ToTopTrigger}
      */
-    #link;
+    #trigger;
 
     constructor(target) {
 
       this.#container = new ToTopContainer();
 
-      this.#link = new ToTopLink();
+      this.#trigger = new ToTopTrigger();
 
       fastdom.mutate(() => {
 
-        this.#link.$element.appendTo(this.#container.$element);
+        this.#trigger.$element.appendTo(this.#container.$element);
 
         this.#container.$element.appendTo(target);
 
@@ -637,20 +637,20 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
     /**
      * Destroy this instance.
      *
-     * This wraps the container and link instances destroy() methods.
+     * This wraps the container and trigger instances destroy() methods.
      *
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      *
      * @see ToTopContainer~destroy()
      *
-     * @see ToTopLink~destroy()
+     * @see ToTopTrigger~destroy()
      */
     async destroy() {
 
       await this.#container.destroy();
 
-      await this.#link.destroy();
+      await this.#trigger.destroy();
 
     }
 
