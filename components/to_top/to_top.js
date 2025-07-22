@@ -750,25 +750,30 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
     'AmbientImpactToTop',
     'ambientimpact-to-top',
     'body',
+    // We want to ignore 'refreshless:before-cache' but we do want to be
+    // notified when displaying a cached snapshot.
+    ['unload', 'refreshless:cached-snapshot'],
     function(context, settings) {
 
       $(this).prop('aiToTop', new ToTop(this));
 
     },
-    function(context, settings, trigger) {
+    async function(context, settings, trigger) {
 
-      /**
-       * Reference to the HTML element being detached from.
-       *
-       * @type {HTMLElement}
-       */
-      const that = this;
+      // Remove any cached element and return if displaying a cached snapshot.
+      if (trigger === 'refreshless:cached-snapshot') {
 
-      $(this).prop('aiToTop')?.destroy().then(function() {
+        await fastdom.mutate(() => {
+          $(this).find(`.${baseClass}`).remove();
+        });
 
-        $(that).removeProp('aiToTop');
+        return;
 
-      });
+      }
+
+      await $(this).prop('aiToTop')?.destroy();
+
+      $(this).removeProp('aiToTop');
 
     }
   );
