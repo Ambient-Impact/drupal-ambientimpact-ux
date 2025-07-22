@@ -113,29 +113,25 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
 
     constructor() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
-
       this.#$element = $('<div></div>').addClass([baseClass, invisibleClass]);
 
       // Evaluate visibility immediately on construct.
-      this.updateVisibility()
-      // Then immediately evaluate whether the hidden attribute should be set so
-      // that the container is instantly hidden without any visible transition.
-      .then(function() {
-        return that.#setHiddenAttr();
-      // Then initialize the Headroom.js instance.
-      }).then(function() {
-        return that.#initHeadroom();
-      // And lastly, bind all our event handlers once all of the above are
-      // complete.
-      }).then(function() {
-        that.#bindEventHandlers();
-        that.#$element.removeClass(invisibleClass);
+      this.updateVisibility().then(async () => {
+
+        // Then immediately evaluate whether the hidden attribute should be set
+        // so that the container is instantly hidden without any visible
+        // transition.
+        await this.#setHiddenAttr();
+
+        // Then initialize the Headroom.js instance.
+        await this.#initHeadroom();
+
+        this.#bindEventHandlers();
+
+        await fastdom.mutate(() => {
+          this.#$element.removeClass(invisibleClass);
+        });
+
       });
 
     }
@@ -149,24 +145,17 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      */
-    destroy() {
+    async destroy() {
 
       this.#unbindEventHandlers();
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
+      await fastdom.mutate(() => {
 
-      return fastdom.mutate(function() {
-
-        if (that.#headroom && 'destroy' in that.#headroom) {
-          that.#headroom.destroy();
+        if (this.#headroom && 'destroy' in this.#headroom) {
+          this.#headroom.destroy();
         }
 
-        that.#$element.detach();
+        this.#$element.detach();
 
       });
 
@@ -179,15 +168,8 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      */
     #bindEventHandlers() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
-
-      this.#$element.on(`transitionend.${eventNamespace}`, function(event) {
-        that.#setHiddenAttr();
+      this.#$element.on(`transitionend.${eventNamespace}`, (event) => {
+        this.#setHiddenAttr();
       });
 
       // Handle visibility on text input focus/blur.
@@ -200,26 +182,25 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
       $('body').on([
         `focus.${eventNamespace}`,
         `blur.${eventNamespace}`,
-      ].join(' '), 'input:textall, textarea', function(event) {
+      ].join(' '), 'input:textall, textarea', (event) => {
 
         // Use a timeout to delay checking the active element. This ensures we
         // don't incorrectly show the widget when the user blurs one text field
         // by focusing another one.
-        setTimeout(function() {
-          that.updateVisibility();
+        setTimeout(() => {
+          this.updateVisibility();
         });
 
       });
 
       // Hide unconditionally on immerseEnter.
-      $(document).on(`immerseEnter.${eventNamespace}`, function(
-        event, element,
-      ) {
-        that.hide();
+      $(document).on(`immerseEnter.${eventNamespace}`, (event, element) => {
+
+        this.hide();
 
       // Show if allowed on immerseExit.
-      }).on(`immerseExit.${eventNamespace}`, function(event, element) {
-        that.updateVisibility();
+      }).on(`immerseExit.${eventNamespace}`, (event, element) => {
+        this.updateVisibility();
       });
 
       $(window).on([
@@ -231,8 +212,8 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
         //
         // @see https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation/change_event
         `orientationchange.${eventNamespace}`,
-      ].join(' '), function(event) {
-        that.#initHeadroom();
+      ].join(' '), (event) => {
+        this.#initHeadroom();
       });
 
     }
@@ -284,13 +265,6 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      */
     #getHeadroomOptions(threshold) {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
-
       return {
 
         // This is the threshold from the top of the window/parent that
@@ -316,34 +290,34 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
 
         // When Headroom says we're pinned and thus going up, record the
         // direction and execute show if other conditions are met.
-        onPin: function() {
+        onPin: () => {
 
-          that.#scrollDirection = 'up';
-          that.updateVisibility();
+          this.#scrollDirection = 'up';
+          this.updateVisibility();
 
         },
         // When Headroom says we're unpinned and thus going down, record the
         // direction and hide if not already hidden.
-        onUnpin: function() {
+        onUnpin: () => {
 
-          that.#scrollDirection = 'down';
-          that.updateVisibility();
+          this.#scrollDirection = 'down';
+          this.updateVisibility();
 
         },
         // When Headroom says we're at the top, i.e. above the 'offset' setting,
         // hide if not already hidden.
-        onTop: function() {
+        onTop: () => {
 
-          that.updateVisibility();
+          this.updateVisibility();
 
         },
         // When Headroom says we've hit the bottom, set the scroll direction to
         // 'up' and show the container if possible. This automatically shows the
         // container at the bottom, which makes a certain intuitive sense.
-        onBottom: function() {
+        onBottom: () => {
 
-          that.#scrollDirection = 'up';
-          that.updateVisibility();
+          this.#scrollDirection = 'up';
+          this.updateVisibility();
 
         },
 
@@ -360,38 +334,32 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      */
-    #initHeadroom() {
+    async #initHeadroom() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
-
-      return fastdom.measure(function() {
+      // Update the currently stored threshold based on the current window
+      // height. This allows for resizing or changing the display orientation.
+      this.#scrollShowThreshold = await fastdom.measure(() => {
 
         return $(window).height();
 
-      }).then(function(threshold) { return fastdom.mutate(function() {
+      });
 
-        // Update the currently stored threshold based on the current window
-        // height. This allows for resizing or changing the display orientation.
-        that.#scrollShowThreshold = threshold;
+      await fastdom.mutate(() => {
 
-        if (that.#headroom && 'destroy' in that.#headroom) {
-          that.#headroom.destroy();
+        if (this.#headroom && 'destroy' in this.#headroom) {
+          this.#headroom.destroy();
         }
 
         // Initialize Headroom instance to act on scroll direction and to detect
         // when we pass the scroll threshold.
-        that.#headroom = new Headroom(
-          that.#$element[0], that.#getHeadroomOptions(threshold),
+        this.#headroom = new Headroom(
+          this.#$element[0],
+          this.#getHeadroomOptions(this.#scrollShowThreshold),
         );
 
-        that.#headroom.init();
+        this.#headroom.init();
 
-      })});
+      });
 
     };
 
@@ -404,35 +372,21 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @see this~updateVisibility()
      *   This method should be used in most cases rather than show().
      */
-    show() {
+    async show() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
+      // Remove the hidden attribute.
+      await fastdom.mutate(() => {
+        this.#$element.removeAttr('hidden');
+      });
 
-      return fastdom.mutate(function() {
+      // Let any rendering/layout/etc. settle for a frame before proceeding.
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
 
-        // Remove the hidden attribute.
-        that.#$element.removeAttr('hidden');
-
-      // We need to delay the removal of the class until at least one frame has
-      // been painted, so that the browser has a chance to paint the container
-      // as unhidden, otherwise transitions won't run.
-      //
-      // @see https://stackoverflow.com/questions/61017477/requestanimationframe-inside-a-promise#61020604
-      //   Describes how to Promise-ify requestAnimationFrame.
-      }).then(function() {
-        return new Promise(requestAnimationFrame);
-      // At this point we haven't painted a new frame yet but the browser is
-      // indicating one is ready to paint.
-      }).then(function() {
-        return new Promise(requestAnimationFrame);
-      // Now we have painted a frame, so we remove the class on the next frame.
-      }).then(function() {
-        that.#$element.removeClass(hiddenClass);
+      // Now that we've painted a frame, remove the hidden class to transition
+      // in.
+      await fastdom.mutate(() => {
+        this.#$element.removeClass(hiddenClass);
       });
 
     }
@@ -446,17 +400,10 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @see this~updateVisibility()
      *   This method should be used in most cases rather than hide().
      */
-    hide() {
+    async hide() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
-
-      return fastdom.mutate(function() {
-        that.#$element.addClass(hiddenClass);
+      await fastdom.mutate(() => {
+        this.#$element.addClass(hiddenClass);
       });
 
     }
@@ -471,29 +418,20 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      */
-    #setHiddenAttr() {
+    async #setHiddenAttr() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
+      const hasHiddenClass = await fastdom.measure(() => {
 
-      return fastdom.measure(function() {
+        return this.#$element.is(`.${hiddenClass}`);
 
-        return that.#$element.is(`.${hiddenClass}`);
+      });
 
-      }).then(function(hasHiddenClass) {
+      if (hasHiddenClass === false) {
+        return Promise.resolve();
+      }
 
-        if (hasHiddenClass === false) {
-          return Promise.resolve();
-        }
-
-        return fastdom.mutate(function() {
-          that.#$element.attr('hidden', 'hidden');
-        });
-
+      await fastdom.mutate(() => {
+        this.#$element.attr('hidden', 'hidden');
       });
 
     }
@@ -504,45 +442,36 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      */
-    updateVisibility() {
+    async updateVisibility() {
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopContainer}
-       */
-      const that = this;
-
-      return fastdom.measure(function() {
+      const data = await fastdom.measure(() => {
 
         return {
           scrollTop:      $(window).scrollTop(),
-          scrollIgnore:   that.#scrollShowThreshold * scrollShowIgnoreFactor,
-          direction:      that.#scrollDirection,
+          scrollIgnore:   this.#scrollShowThreshold * scrollShowIgnoreFactor,
+          direction:      this.#scrollDirection,
           isTextFocused:  $(ally.get.activeElement()).is(
             'input:textall, textarea',
           ),
         }
 
-      }).then(function(data) {
-
-        // Should we show the container?
-        if (
-          // Are we scrolling up?
-          data.direction === 'up' &&
-          // Is the scroll position outside of the ignore area?
-          data.scrollTop > data.scrollIgnore &&
-          // Is there no text input currently focused?
-          data.isTextFocused === false
-        ) {
-          return that.show();
-
-        // If not, hide the container.
-        } else {
-          return that.hide();
-        }
-
       });
+
+      // Should we show the container?
+      if (
+        // Are we scrolling up?
+        data.direction === 'up' &&
+        // Is the scroll position outside of the ignore area?
+        data.scrollTop > data.scrollIgnore &&
+        // Is there no text input currently focused?
+        data.isTextFocused === false
+      ) {
+        await this.show();
+
+      // If not, hide the container.
+      } else {
+        await this.hide();
+      }
 
     }
 
@@ -575,11 +504,9 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
           bundle:       'core',
           textDisplay:  'visuallyHidden',
         })
-        .on(`click.${eventNamespace}`, {
-          // Pass the current instance to the event handler because 'this' will
-          // be the link element in that context.
-          that: this,
-        }, this.#click);
+        .on(`click.${eventNamespace}`, (event) => {
+          this.#click(event);
+        });
 
     }
 
@@ -591,20 +518,13 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      * @return {Promise}
      *   A Promise that resolves when various DOM tasks are complete.
      */
-    destroy() {
-
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTopLink}
-       */
-      const that = this;
+    async destroy() {
 
       this.#$element.off(`click.${eventNamespace}`, this.#click);
 
-      return fastdom.mutate(function() {
+      await fastdom.mutate(() => {
 
-        that.#$element.detach();
+        this.#$element.detach();
 
       });
 
@@ -669,7 +589,7 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
         );
       }
 
-      window.scroll(event.data.that.#getScrollObject());
+      window.scroll(this.#getScrollObject());
 
       // The link has #top as the href, but we're going to prevent that being
       // added to the URL to keep the URL clean.
@@ -704,18 +624,11 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
 
       this.#link = new ToTopLink();
 
-      /**
-       * Reference to the current instance.
-       *
-       * @type {ToTop}
-       */
-      const that = this;
+      fastdom.mutate(() => {
 
-      fastdom.mutate(function() {
+        this.#link.$element.appendTo(this.#container.$element);
 
-        that.#link.$element.appendTo(that.#container.$element);
-
-        that.#container.$element.appendTo(target);
+        this.#container.$element.appendTo(target);
 
       });
 
@@ -733,14 +646,11 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
      *
      * @see ToTopLink~destroy()
      */
-    destroy() {
+    async destroy() {
 
-      return Promise.all([
+      await this.#container.destroy();
 
-        this.#container.destroy(),
-        this.#link.destroy(),
-
-      ]);
+      await this.#link.destroy();
 
     }
 
