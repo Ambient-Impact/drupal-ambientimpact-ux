@@ -73,3 +73,12 @@ function ambientimpact_ux_update_10201(): void {
   )->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild libraries for switch to Headroom.js fork.
+ */
+function ambientimpact_ux_update_10202(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+}

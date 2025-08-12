@@ -40,16 +40,15 @@ frend-offcanvas:
     }
 
 headroom.js:
-  remote: https://wicky.nillia.ms/headroom.js/
-  version: 0.10.4
+  remote: https://gitlab.com/neurocracy/front-end/headroom.js
+  version: 0.13.0
   license:
     name: MIT
-    url: https://github.com/WickyNilliams/headroom.js/blob/master/LICENSE
+    url: https://gitlab.com/neurocracy/front-end/headroom.js/-/blob/main/LICENSE
     gpl-compatible: true
   js:
-    vendor/headroom.js/dist/headroom.min.js: {
-      attributes: { defer: true },
-      minified:   true
+    vendor/@neurocracy/headroom.js/dist/headroom.js: {
+      attributes: { defer: true }
     }
 
 jquery.hoverintent:
