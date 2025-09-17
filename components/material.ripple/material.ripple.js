@@ -14,9 +14,17 @@
 // @todo Enable/fix ability to reset the animation if a pointer event occurs
 // while the animation is in progress.
 
+AmbientImpact.onGlobals(['once'], () => {
 AmbientImpact.addComponent('material.ripple', function(aiMaterialRipple, $) {
 
   'use strict';
+
+  /**
+   * Event namespace name.
+   *
+   * @type {String}
+   */
+  const eventNamespace = this.getName();
 
   // The names of the events that trigger a ripple.
   var triggerEventNames = [
@@ -349,4 +357,54 @@ AmbientImpact.addComponent('material.ripple', function(aiMaterialRipple, $) {
         .off(animationEventNames.join(' '));
     }
   );
+
+  // Clean up and remove any cached ripple classes or custom properties so that
+  // the ripple animation doesn't get triggered when restoring from cache.
+  $(once(
+    'material-ripple-refreshless-cache-restore',
+    'html',
+  )).on(`refreshless:before-render.${eventNamespace}`, async (event) => {
+
+    // Don't attempt to to do anything if this is not a cached snapshot being
+    // rendered.
+    if (event.detail.isCachedSnapshot === false) {
+      return;
+    }
+
+    const context = event.detail.newBody;
+
+    await event.detail.delay(async (resolve, reject) => {
+
+      $(context).find(`.${activeClass}`).each(async (i, element) => {
+
+        const $this = $(element);
+
+        $this.removeClass([
+          activeClass, resetClass, inputActiveClass, noActiveStateClass,
+        ]);
+
+        const properties = [
+          '--material-ripple-pointer-offset-x',
+          '--material-ripple-pointer-offset-y',
+          '--material-ripple-max-radius',
+          '--material-ripple-element-width',
+          '--material-ripple-element-height',
+        ];
+
+        // Remove any custom properties still left on the element.
+        for (const property in properties) {
+
+          this.style.removeProperty(property);
+
+        }
+
+      });
+
+      resolve();
+
+    });
+
+  });
+
+});
 });

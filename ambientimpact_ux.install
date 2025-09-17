@@ -82,3 +82,16 @@ function ambientimpact_ux_update_10202(): void {
   \Drupal::service('library.discovery')->clearCachedDefinitions();
 
 }
+
+/**
+ * Rebuild library definitions & component plug-ins for ripple RefreshLess fix.
+ */
+function ambientimpact_ux_update_10203(): void {
+
+  \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+  \Drupal::service(
+    'plugin.manager.ambientimpact_component',
+  )->clearCachedDefinitions();
+
+}
