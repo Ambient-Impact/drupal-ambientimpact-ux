@@ -12,3 +12,4 @@ component.to_top:
     - ambientimpact_core/component.media_query
     - ambientimpact_icon/component.icon
     - ambientimpact_ux/component.headroom
+    - core/once

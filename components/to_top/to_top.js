@@ -7,7 +7,9 @@
 // scrolling up, the viewport has been scrolled down enough to merit it, and no
 // text field is focused (to avoid blocking one on narrow screens).
 
-AmbientImpact.onGlobals(['Headroom', 'ally.get.activeElement'], function() {
+AmbientImpact.onGlobals([
+  'ally.get.activeElement', 'Headroom', 'once',
+], function() {
 AmbientImpact.on(['fastdom', 'icon', 'jquery', 'mediaQuery'], function(
   aiFastDom, aiIcon, aijQuery, aiMediaQuery,
 ) {
@@ -660,9 +662,6 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
     'AmbientImpactToTop',
     'ambientimpact-to-top',
     'body',
-    // We want to ignore 'refreshless:before-cache' but we do want to be
-    // notified when displaying a cached snapshot.
-    ['unload', 'refreshless:cached-snapshot'],
     function(context, settings) {
 
       $(this).prop('aiToTop', new ToTop(this));
@@ -670,23 +669,47 @@ AmbientImpact.addComponent('toTop', function(aiToTop, $) {
     },
     async function(context, settings, trigger) {
 
-      // Remove any cached element and return if displaying a cached snapshot.
-      if (trigger === 'refreshless:cached-snapshot') {
-
-        await fastdom.mutate(() => {
-          $(this).find(`.${baseClass}`).remove();
-        });
-
+      // Ignore 'refreshless:before-cache' to avoid visibly instantly
+      // disappearing because this is triggered before the page can be fully
+      // hidden, and since we use async/await, we can't even reliably remove
+      // this from the page be before it's stored in cache. Because of these
+      // issues, we attach a 'refreshless:before-render' event instead lower
+      // down which we can use to reliably remove the to top container from a
+      // cached snapshot before it's swapped in, eliminating the possibility of
+      // a brief flash of a cached to top.
+      if (trigger === 'refreshless:before-cache') {
         return;
-
       }
 
       await $(this).prop('aiToTop')?.destroy();
 
       $(this).removeProp('aiToTop');
 
-    }
+    },
   );
+
+  $(once(
+    'to-top-refreshless-cache-restore',
+    'html',
+  )).on(`refreshless:before-render.${eventNamespace}`, async (event) => {
+
+    // Don't attempt to to do anything if this is not a cached snapshot being
+    // rendered.
+    if (event.detail.isCachedSnapshot === false) {
+      return;
+    }
+
+    const context = event.detail.newBody;
+
+    await event.detail.delay(async (resolve, reject) => {
+
+      $(context).find(`.${baseClass}`).remove();
+
+      resolve();
+
+    });
+
+  });
 
 });
 });
