@@ -205,41 +205,43 @@ $divider-padding-multiplier: 0.3 !default;
   $padding-breakpoint:  $padding-breakpoint,
   $padding-axis:        'both'
 ) {
+
+  --material-panel-padding-small: #{$padding-small};
+
+  --material-panel-padding-large: #{$padding-large};
+
+  --material-panel-padding: var(--material-panel-padding-small);
+
   // Horizontal padding.
+  //
+  // @todo Introduce 'inline' value and set padding-inline.
   @if $padding-axis == 'horizontal' {
-    padding-left:   $padding-small;
-    padding-right:  $padding-small;
+
+    padding-left:   var(--material-panel-padding);
+    padding-right:  var(--material-panel-padding);
 
   // Vertical padding.
+  //
+  // @todo Introduce 'block' value and set padding-block.
   } @else if $padding-axis == 'vertical' {
-    padding-top:    $padding-small;
-    padding-bottom: $padding-small;
+
+    padding-top:    var(--material-panel-padding);
+    padding-bottom: var(--material-panel-padding);
 
   // Both axes padding.
   } @else {
-    padding: $padding-small;
+
+    padding: var(--material-panel-padding);
+
   }
 
-  // Switch to large padding on the provided breakpoint if the small and large
-  // padding values are not identical.
-  @if $padding-small != $padding-large {
-    @include breakpoint.on($padding-breakpoint) {
-      // Horizontal padding.
-      @if $padding-axis == 'horizontal' {
-        padding-left:   $padding-large;
-        padding-right:  $padding-large;
+  // Switch to large padding on the provided breakpoint.
+  @include breakpoint.on($padding-breakpoint) {
 
-      // Vertical padding.
-      } @else if $padding-axis == 'vertical' {
-        padding-top:    $padding-large;
-        padding-bottom: $padding-large;
+    --material-panel-padding: var(--material-panel-padding-large);
 
-      // Both axes padding.
-      } @else {
-        padding: $padding-large;
-      }
-    }
   }
+
 }
 
 ///
